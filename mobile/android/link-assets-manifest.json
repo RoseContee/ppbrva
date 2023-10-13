@@ -1,0 +1,37 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/fonts/GillSansMT-Bold.ttf",
+      "sha1": "766ad5a19cf270def00022f8bb1b1bffb0a1e6e7"
+    },
+    {
+      "path": "src/assets/fonts/GillSansMT.ttf",
+      "sha1": "2247b20e88aaf8bfef070a2f8e7aab45c337ff5d"
+    },
+    {
+      "path": "src/assets/fonts/Grange-DemiBold.ttf",
+      "sha1": "2ac5fcabea069e7b4aebc7e58982ac2604c8143d"
+    },
+    {
+      "path": "src/assets/fonts/Grange-DemiBoldCond.ttf",
+      "sha1": "3e041f082dee060f7a04938c8135f69e22b40029"
+    },
+    {
+      "path": "src/assets/fonts/Grange-Light.ttf",
+      "sha1": "229e26cfa6693e53a7cc744efc276c80bec65e82"
+    },
+    {
+      "path": "src/assets/fonts/OpenSans-Bold.ttf",
+      "sha1": "1f22568081c57eb8980ccbec86decd452f35d6b0"
+    },
+    {
+      "path": "src/assets/fonts/OpenSans-Light.ttf",
+      "sha1": "5a52715a13bdc78f172f75f0690cfd5a2b1a84a0"
+    },
+    {
+      "path": "src/assets/fonts/OpenSans-Regular.ttf",
+      "sha1": "b4596a8e11ee5b6331f2fecf656a53f61677b56e"
+    }
+  ]
+}
