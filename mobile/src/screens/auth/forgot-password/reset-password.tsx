@@ -4,12 +4,12 @@ import {
   View
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Layouts from '../../components/layouts/auth-layouts';
-import Message from '../../components/basic/message';
-import Button from '../../components/basic/button';
+import Layouts from '../../../components/layouts/auth-layouts';
+import Message from '../../../components/basic/message';
+import Button from '../../../components/basic/button';
 
 import { t } from 'react-native-tailwindcss';
-import s from '../../utils/styles';
+import s from '../../../utils/styles';
 
 const ResetPassword: FC = (): JSX.Element => {
   const [message, setMessage] = useState<string>('Passwords does not match, please try again.');

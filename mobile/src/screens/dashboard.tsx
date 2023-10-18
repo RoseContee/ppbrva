@@ -6,6 +6,8 @@ import {
   useWindowDimensions
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useAppSelector } from '../store';
+import { getMe, getPlan } from '../store/user';
 import Layouts from '../components/layouts/home-layouts';
 import Message from '../components/basic/message';
 import Link from '../components/basic/link';
@@ -18,8 +20,6 @@ import imgPlay from '../assets/img/dashboard/play.png';
 import imgImprove from '../assets/img/dashboard/improve.png';
 import imgRent from '../assets/img/dashboard/rent.png';
 import imgShop from '../assets/img/dashboard/shop.png';
-
-import imgProfile from '../assets/img/tmp/profile.png';
 
 import { t } from 'react-native-tailwindcss';
 import s from '../utils/styles';
@@ -50,6 +50,8 @@ const CardWidget: FC<CardProps> = ({
 };
 
 const Dashboard: FC = (): JSX.Element => {
+  const me = useAppSelector(getMe);
+  const plan = useAppSelector(getPlan);
   const navigation = useNavigation();
   const { width } = useWindowDimensions();
   const padding = 16; //t.p4
@@ -63,10 +65,10 @@ const Dashboard: FC = (): JSX.Element => {
       </Text>
       <Message style={[t.mT4]}>
         <Text style={[t.flexShrink, s.textTiny, s.textGray, t.pR2]}>
-          Please update your <Link onPress={() => navigation.navigate('Profile' as never)}>billing profile</Link>
+          Please update your <Link onPress={() => navigation.navigate('ProfileScreen' as never)}>billing profile</Link>
         </Text>
         <Button style={[s.bgPrimary, s.messageBtn]} titleStyle={[s.textTiny]}
-          onPress={() => navigation.navigate('Profile' as never)}
+          onPress={() => navigation.navigate('ProfileScreen' as never)}
         >
           Fix
         </Button>
@@ -93,13 +95,16 @@ const Dashboard: FC = (): JSX.Element => {
         <Card style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.mT6]}>
           <View style={[t.flexShrink]}>
             <Title style={[s.textPrimary, t.textSm]}>
-              Elite Team Membership
+              { plan && plan.name }
             </Title>
             <Text style={[s.fontBodyLight, s.textTiny, s.textGray, t.mT1]}>
-              Member #PB1054
+              Member #{ me && me.memberID }
             </Text>
           </View>
-          <Image source={imgProfile} style={[s.cardListImage]} />
+          {
+            me && me.avatar &&
+            <Image source={me.avatar} style={[s.cardListImage]} />
+          }
         </Card>
       </View>
     </Layouts>

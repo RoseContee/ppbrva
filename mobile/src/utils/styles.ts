@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import theme from './theme';
 
 const styles = StyleSheet.create({
@@ -200,6 +200,20 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     backgroundColor: theme.color.inactive,
+  },
+  loadingContainer: {
+    position: 'absolute',
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
+    justifyContent: 'center',
+    zIndex: 999,
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
+    backgroundColor: '#fff',
+    opacity: 0.3,
   },
 
   testBorder: {
