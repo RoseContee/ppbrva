@@ -1,12 +1,16 @@
 <?php
 
-use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\EventController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MemberController;
-use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\InvoicesController;
+use App\Http\Controllers\UsersController;
+use App\Http\Controllers\Settings\IndexController as SettingsController;
+use App\Http\Controllers\Settings\PlanController;
+use App\Http\Controllers\Settings\RoleController;
+use App\Http\Controllers\Settings\AppiconsController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,37 +24,39 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('auth.login');
-});
+Route::middleware(['auth', 'role'])->group(function () {
+    Route::get('/', function() {
+        return redirect()->route('dashboard');
+    });
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware(['verified']);
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    Route::resources([
+        'locations' => LocationController::class,
+        'members'   => MemberController::class,
+        'activity' => ActivityController::class,
+        'invoices' => InvoicesController::class,
+        'users'     => UsersController::class,
+    ]);
+    Route::post('members/send-invite', [MemberController::class, 'sendInvite'])->name('members.send-invite');
+    Route::delete('members', [MemberController::class, 'destroy'])->name('members.destroy');
+    Route::delete('users', [UsersController::class, 'destroy'])->name('users.destroy');
 
+    Route::prefix('settings')->group(function () {
+        Route::get('/', [SettingsController::class, 'index'])->name('settings.index');
+        Route::resources([
+            'plans' => PlanController::class,
+            'roles' => RoleController::class,
+            'appicons' => AppiconsController::class,
+        ], [
+            'as' => 'settings'
+        ]);
+        Route::delete('plans', [PlanController::class, 'destroy'])->name('settings.plans.destroy');
+        Route::delete('roles', [RoleController::class, 'destroy'])->name('settings.roles.destroy');
+    });
 
-Route::middleware('auth')->group(function () {
-
-    Route::get('/members', [MemberController::class, 'index'])->name('members');
-    Route::get('/members/add', [MemberController::class, 'add'])->name('addmember');
-    Route::get('/activity', [MemberController::class, 'activity'])->name('activity');
-    Route::get('/activity/add', [MemberController::class, 'addactivity'])->name('addactivity');
-    Route::get('/invoices', [MemberController::class, 'invoices'])->name('invoices');
-    Route::get('/invoices/{id}', [MemberController::class, 'invoicedetail'])->name('invoicedetail');
-    Route::get('/locations', [LocationController::class, 'index'])->name('locations');
-    Route::get('/locations/add', [LocationController::class, 'add'])->name('addlocation');
-    Route::get('/payments', [PaymentController::class, 'index'])->name('payments');
-    Route::get('/users', [RegisteredUserController::class, 'index'])->name('users');
-    Route::get('/users/add', [RegisteredUserController::class, 'add'])->name('adduser');
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
-    Route::get('/settings/plans', [SettingsController::class, 'plans'])->name('plans');
-    Route::get('/settings/plans/add', [SettingsController::class, 'addplan'])->name('addplan');
-    Route::get('/settings/roles', [SettingsController::class, 'roles'])->name('roles');
-    Route::get('/settings/roles/add', [SettingsController::class, 'addrole'])->name('addrole');
-    Route::get('/settings/appicons', [SettingsController::class, 'appicons'])->name('appicons');
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 require __DIR__.'/auth.php';

@@ -48,6 +48,13 @@ class LoginRequest extends FormRequest
                 'email' => trans('auth.failed'),
             ]);
         }
+        if (!$this->user()->active) {
+            auth('web')->logout();
+            throw ValidationException::withMessages([
+                'email' => 'Your account has been deactivated.',
+            ]);
+        }
+        $this->user()->update(['last_login' => now()]);
 
         RateLimiter::clear($this->throttleKey());
     }

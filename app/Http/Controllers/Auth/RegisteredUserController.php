@@ -18,19 +18,6 @@ class RegisteredUserController extends Controller
     /**
      * Display the registration view.
      */
-
-    public function index(Request $request) {
-        return view('users', [
-            'user' => $request->user(),
-        ]);
-    }
-
-    public function add(Request $request) {
-        return view('add-user', [
-            'user' => $request->user(),
-        ]);
-    }    
-
     public function create(): View
     {
         return view('auth.register');
