@@ -1,8 +1,8 @@
 import Axios from 'axios';
 import store from '../store';
 
-const baseURL = 'http://192.168.137.101/ppbrva/public/api/app';
-// const baseURL = 'https://app.ppbrva.com/api/app';
+// const baseURL = 'http://192.168.137.247/ppbrva/public/api/app';
+const baseURL = 'https://app.ppbrva.com/api/app';
 
 const axios = Axios.create({
 	baseURL: baseURL,

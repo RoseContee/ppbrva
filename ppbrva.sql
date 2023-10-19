@@ -75,6 +75,30 @@ LOCK TABLES `locations` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `member_password_reset_codes`
+--
+
+DROP TABLE IF EXISTS `member_password_reset_codes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `member_password_reset_codes` (
+  `email` varchar(255) NOT NULL,
+  `code` varchar(6) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `member_password_reset_codes`
+--
+
+LOCK TABLES `member_password_reset_codes` WRITE;
+/*!40000 ALTER TABLE `member_password_reset_codes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `member_password_reset_codes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `member_profiles`
 --
 
@@ -117,13 +141,14 @@ CREATE TABLE `members` (
   `name` varchar(255) NOT NULL,
   `email` varchar(80) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `origin_pass` varchar(8) DEFAULT NULL,
+  `original_pass` varchar(8) DEFAULT NULL,
   `phone` varchar(255) DEFAULT NULL,
   `location_id` bigint(20) NOT NULL,
   `plan_id` int(11) NOT NULL,
   `avatar` varchar(255) DEFAULT NULL,
   `customer_id` varchar(255) NOT NULL,
   `card_id` varchar(255) DEFAULT NULL,
+  `card_last4` varchar(4) DEFAULT NULL,
   `active` tinyint(1) DEFAULT 1,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -155,7 +180,7 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -164,7 +189,7 @@ CREATE TABLE `migrations` (
 
 LOCK TABLES `migrations` WRITE;
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
-INSERT INTO `migrations` VALUES (1,'2014_10_12_000000_create_users_table',1),(2,'2014_10_12_100000_create_password_reset_tokens_table',1),(3,'2019_08_19_000000_create_failed_jobs_table',1),(4,'2019_12_14_000001_create_personal_access_tokens_table',1),(5,'2023_10_13_140506_create_locations_table',1),(6,'2023_10_14_091114_create_members_table',1),(7,'2023_10_14_094721_create_plans_table',1),(8,'2023_10_15_040236_create_roles_table',1),(9,'2023_10_17_002702_create_member_profiles_table',1);
+INSERT INTO `migrations` VALUES (1,'2014_10_12_000000_create_users_table',1),(2,'2014_10_12_100000_create_password_reset_tokens_table',1),(3,'2019_08_19_000000_create_failed_jobs_table',1),(4,'2019_12_14_000001_create_personal_access_tokens_table',1),(5,'2023_10_13_140506_create_locations_table',1),(6,'2023_10_14_091114_create_members_table',1),(7,'2023_10_14_094721_create_plans_table',1),(8,'2023_10_15_040236_create_roles_table',1),(9,'2023_10_17_002702_create_member_profiles_table',1),(10,'2023_10_19_123019_create_member_password_reset_codes_table',1);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -275,7 +300,7 @@ CREATE TABLE `roles` (
 
 LOCK TABLES `roles` WRITE;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
-INSERT INTO `roles` VALUES (1,'Admin','1,2,3,4,5,6,7','2023-10-18 22:54:54','2023-10-18 22:54:54');
+INSERT INTO `roles` VALUES (1,'Admin','1,2,3,4,5,6,7','2023-10-19 19:37:23','2023-10-19 19:37:23');
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -310,7 +335,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Jim Doyle','jim@divstrong.com','2023-10-18 22:54:54','$2y$10$MQnTSYsb5Yq8mN5anhlz7.rYgvH1ASwb43Yas7nlXRGMcvDK1jCOa',NULL,NULL,1,1,NULL,'2023-10-18 22:54:54','2023-10-18 22:54:54');
+INSERT INTO `users` VALUES (1,'Jim Doyle','jim@divstrong.com','2023-10-19 19:37:23','$2y$10$yGZfHlWoURfxIZZDPz0tYORklbGBBoHDtKJP8cEk5ChV6b41odN1K',NULL,NULL,1,1,NULL,'2023-10-19 19:37:23','2023-10-19 19:37:23');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -323,4 +348,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-10-19  0:56:02
+-- Dump completed on 2023-10-19 21:37:54
