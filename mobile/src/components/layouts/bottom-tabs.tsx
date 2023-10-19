@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import {
+  ColorValue,
   TouchableOpacity,
   View
 } from 'react-native';
@@ -19,18 +20,24 @@ import s from '../../utils/styles';
 import theme from '../../utils/theme';
 
 interface MenuItemProps {
+  color: ColorValue,
   Icon: FC<SvgProps>,
   text: string,
   onPress: () => void,
 }
 
-const MenuItem: FC<MenuItemProps> = ({ Icon, text, onPress }): JSX.Element => {
+const MenuItem: FC<MenuItemProps> = ({
+  color,
+  Icon,
+  text,
+  onPress
+}): JSX.Element => {
   return (
     <TouchableOpacity style={[t.itemsCenter, t.mT3, t.mB2]} onPress={onPress}>
-      <Icon fill={theme.color.title}
+      <Icon fill={color}
         width={theme.size.bottomIcon} height={theme.size.bottomIcon}
       />
-      <Text style={[s.fontBodyLight, s.textTitle, s.textTiny, t.mT1]}>
+      <Text style={[s.fontBodyLight, {color: color}, s.textTiny, t.mT1]}>
         { text }
       </Text>
     </TouchableOpacity>
@@ -38,23 +45,27 @@ const MenuItem: FC<MenuItemProps> = ({ Icon, text, onPress }): JSX.Element => {
 };
 
 const BottomTabs: FC<BottomTabBarProps> = (props): JSX.Element => {
-  const { navigation } = props;
+  const { navigation, state: { index } } = props;
 
   return (
     <View style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.bgWhite, t.pX2]}>
       <MenuItem Icon={IconActivity} text="Activity"
+        color={index === 1 ? theme.color.active : theme.color.title}
         onPress={() => navigation.navigate('Activity')}
       />
       <MenuItem Icon={IconFriends} text="Friends"
+        color={index === 2 ? theme.color.active : theme.color.title}
         onPress={() => navigation.navigate('Friends')}
       />
       <Image source={imgLogo} height={52}
         onPress={() => navigation.navigate('Dashboard')}
       />
       <MenuItem Icon={IconEvents} text="Events"
+        color={index === 3 ? theme.color.active : theme.color.title}
         onPress={() => navigation.navigate('Events')}
       />
       <MenuItem Icon={IconProfile} text="Profile"
+        color={index === 4 ? theme.color.active : theme.color.title}
         onPress={() => navigation.navigate('ProfileScreen')}
       />
     </View>

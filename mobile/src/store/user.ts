@@ -25,9 +25,9 @@ const userSlice = createSlice({
 });
 
 export const { SaveAccessToken, SaveMe } = userSlice.actions;
-export const getMe = (state: RootState) => state.user.me;
-export const getProfile = (state: RootState) => (state.user.me || {}).profile;
-export const getPlan = (state: RootState) => (state.user.me || {}).plan;
-export const getLocation = (state: RootState) => (state.user.me || {}).location;
+export const getMe = (state: RootState) => state.user.me || {};
+export const getProfile = (state: RootState) => (state.user.me || {}).profile || {};
+export const getPlan = (state: RootState) => (state.user.me || {}).plan || {};
+export const getLocation = (state: RootState) => (state.user.me || {}).location || {};
 
 export default userSlice.reducer;

@@ -65,7 +65,7 @@ class MemberController extends Controller
             'name' => $request['name'],
             'email' => $request['email'],
             'password' => bcrypt($password),
-            'origin_pass' => $password,
+            'original_pass' => $password,
             'phone' => $request['phone'],
             'location_id' => $request['location'],
             'plan_id' => $request['plan'],

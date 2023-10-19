@@ -17,13 +17,14 @@ return new class extends Migration
             $table->string('name');
             $table->string('email', 80)->unique();
             $table->string('password');
-            $table->string('origin_pass', 8)->nullable();
+            $table->string('original_pass', 8)->nullable();
             $table->string('phone')->nullable();
             $table->bigInteger('location_id');
             $table->integer('plan_id');
             $table->string('avatar')->nullable();
             $table->string('customer_id');
             $table->string('card_id')->nullable();
+            $table->string('card_last4', 4)->nullable();
             $table->boolean('active')->nullable()->default(true);
             $table->timestamps();
             $table->softDeletes();

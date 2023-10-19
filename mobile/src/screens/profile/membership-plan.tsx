@@ -19,11 +19,11 @@ import { t } from 'react-native-tailwindcss';
 import s from '../../utils/styles';
 
 const ProfileMembershipPlan: FC = (): JSX.Element => {
+  const navigation = useNavigation();
   const [plans, setPlans] = useState<SelectItemProps[]>([
     { label: 'Plan1', value: 'Plan1' },
     { label: 'Plan2', value: 'Plan2' },
   ]);
-  const navigation = useNavigation();
 
   return (
     <Layouts>

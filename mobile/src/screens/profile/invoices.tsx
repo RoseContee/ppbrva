@@ -51,6 +51,7 @@ interface ItemProps {
 
 const ItemComponent: FC<ItemProps> = (invoice): JSX.Element => {
   const navigation = useNavigation();
+
   return (
     <View style={[t.pX4, t.mB4]}>
       <TouchableOpacity onPress={() => navigation.navigate('ProfileInvoicesDetail' as never)}>

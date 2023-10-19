@@ -27,6 +27,18 @@ class Clover
         ]);
     }
 
+    public function getCustomer(string $customerId) {
+        $response = $this->client->get("/v3/merchants/{$this->mId}/customers/{$customerId}", [
+            'query' => [
+                'expand' => 'cards'
+            ],
+        ]);
+        if ($response->getStatusCode() == 200) {
+            return json_decode($response->getBody(), true);
+        }
+        return null;
+    }
+
     public function createCustomer(array $data) {
         $body = [
             'firstName' => substr($data['name'], 0, 64),
@@ -38,7 +50,7 @@ class Clover
                 'phoneNumber' => $data['phone'],
             ]],
         ];
-        $response = $this->client->request('POST', "/v3/merchants/{$this->mId}/customers", [
+        $response = $this->client->post("/v3/merchants/{$this->mId}/customers", [
             'body' => json_encode($body),
         ]);
         if ($response->getStatusCode() == 200) {
@@ -58,9 +70,17 @@ class Clover
                 'phoneNumber' => $data['phone'],
             ]],
         ];
-        $response = $this->client->request('POST', "/v3/merchants/{$this->mId}/customers/{$customerId}", [
+        $response = $this->client->post("/v3/merchants/{$this->mId}/customers/{$customerId}", [
             'body' => json_encode($body),
         ]);
+        if ($response->getStatusCode() == 200) {
+            return json_decode($response->getBody(), true);
+        }
+        return null;
+    }
+
+    public function revokeCard(string $customerId, string $cardId) {
+        $response = $this->client->delete("/v3/merchants/{$this->mId}/customers/{$customerId}/cards/{$cardId}");
         if ($response->getStatusCode() == 200) {
             return json_decode($response->getBody(), true);
         }

@@ -3,7 +3,8 @@ import {
   TextInput,
   View
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import axios, { getErrorMessage } from '../../../utils/axios';
 import Layouts from '../../../components/layouts/auth-layouts';
 import Message from '../../../components/basic/message';
 import Button from '../../../components/basic/button';
@@ -12,13 +13,45 @@ import { t } from 'react-native-tailwindcss';
 import s from '../../../utils/styles';
 
 const ResetPassword: FC = (): JSX.Element => {
-  const [message, setMessage] = useState<string>('Passwords does not match, please try again.');
+  const route = useRoute();
+  const navigation = useNavigation();
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string>();
   const [password, setPassword] = useState<string>();
   const [password_confirmation, setPasswordConfirmation] = useState<string>();
-  const navigation = useNavigation();
+
+  const savePassword = () => {
+    if (!password) {
+      setMessage('The password field is required.');
+      return;
+    }
+    if (password.length < 8) {
+      setMessage('The password field must be at least 8 characters.');
+      return;
+    }
+    if (password != password_confirmation) {
+      setMessage('The password field confirmation does not match.');
+      return;
+    }
+    const email = (route.params as any)?.email;
+    const code = (route.params as any)?.code;
+    setLoading(true);
+    axios.post(`/reset-password`, {
+      email, code, password, password_confirmation
+    }).then(() => {
+      navigation.navigate({
+        name: 'Login',
+        params: {
+          message: 'Login with new password.',
+        },
+      } as never);
+    }).catch(error => {
+      setMessage(getErrorMessage(error));
+    }).finally(() => setLoading(false));
+  };
 
   return (
-    <Layouts>
+    <Layouts loading={loading}>
       <View style={[t.mT4]}>
         <Message style={[t.pX6]} text={message} />
       </View>
@@ -35,7 +68,7 @@ const ResetPassword: FC = (): JSX.Element => {
           onChange={e => setPasswordConfirmation(e.nativeEvent.text)}
         />
         <Button style={[s.bgPrimary, t.mT4]}
-          onPress={() => navigation.navigate('Login' as never)}
+          onPress={savePassword}
         >
           Save password
         </Button>

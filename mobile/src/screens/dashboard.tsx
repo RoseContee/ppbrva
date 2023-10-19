@@ -1,11 +1,12 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 import {
+  BackHandler,
   Image,
   ImageSourcePropType,
   View,
   useWindowDimensions
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useAppSelector } from '../store';
 import { getMe, getPlan } from '../store/user';
 import Layouts from '../components/layouts/home-layouts';
@@ -50,29 +51,42 @@ const CardWidget: FC<CardProps> = ({
 };
 
 const Dashboard: FC = (): JSX.Element => {
+  const navigation = useNavigation();
   const me = useAppSelector(getMe);
   const plan = useAppSelector(getPlan);
-  const navigation = useNavigation();
   const { width } = useWindowDimensions();
   const padding = 16; //t.p4
   const cardWidth = (width - (padding * 2) - padding) / 2;
   const cardImgSize = cardWidth - (padding * 2);
 
+  useFocusEffect(
+    useCallback(() => {
+      const subscribe = BackHandler.addEventListener("hardwareBackPress", () => {
+        BackHandler.exitApp();
+        return true;
+      });
+      return () => subscribe.remove();
+    }, [])
+  );
+
   return (
     <Layouts>
       <Text style={[s.fontBodyLight, s.textTiny, s.textTitle, t.pX4]}>
-        Welcome back Wally!
+        Welcome back { me.name }!
       </Text>
-      <Message style={[t.mT4]}>
-        <Text style={[t.flexShrink, s.textTiny, s.textGray, t.pR2]}>
-          Please update your <Link onPress={() => navigation.navigate('ProfileScreen' as never)}>billing profile</Link>
-        </Text>
-        <Button style={[s.bgPrimary, s.messageBtn]} titleStyle={[s.textTiny]}
-          onPress={() => navigation.navigate('ProfileScreen' as never)}
-        >
-          Fix
-        </Button>
-      </Message>
+      {
+        !me.card_id &&
+        <Message style={[t.mT4]}>
+          <Text style={[t.flexShrink, s.textTiny, s.textGray, t.pR2]}>
+            Please update your <Link onPress={() => navigation.navigate('ProfileScreen' as never)}>billing profile</Link>
+          </Text>
+          <Button style={[s.bgPrimary, s.messageBtn]} titleStyle={[s.textTiny]}
+            onPress={() => navigation.navigate('ProfileScreen' as never)}
+          >
+            Fix
+          </Button>
+        </Message>
+      }
       <View style={[t.pX4]}>
         <View style={[t.flexRow, t.flexWrap, {gap: padding}, t.mT6]}>
           <CardWidget cardWidth={cardWidth}
@@ -95,16 +109,13 @@ const Dashboard: FC = (): JSX.Element => {
         <Card style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.mT6]}>
           <View style={[t.flexShrink]}>
             <Title style={[s.textPrimary, t.textSm]}>
-              { plan && plan.name }
+              { plan.name }
             </Title>
             <Text style={[s.fontBodyLight, s.textTiny, s.textGray, t.mT1]}>
-              Member #{ me && me.memberID }
+              Member #{ me.memberID }
             </Text>
           </View>
-          {
-            me && me.avatar &&
-            <Image source={me.avatar} style={[s.cardListImage]} />
-          }
+          <Image source={{uri: me.avatar}} style={[s.cardListImage]} />
         </Card>
       </View>
     </Layouts>

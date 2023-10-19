@@ -4,33 +4,61 @@ import {
   TextInput,
   View
 } from 'react-native';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { SaveMe, getMe, getProfile } from '../../store/user';
+import axios, { getErrorMessage } from '../../utils/axios';
 import MaskInput from 'react-native-mask-input';
 import Layouts from '../../components/layouts/home-layouts';
+import Message from '../../components/basic/message';
 import Link from '../../components/basic/link';
 import Button from '../../components/basic/button';
 import Title from '../../components/basic/title';
 import Switch from '../../components/basic/switch';
 
-import imgProfile from '../../assets/img/tmp/profile.png';
-
 import { t } from 'react-native-tailwindcss';
 import s from '../../utils/styles';
 
 const ProfileMember: FC = (): JSX.Element => {
-  const [name, setName] = useState<string>('Wally Pickles');
-  const [email, setEmail] = useState<string>('wally@pickles.com');
-  const [phone, setPhone] = useState<string>('(804) 315-9609');
-  const [share, setShare] = useState<boolean>(true);
+  const dispatch = useAppDispatch();
+  const me = useAppSelector(getMe);
+  const profile = useAppSelector(getProfile);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string>();
+  const [name, setName] = useState<string>(me.name);
+  const [email, setEmail] = useState<string>(me.email);
+  const [phone, setPhone] = useState<string>(me.phone);
+  const [share, setShare] = useState<boolean>(!!profile.share_age_gender);
+
+  const updateProfile = () => {
+    if (!name) {
+      setMessage('The name field is required.');
+      return;
+    }
+    if (!email) {
+      setMessage('The email field is required.');
+      return;
+    }
+    setLoading(true);
+    axios.post(`profile`, {
+      name, email, phone, share
+    }).then(({ data: { user } }) => {
+      dispatch(SaveMe(user));
+      setMessage('Profile has been updated.');
+    }).catch(error => {
+      setMessage(getErrorMessage(error));
+    }).finally(() => setLoading(false));
+  }
 
   return (
-    <Layouts>
+    <Layouts loading={loading}>
+      <View style={[t.itemsCenter, t.mT6]}>
+        <Image source={{ uri: me.avatar }} style={[s.profileImage]} />
+        <Link style={[t.textXs, t.mT2]}>
+          Change Avatar
+        </Link>
+      </View>
+      <Message style={[t.mT4]} text={message} />
       <View style={[t.pX4]}>
-        <View style={[t.itemsCenter, t.mT6]}>
-          <Image source={imgProfile} style={[s.profileImage]} />
-          <Link style={[t.textXs, t.mT2]}>
-            Change Avatar
-          </Link>
-        </View>
         <Title style={[t.mT6]}>
           Contact Info
         </Title>
@@ -55,7 +83,7 @@ const ProfileMember: FC = (): JSX.Element => {
           onChange={() => setShare(!share)}
         />
         <Button style={[s.bgPrimary, t.mT6]}
-          onPress={() => {}}
+          onPress={updateProfile}
         >
           Update
         </Button>

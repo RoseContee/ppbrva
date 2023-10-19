@@ -4,14 +4,14 @@ import {
   View
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useAppSelector } from '../../store';
+import { getMe, getPlan, getProfile } from '../../store/user';
 import Layouts from '../../components/layouts/home-layouts';
 import ProfileCard from '../../components/basic/profile-card';
 import Card from '../../components/basic/card';
 import Text from '../../components/basic/text';
 import Title from '../../components/basic/title';
 import IconSettings from '../../assets/img/icons/settings.svg';
-
-import imgProfile from '../../assets/img/tmp/profile.png';
 
 import { t } from 'react-native-tailwindcss';
 import s from '../../utils/styles';
@@ -47,15 +47,18 @@ const MenuItem: FC<MenuItemProps> = ({ onPress, title, description }): JSX.Eleme
 
 const Profile: FC = (): JSX.Element => {
   const navigation = useNavigation();
+  const me = useAppSelector(getMe);
+  const profile = useAppSelector(getProfile);
+  const plan = useAppSelector(getPlan);
 
   return (
     <Layouts>
       <Text style={[s.fontBodyLight, s.textTiny, s.textTitle, t.pX4]}>
-        Member #PB1054
+        Member #{ me.memberID }
       </Text>
       <View style={[t.pX4]}>
         <ProfileCard style={[t.mT5]}
-          image={imgProfile} dupr={3.7} gender={"Male"} age={46}
+          image={{uri: me.avatar}} dupr={3.7} gender={"Male"} age={46}
           matches={27} wins={19} losses={8}
         />
         <MenuItem title="Member Profile" description="Update member info"
@@ -64,7 +67,7 @@ const Profile: FC = (): JSX.Element => {
         <MenuItem title="Billing Profile" description="Update payment info"
           onPress={() => navigation.navigate('ProfileBilling' as never)}
         />
-        <MenuItem title="Membership Plan" description="Elit Team Membership"
+        <MenuItem title="Membership Plan" description={plan.name}
           onPress={() => navigation.navigate('ProfileMembershipPlan' as never)}
         />
       </View>

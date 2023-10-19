@@ -20,8 +20,8 @@ interface IHeaderProps {
 }
 
 const HeaderComponent: FC<IHeaderProps> = ({ keyword, onSort }): JSX.Element => {
-  const [text, setText] = useState<string>(keyword);
   const navigation = useNavigation();
+  const [text, setText] = useState<string>(keyword);
 
   return (
     <>
@@ -33,7 +33,7 @@ const HeaderComponent: FC<IHeaderProps> = ({ keyword, onSort }): JSX.Element => 
           You have 3 pending requests!
         </Text>
         <Button style={[s.bgPrimary, s.messageBtn]} titleStyle={[s.textTiny]}
-          onPress={() => navigation.navigate('Members' as never)}
+          onPress={() => navigation.navigate('MembersScreen' as never)}
         >
           View
         </Button>

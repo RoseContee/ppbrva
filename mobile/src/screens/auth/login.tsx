@@ -1,9 +1,10 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import {
+  BackHandler,
   TextInput,
   View
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import DeviceInfo from 'react-native-device-info';
 import { useAppDispatch } from '../../store';
 import { SaveAccessToken, SaveMe } from '../../store/user';
@@ -14,7 +15,6 @@ import Layouts from '../../components/layouts/auth-layouts';
 import Message from '../../components/basic/message';
 import Button from '../../components/basic/button';
 import Link from '../../components/basic/link';
-import Loading from '../../components/basic/loading';
 
 import imgLogo from '../../assets/img/logo.png';
 
@@ -23,12 +23,28 @@ import s from '../../utils/styles';
 import theme from '../../utils/theme';
 
 const Login: FC = (): JSX.Element => {
+  const route = useRoute();
+  const navigation = useNavigation();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string>();
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
-  const [message, setMessage] = useState<string>();
-  const dispatch = useAppDispatch();
-  const navigation = useNavigation();
+  const msg = (route.params as any)?.message;
+
+  useFocusEffect(
+    useCallback(() => {
+      const subscribe = BackHandler.addEventListener("hardwareBackPress", () => {
+        BackHandler.exitApp();
+        return true;
+      });
+      return () => subscribe.remove();
+    }, [])
+  );
+
+  useEffect(() => {
+    setMessage(msg);
+  }, [msg]);
 
   const login = () => {
     if (!email) {
@@ -41,7 +57,9 @@ const Login: FC = (): JSX.Element => {
     }
     const device = DeviceInfo.getDeviceId() + '-' + email;
     setLoading(true);
-    axios.post(`/login`, {email, password, device}).then(({ data: { access_token, user }}) => {
+    axios.post(`/login`, {
+      email, password, device
+    }).then(({ data: { access_token, user }}) => {
       dispatch(SaveAccessToken(access_token));
       dispatch(SaveMe(user));
       saveStorage('access_token', access_token);
@@ -56,37 +74,34 @@ const Login: FC = (): JSX.Element => {
   };
 
   return (
-    <>
-      <Loading show={loading} />
-      <Layouts>
-        <View style={[t.itemsCenter, t.mT8]}>
-          <Image source={imgLogo} width={theme.size.logo} />
-        </View>
-        <Message style={[t.pX6, t.mT3]} text={message} />
-        <View style={[t.pX6]}>
-          <TextInput inputMode="email" style={[s.input, t.mT4]}
-            keyboardType="email-address"
-            placeholder="Email address..."
-            value={email} onChange={e => setEmail(e.nativeEvent.text)}
-          />
-          <TextInput inputMode="text" style={[s.input, t.mT4]}
-            secureTextEntry={true}
-            placeholder="Password..."
-            value={password} onChange={e => setPassword(e.nativeEvent.text)}
-          />
-          <Button style={[s.bgPrimary, t.mT4]}
-            onPress={login}
-          >
-            Login
-          </Button>
-          <Link style={[t.textXs, t.mT5]}
-            onPress={() => navigation.navigate('ForgotPassword' as never)}
-          >
-            Reset Password
-          </Link>
-        </View>
-      </Layouts>
-    </>
+    <Layouts loading={loading}>
+      <View style={[t.itemsCenter, t.mT8]}>
+        <Image source={imgLogo} width={theme.size.logo} />
+      </View>
+      <Message style={[t.pX6, t.mT3]} text={message} />
+      <View style={[t.pX6]}>
+        <TextInput inputMode="email" style={[s.input, t.mT4]}
+          keyboardType="email-address"
+          placeholder="Email address..."
+          value={email} onChange={e => setEmail(e.nativeEvent.text)}
+        />
+        <TextInput inputMode="text" style={[s.input, t.mT4]}
+          secureTextEntry={true}
+          placeholder="Password..."
+          value={password} onChange={e => setPassword(e.nativeEvent.text)}
+        />
+        <Button style={[s.bgPrimary, t.mT4]}
+          onPress={login}
+        >
+          Login
+        </Button>
+        <Link style={[t.textXs, t.mT5]}
+          onPress={() => navigation.navigate('ForgotPasswordScreen' as never)}
+        >
+          Reset Password
+        </Link>
+      </View>
+    </Layouts>
   );
 };
 

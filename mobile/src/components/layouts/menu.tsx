@@ -9,8 +9,8 @@ import {
   DrawerContentComponentProps,
   DrawerContentScrollView
 } from '@react-navigation/drawer';
-import { useAppDispatch } from '../../store';
-import { SaveAccessToken } from '../../store/user';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { SaveAccessToken, getMe } from '../../store/user';
 import { removeStorage } from '../../utils/storage';
 import axios from '../../utils/axios';
 import ScalableImage from 'react-native-scalable-image';
@@ -50,15 +50,16 @@ const MenuItem: FC<MenuItemProps> = ({ text, image, onPress }): JSX.Element => {
 };
 
 const Menu: FC<DrawerContentComponentProps> = (props): JSX.Element => {
+  const me = useAppSelector(getMe);
   const dispatch = useAppDispatch();
   const { navigation } = props;
-  const name = 'Richmond West';
 
-  const logout = () => {
-    axios.get(`/logout`);
-    dispatch(SaveAccessToken(null));
-    removeStorage('access_token');
-    navigation.navigate('AuthScreen');
+  const logout = async () => {
+    axios.get(`/logout`).finally(() => {
+      dispatch(SaveAccessToken(null));
+      removeStorage('access_token');
+      navigation.navigate('AuthScreen');
+    });
   };
 
   return (
@@ -72,7 +73,9 @@ const Menu: FC<DrawerContentComponentProps> = (props): JSX.Element => {
             />
           </TouchableOpacity>
         </View>
-        <Text style={[s.fontBodyLight, t.textXs, s.textTitle, t.mT2]}>{ name }</Text>
+        <Text style={[s.fontBodyLight, t.textXs, s.textTitle, t.mT2]}>
+          { me.name }
+        </Text>
 
         <View style={[t.mT8]} />
 
