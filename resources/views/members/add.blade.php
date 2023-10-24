@@ -149,11 +149,11 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
                                 </button>
                             </div>
 
-                            <div>
-                                @if (!$add && $member['avatar'])
-                                    <img src="{{ asset($member['avatar']) }}" alt="Avatar"
+                            <div class="w-full max-w-lg">
+                                <div class="justify-center" :class="{'flex': avatar, 'hidden': !avatar}">
+                                    <img :src="avatar" alt="Avatar"
                                          class="w-96 mb-5" />
-                                @endif
+                                </div>
                                 <div class="flex flex-wrap -mx-3 mb-6">
                                     <div class="w-full px-3">
                                         <label for="avatar" class="block uppercase tracking-wide text-gray-900 text-xs font-bold mb-2">
@@ -166,6 +166,7 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
                                                ])
                                                type="file" id="avatar" name="avatar"
                                                accept="image/*"
+                                               v-on:change="selectAvatar"
                                                placeholder="Choose Image...">
                                         @error('avatar')
                                         <p class="text-red-500 text-xs italic">{{ $message }}</p>
@@ -179,4 +180,34 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
             </div>
         </div>
     </div>
+
+    @push('scripts')
+        <script type="module">
+            const { createApp, ref, computed } = Vue
+
+            createApp({
+                setup() {
+                    const original_avatar = '{{ $add || !$member['avatar'] ? '' : asset($member['avatar']) }}';
+                    const avatar = ref(original_avatar);
+                    const selectAvatar = (e) => {
+                        const files = e.target.files;
+                        if (!files.length) {
+                            avatar.value = original_avatar;
+                            return;
+                        }
+                        const fr = new FileReader();
+                        fr.onload = () => {
+                            avatar.value = fr.result;
+                        };
+                        fr.readAsDataURL(files[0]);
+                    }
+
+                    return {
+                        avatar,
+                        selectAvatar
+                    }
+                }
+            }).mount('#app');
+        </script>
+    @endpush
 </x-app-layout>

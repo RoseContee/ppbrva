@@ -124,10 +124,10 @@ $route = $add ? route('locations.store') : route('locations.update', $location['
                             </div>
 
                             <div class="w-full max-w-lg">
-                                @if (!$add)
-                                    <img src="{{ asset($location['image']) }}" alt="Image"
+                                <div class="justify-center" :class="{'flex': image, 'hidden': !image}">
+                                    <img :src="image" alt="Image"
                                          class="w-96 mb-5" />
-                                @endif
+                                </div>
                                 <div class="flex flex-wrap -mx-3 mb-6">
                                     <div class="w-full px-3">
                                         <label for="image" class="block uppercase tracking-wide text-gray-900 text-xs font-bold mb-2">
@@ -140,6 +140,7 @@ $route = $add ? route('locations.store') : route('locations.update', $location['
                                                ])
                                                type="file" id="image" name="image" @required($add)
                                                accept="image/*"
+                                               v-on:change="selectImage"
                                                placeholder="Choose Image...">
                                         @error('image')
                                         <p class="text-red-500 text-xs italic">{{ $message }}</p>
@@ -153,4 +154,34 @@ $route = $add ? route('locations.store') : route('locations.update', $location['
             </div>
         </div>
     </div>
+
+    @push('scripts')
+        <script type="module">
+            const { createApp, ref, computed } = Vue
+
+            createApp({
+                setup() {
+                    const original_image = '{{ $add ? '' : asset($location['image']) }}';
+                    const image = ref(original_image);
+                    const selectImage = (e) => {
+                        const files = e.target.files;
+                        if (!files.length) {
+                            image.value = original_image;
+                            return;
+                        }
+                        const fr = new FileReader();
+                        fr.onload = () => {
+                            image.value = fr.result;
+                        };
+                        fr.readAsDataURL(files[0]);
+                    }
+
+                    return {
+                        image,
+                        selectImage
+                    }
+                }
+            }).mount('#app');
+        </script>
+    @endpush
 </x-app-layout>
