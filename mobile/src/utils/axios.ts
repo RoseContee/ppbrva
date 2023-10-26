@@ -1,11 +1,11 @@
 import Axios from 'axios';
 import store from '../store';
 
-// const baseURL = 'http://192.168.137.100/ppbrva/public/api/app';
-const baseURL = 'https://app.ppbrva.com/api/app';
+// const SERVER_URL = 'http://192.168.137.100/ppbrva/public';
+const SERVER_URL = 'https://app.ppbrva.com';
 
 const axios = Axios.create({
-	baseURL: baseURL,
+	baseURL: `${SERVER_URL}/api/app`,
 });
 
 axios.interceptors.request.use(config => {
