@@ -36,7 +36,7 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Grange-DemiBold.ttf</string>
@@ -47,6 +47,7 @@
 		<string>OpenSans-Light.ttf</string>
 		<string>Grange-Light.ttf</string>
 		<string>OpenSans-Bold.ttf</string>
+		<string>OpenSansSemiCondensed-Bold.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

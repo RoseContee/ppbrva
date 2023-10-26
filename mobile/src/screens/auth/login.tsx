@@ -7,11 +7,11 @@ import {
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import DeviceInfo from 'react-native-device-info';
 import { useAppDispatch } from '../../store';
-import { SaveAccessToken, SaveMe } from '../../store/user';
+import { saveAccessToken, saveMe } from '../../store/user';
 import { saveStorage } from '../../utils/storage';
 import axios, { getErrorMessage } from '../../utils/axios';
 import Image from 'react-native-scalable-image';
-import Layouts from '../../components/layouts/auth-layouts';
+import Layouts from '../../components/layouts/auth';
 import Message from '../../components/basic/message';
 import Button from '../../components/basic/button';
 import Link from '../../components/basic/link';
@@ -34,7 +34,10 @@ const Login: FC = (): JSX.Element => {
 
   useFocusEffect(
     useCallback(() => {
-      const subscribe = BackHandler.addEventListener("hardwareBackPress", () => {
+      setMessage('');
+      setEmail('');
+      setPassword('');
+      const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
         BackHandler.exitApp();
         return true;
       });
@@ -55,14 +58,15 @@ const Login: FC = (): JSX.Element => {
       setMessage('The password field is required.');
       return;
     }
-    const device = DeviceInfo.getDeviceId() + '-' + email;
     setLoading(true);
+    setMessage('');
+    const device = DeviceInfo.getDeviceId() + '-' + email;
     axios.post(`/login`, {
       email, password, device
     }).then(({ data: { access_token, user }}) => {
-      dispatch(SaveAccessToken(access_token));
-      dispatch(SaveMe(user));
       saveStorage('access_token', access_token);
+      dispatch(saveAccessToken(access_token));
+      dispatch(saveMe(user));
       if (user.original_pass) {
         navigation.navigate('SetNewPassword' as never);
       } else {
@@ -75,28 +79,28 @@ const Login: FC = (): JSX.Element => {
 
   return (
     <Layouts loading={loading}>
-      <View style={[t.itemsCenter, t.mT8]}>
+      <View style={[t.itemsCenter, t.mT5, t.mB3]}>
         <Image source={imgLogo} width={theme.size.logo} />
       </View>
-      <Message style={[t.pX6, t.mT3]} text={message} />
-      <View style={[t.pX6]}>
-        <TextInput inputMode="email" style={[s.input, t.mT4]}
+      <Message style={[t.pX8, t.mT3]} text={message} />
+      <View style={[t.pX8]}>
+        <TextInput inputMode="email" style={[s.input, t.mT6]}
           keyboardType="email-address"
-          placeholder="Email address..."
+          placeholder="Email address..." placeholderTextColor={theme.color.placeholder}
           value={email} onChange={e => setEmail(e.nativeEvent.text)}
         />
-        <TextInput inputMode="text" style={[s.input, t.mT4]}
+        <TextInput inputMode="text" style={[s.input, s.mT7]}
           secureTextEntry={true}
-          placeholder="Password..."
+          placeholder="Password..." placeholderTextColor={theme.color.placeholder}
           value={password} onChange={e => setPassword(e.nativeEvent.text)}
         />
-        <Button style={[s.bgPrimary, t.mT4]}
+        <Button style={[s.bgPrimary, s.mT7]}
           onPress={login}
         >
           Login
         </Button>
-        <Link style={[t.textXs, t.mT5]}
-          onPress={() => navigation.navigate('ForgotPasswordScreen' as never)}
+        <Link style={[t.textLg, t.mT8]}
+          onPress={() => navigation.navigate('ForgotPassword' as never)}
         >
           Reset Password
         </Link>

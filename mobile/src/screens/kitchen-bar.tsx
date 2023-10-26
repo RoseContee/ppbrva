@@ -1,10 +1,11 @@
 import React, { FC, useState } from 'react';
 import {
+  SafeAreaView,
   ScrollView,
   SectionList,
   View
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import PageTitle from '../components/basic/page-title';
 import Button from '../components/basic/button';
 import Card from '../components/basic/card';
 import Text from '../components/basic/text';
@@ -26,15 +27,13 @@ interface ItemProps {
 
 const HeaderComponent: FC<{sections: ItemProps[]}> = ({ sections }): JSX.Element => {
   return (
-    <View style={[t.pX4]}>
-      <Text style={[s.fontBodyLight, s.textTiny, s.textTitle]}>
-        Open daily 11AM - 8PM
-      </Text>
-      <ScrollView horizontal={true} style={[t.pY3]}>
+    <>
+      <PageTitle title="Open daily 11AM - 8PM" />
+      <ScrollView horizontal={true} style={[s.pX7, t.pY3]}>
         {sections.map((section) => {
           return (
             <Button key={section.category} style={[s.bgFilter, s.border, s.borderPrimary, s.btnXs, t.mR2]}
-              titleStyle={[s.fontButton, s.textTiny, s.textPrimary, t.capitalize]}
+              titleStyle={[s.fontButton, t.textSm, s.textPrimary, t.capitalize]}
               onPress={() => {}}
             >
               { section.category }
@@ -42,19 +41,19 @@ const HeaderComponent: FC<{sections: ItemProps[]}> = ({ sections }): JSX.Element
           );
         })}
       </ScrollView>
-    </View>
-  )
-}
+    </>
+  );
+};
 
 const ItemComponent: FC<IFoodProps> = (food): JSX.Element => {
   return (
-    <View style={[t.pX4, t.mB4]}>
-      <Card style={[t.flexRow, t.itemsCenter, t.justifyBetween]}>
-        <View style={[t.flexGrow, t.pR2]}>
-          <Title style={[t.textXs, s.textPrimary]}>
+    <View style={[s.pX7, t.mY3]}>
+      <Card style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.pY6]}>
+        <View style={[t.flexGrow, t.pR3]}>
+          <Title style={[t.textXl, s.textPrimary]}>
             { food.meal }
           </Title>
-          <Text style={[s.fontBodyLight, s.textTiny, s.textGray, t.mT1]}>
+          <Text style={[s.fontBodyLight, t.textSm, s.textGray, t.mT2]}>
             { food.description }
           </Text>
         </View>
@@ -102,7 +101,7 @@ const KitchenBar: FC = (): JSX.Element => {
         ListHeaderComponent={() => <HeaderComponent sections={foods} />}
         renderSectionHeader={({ section: { category } }) => {
           return (
-            <Title style={[t.uppercase, t.textSm, t.pX4, t.mT2, t.mB3]}>
+            <Title style={[t.uppercase, t.textXl, s.pX7, t.mY3]}>
               { category }
             </Title>
           );
@@ -111,7 +110,7 @@ const KitchenBar: FC = (): JSX.Element => {
       >
       </SectionList>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 export default KitchenBar;

@@ -24,7 +24,7 @@ const Message: FC<IProps> = ({
     <>
     {
       (text || children) &&
-      <View style={[s.message, t.pX4, t.pY3, style]}>
+      <View style={[s.message, s.pX7, t.pY5, style]}>
         {
           text ? ( <Text style={[s.messageText]}>{ text }</Text> )
           : ( children )

@@ -1,9 +1,9 @@
 import React, { FC, ReactNode } from 'react';
 import {
   ImageBackground,
-  ScrollView,
+  SafeAreaView,
+  ScrollView
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import Loading from '../basic/loading';
 
 import imgBG from '../../assets/img/auth-bg.png';
@@ -21,7 +21,7 @@ const Layouts: FC<IProps> = ({ loading, children }): JSX.Element => {
       <Loading show={loading} />
       <ImageBackground source={imgBG} resizeMode="cover" style={[t.bgWhite]}>
         <SafeAreaView>
-          <ScrollView style={[t.hFull]} contentContainerStyle={[t.pT2, t.pB4]}>
+          <ScrollView style={[t.hFull]} contentContainerStyle={[t.pT8, t.pB4]}>
             { children }
           </ScrollView>
         </SafeAreaView>

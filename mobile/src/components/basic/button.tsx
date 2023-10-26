@@ -25,7 +25,7 @@ const Button: FC<IProps> = ({
 }): JSX.Element => {
   return (
     <TouchableOpacity style={[s.btn, style]} onPress={() => onPress()}>
-      <Text style={[s.fontButtonBold, t.textXs, t.textWhite, t.uppercase, titleStyle]}>
+      <Text style={[s.fontButtonBold, t.textLg, t.textWhite, t.uppercase, titleStyle]}>
         { children }
       </Text>
     </TouchableOpacity>

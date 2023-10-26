@@ -1,10 +1,14 @@
 import React, { FC } from 'react';
 import {
+  Linking,
   View,
   useWindowDimensions
 } from 'react-native';
 import Image from 'react-native-scalable-image';
-import Layouts from '../components/layouts/home-layouts';
+import { useAppSelector } from '../store';
+import { getLocation, getMe } from '../store/user';
+import Layouts from '../components/layouts/home';
+import PageTitle from '../components/basic/page-title';
 import Link from '../components/basic/link';
 import Text from '../components/basic/text';
 import Button from '../components/basic/button';
@@ -15,32 +19,40 @@ import { t } from 'react-native-tailwindcss';
 import s from '../utils/styles';
 
 const Dashboard: FC = (): JSX.Element => {
-  const {width} = useWindowDimensions();
+  const me = useAppSelector(getMe);
+  const location = useAppSelector(getLocation);
+  const { width } = useWindowDimensions();
 
   return (
     <Layouts>
-      <Text style={[s.fontBodyLight, t.textXs, s.textTitle, t.pX4]}>
-        Richmond West
-      </Text>
-      <Image source={imgClub} width={width} style={[t.mT4]} />
-      <View style={[t.pX4, t.mB2]}>
-        <Text style={[t.textCenter, t.mT8]}>Performace Pickleball RVA</Text>
-        <Text style={[s.fontBodyLight, t.textCenter, t.mT1]}>8641 Quioccasin Rd</Text>
-        <Text style={[s.fontBodyLight, t.textCenter, t.mT1]}>Henrico, VA 23229</Text>
-        <Link style={[s.fontBodyLight, t.textCenter, t.mT1]}>www.ppbrva.com</Link>
+      <PageTitle title={me.name} />
+      <Image source={imgClub} width={width} style={[t.mT5]} />
+      <View style={[s.pX7, t.mT3, t.mB2]}>
+        <Text style={[t.textXl, t.textCenter, t.mT10]}>
+          Performace Pickleball RVA
+        </Text>
+        <Text style={[s.fontBodyLight, t.textXl, t.textCenter, t.mT2]}>
+          { location.address }
+        </Text>
+        <Link style={[s.fontBodyLight, t.textXl, t.textCenter, t.mT2]}
+          onPress={() => Linking.openURL('https://ppbrva.com/')}
+        >
+          www.ppbrva.com
+        </Link>
+        <View style={[t.mY3]} />
         <Button style={[s.bgPrimary, t.mT10]}
           onPress={() => {}}
         >
           Directions
         </Button>
-        <Button style={[s.border, s.borderPrimary, t.mT4]} titleStyle={[s.textPrimary]}
+        <Button style={[s.border, s.borderPrimary, s.mT7]} titleStyle={[s.textPrimary]}
           onPress={() => {}}
         >
           Call Front Desk
         </Button>
       </View>
     </Layouts>
-  )
-}
+  );
+};
 
 export default Dashboard;

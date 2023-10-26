@@ -41,8 +41,8 @@ const Switch: FC<IProps> = ({
         inActiveText=""
         backgroundActive={theme.color.active}
         backgroundInactive={theme.color.inactive}
-        circleSize={12}
-        barHeight={18}
+        circleSize={18}
+        barHeight={26}
         switchLeftPx={2}
         switchRightPx={2}
         circleBorderWidth={0}
@@ -53,7 +53,7 @@ const Switch: FC<IProps> = ({
       />
       {
         label && !labelPosition &&
-        <Text style={[t.textXs, t.pL3, labelStyle]}>
+        <Text style={[t.textLg, t.pL3, labelStyle]}>
           { label }
         </Text>
       }

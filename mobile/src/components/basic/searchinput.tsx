@@ -28,7 +28,7 @@ const SearchInput: FC<IProps> = ({
   return (
     <View style={[s.searchInputContainer, style]}>
       <TextInput inputMode="text" style={[s.searchInput, inputStyle]}
-        placeholder="Search..."
+        placeholder="Search..." placeholderTextColor={theme.color.placeholder}
         value={value} onChange={onChange}
       />
       <IconSearch fill={theme.color.inputIcon}

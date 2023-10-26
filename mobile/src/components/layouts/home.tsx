@@ -1,8 +1,8 @@
 import React, { FC, ReactNode } from 'react';
 import {
+  SafeAreaView,
   ScrollView
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import Loading from '../basic/loading';
 
 import { t } from 'react-native-tailwindcss';

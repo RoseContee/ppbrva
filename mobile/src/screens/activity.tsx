@@ -1,15 +1,15 @@
 import React, { FC, useState } from 'react';
 import {
   FlatList,
+  SafeAreaView,
   View
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Collapse, CollapseHeader, CollapseBody } from 'accordion-collapse-react-native';
-import SearchInput from '../components/basic/searchinput';
+import PageTitle from '../components/basic/page-title';
+import SearchBar from '../components/basic/search-bar';
 import Card from '../components/basic/card';
 import Text from '../components/basic/text';
 import Title from '../components/basic/title';
-import Button from '../components/basic/button';
 import IconDown from '../assets/img/icons/arrow-down.svg';
 
 import { t } from 'react-native-tailwindcss';
@@ -17,32 +17,13 @@ import s from '../utils/styles';
 import theme from '../utils/theme';
 
 interface IHeaderProps {
-  keyword: string,
-  onSort: () => void,
 }
 
-const HeaderComponent: FC<IHeaderProps> = ({ keyword, onSort }): JSX.Element => {
-  const [text, setText] = useState<string>(keyword);
-
+const HeaderComponent: FC<IHeaderProps> = ({}): JSX.Element => {
   return (
     <>
-      <Text style={[t.textXs, s.textTitle, t.pX4]}>
-        Recent Transactions
-      </Text>
-      <View style={[t.flexRow, t.itemsCenter, t.pX4, t.mT3, t.mB4]}>
-        <View style={[t.w3_4, t.pR3]}>
-          <SearchInput value={text}
-            onChange={e => setText(e.nativeEvent.text)}
-          />
-        </View>
-        <View style={[t.w1_4]}>
-          <Button style={[s.bgPrimary, {paddingVertical: 9}]} titleStyle={[s.textTiny]}
-            onPress={onSort}
-          >
-            Sort
-          </Button>
-        </View>
-      </View>
+      <PageTitle title="Recent Transactions" />
+      <SearchBar style={[t.mY5]} />
     </>
   );
 };
@@ -63,18 +44,18 @@ interface ItemProps {
 
 const ItemComponent: FC<ItemProps> = (activity): JSX.Element => {
   return (
-    <View style={[t.pX4, t.mB4]}>
-      <Card style={[t.pX2, t.pY1]}>
-        <Title style={[s.textPrimary, t.textSm, t.mY2]}>
+    <View style={[s.pX7, t.mT4]}>
+      <Card style={[t.pX4, t.pY3]}>
+        <Title style={[t.textXl, s.textPrimary, t.mY2]}>
           { activity.date }
         </Title>
         {activity.activities.map((activity) => {
           const ActivityItem: FC = () => {
             return (
-              <View style={[t.flexRow, t.itemsCenter, t.justifyBetween]}>
+              <View style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.mY1]}>
                 <View style={[t.flexShrink]}>
                   <View style={[t.flexRow, t.itemsCenter]}>
-                    <Text style={[s.fontBodyLight, t.textXs, t.mR3]}>
+                    <Text style={[s.fontBodyLight, t.textBase, t.mR3]}>
                       { activity.type }
                     </Text>
                     {
@@ -84,11 +65,11 @@ const ItemComponent: FC<ItemProps> = (activity): JSX.Element => {
                       />
                     }
                   </View>
-                  <Text style={[s.fontBodyLight, s.textTiny]}>
+                  <Text style={[s.fontBodyLight, t.textSm]}>
                     #{ activity.invoice }
                   </Text>
                 </View>
-                <Text style={[t.textXs]}>
+                <Text style={[t.textBase]}>
                   { activity.amount }
                 </Text>
               </View>
@@ -108,11 +89,11 @@ const ItemComponent: FC<ItemProps> = (activity): JSX.Element => {
                     <CollapseBody style={[t.mT2]}>
                       {activity.items.map((item, index) => {
                         return (
-                          <View key={index} style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.pL4, t.mT1]}>
-                            <Text style={[s.fontBodyLight, s.textTiny, t.pR2]}>
+                          <View key={index} style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.pL4, t.mT2]}>
+                            <Text style={[s.fontBodyLight, t.textSm, t.pR2]}>
                               -{ item.type }
                             </Text>
-                            <Text style={[s.fontBodyLight, s.textTiny]}>
+                            <Text style={[s.fontBodyLight, t.textSm]}>
                               { item.amount }
                             </Text>
                           </View>
@@ -131,7 +112,6 @@ const ItemComponent: FC<ItemProps> = (activity): JSX.Element => {
 };
 
 const Activity: FC = (): JSX.Element => {
-  const [keyword, setKeyword] = useState<string>('');
   const [activities, setActivities] = useState<ItemProps[]>([{
     id: '1',
     date: '8/22/23',
@@ -181,15 +161,15 @@ const Activity: FC = (): JSX.Element => {
 
   return (
     <SafeAreaView style={[t.bgWhite]}>
-      <FlatList style={[t.hFull]}
+      <FlatList style={[t.hFull]} contentContainerStyle={[t.pB6]}
         data={activities}
         keyExtractor={item => item.id}
-        ListHeaderComponent={() => <HeaderComponent keyword={keyword} onSort={() => {}} />}
+        ListHeaderComponent={() => <HeaderComponent />}
         renderItem={({item}) => <ItemComponent {...item} />}
       >
       </FlatList>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 export default Activity;

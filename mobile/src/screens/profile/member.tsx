@@ -1,14 +1,16 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import {
-  Image,
+  BackHandler,
   TextInput,
   View
 } from 'react-native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../../store';
-import { SaveMe, getMe, getProfile } from '../../store/user';
+import { saveMe, getMe, getProfile } from '../../store/user';
 import axios, { getErrorMessage } from '../../utils/axios';
 import MaskInput from 'react-native-mask-input';
-import Layouts from '../../components/layouts/home-layouts';
+import Layouts from '../../components/layouts/home';
+import ProfileImage from '../../components/basic/profile-image';
 import Message from '../../components/basic/message';
 import Link from '../../components/basic/link';
 import Button from '../../components/basic/button';
@@ -17,8 +19,10 @@ import Switch from '../../components/basic/switch';
 
 import { t } from 'react-native-tailwindcss';
 import s from '../../utils/styles';
+import theme from '../../utils/theme';
 
-const ProfileMember: FC = (): JSX.Element => {
+const MemberProfile: FC = (): JSX.Element => {
+  const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const me = useAppSelector(getMe);
   const profile = useAppSelector(getProfile);
@@ -28,6 +32,16 @@ const ProfileMember: FC = (): JSX.Element => {
   const [email, setEmail] = useState<string>(me.email);
   const [phone, setPhone] = useState<string>(me.phone);
   const [share, setShare] = useState<boolean>(!!profile.share_age_gender);
+
+  useFocusEffect(
+    useCallback(() => {
+      const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
+        navigation.navigate('Profile' as never);
+        return true;
+      });
+      return () => subscribe.remove();
+    }, [])
+  );
 
   const updateProfile = () => {
     if (!name) {
@@ -39,10 +53,11 @@ const ProfileMember: FC = (): JSX.Element => {
       return;
     }
     setLoading(true);
+    setMessage('');
     axios.post(`profile`, {
       name, email, phone, share
     }).then(({ data: { user } }) => {
-      dispatch(SaveMe(user));
+      dispatch(saveMe(user));
       setMessage('Profile has been updated.');
     }).catch(error => {
       setMessage(getErrorMessage(error));
@@ -51,45 +66,42 @@ const ProfileMember: FC = (): JSX.Element => {
 
   return (
     <Layouts loading={loading}>
-      <View style={[t.itemsCenter, t.mT6]}>
-        <Image source={{ uri: me.avatar }} style={[s.profileImage]} />
-        <Link style={[t.textXs, t.mT2]}>
-          Change Avatar
-        </Link>
+      <View style={[t.itemsCenter, t.mT10]}>
+        <ProfileImage image={me.avatar} style={[s.profileImage]} />
+        <Link style={[t.textLg, t.mT3]}>Change Avatar</Link>
       </View>
       <Message style={[t.mT4]} text={message} />
-      <View style={[t.pX4]}>
-        <Title style={[t.mT6]}>
+      <View style={[s.pX7]}>
+        <Title style={[t.textXl, t.mT10]}>
           Contact Info
         </Title>
-        <TextInput inputMode="text" style={[s.input, t.mT4]}
-          placeholder="Name..."
+        <TextInput inputMode="text" style={[s.input, s.mT7]}
+          placeholder="Name..." placeholderTextColor={theme.color.placeholder}
           value={name} onChange={e => setName(e.nativeEvent.text)}
         />
-        <TextInput inputMode="email" style={[s.input, t.mT4]}
+        <TextInput inputMode="email" style={[s.input, s.mT7]}
           keyboardType="email-address"
-          placeholder="Email..."
+          placeholder="Email..." placeholderTextColor={theme.color.placeholder}
           value={email} onChange={e => setEmail(e.nativeEvent.text)}
         />
-        <MaskInput inputMode="tel" style={[s.input, t.mT4]}
+        <MaskInput inputMode="tel" style={[s.input, s.mT7]}
           keyboardType="phone-pad"
-          placeholder="Phone..."
+          placeholder="Phone..." placeholderTextColor={theme.color.placeholder}
           mask={['(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
-          value={phone} onChangeText={(masked, unmasked) => setPhone(masked)}
+          value={phone} onChangeText={masked => setPhone(masked)}
         />
-        <Switch style={[t.mT5]}
+        <Switch style={[t.mT8]}
           label="Share age/gender"
-          value={share}
-          onChange={() => setShare(!share)}
+          value={share} onChange={() => setShare(!share)}
         />
-        <Button style={[s.bgPrimary, t.mT6]}
+        <Button style={[s.bgPrimary, t.mT10]}
           onPress={updateProfile}
         >
           Update
         </Button>
       </View>
     </Layouts>
-  )
-}
+  );
+};
 
-export default ProfileMember;
+export default MemberProfile;

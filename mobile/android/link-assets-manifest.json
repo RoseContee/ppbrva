@@ -32,6 +32,10 @@
     {
       "path": "src/assets/fonts/OpenSans-Regular.ttf",
       "sha1": "b4596a8e11ee5b6331f2fecf656a53f61677b56e"
+    },
+    {
+      "path": "src/assets/fonts/OpenSansSemiCondensed-Bold.ttf",
+      "sha1": "cb29c933f6fb8a44a86d844f336da6450796a5ad"
     }
   ]
 }

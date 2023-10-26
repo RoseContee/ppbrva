@@ -1,12 +1,15 @@
 import React, { FC, useState } from 'react';
 import {
   FlatList,
+  SafeAreaView,
   TouchableOpacity,
   View,
   useWindowDimensions
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import Image from 'react-native-scalable-image';
+import { useAppSelector } from '../store';
+import { getMe } from '../store/user';
+import PageTitle from '../components/basic/page-title';
 import Card from '../components/basic/card';
 import Text from '../components/basic/text';
 import Title from '../components/basic/title';
@@ -17,10 +20,12 @@ import { t } from 'react-native-tailwindcss';
 import s from '../utils/styles';
 
 const HeaderComponent: FC = (): JSX.Element => {
+  const me = useAppSelector(getMe);
+
   return (
-    <Text style={[t.textXs, s.textTitle, t.pX4, t.mB2]}>
-      Richmond West
-    </Text>
+    <>
+      <PageTitle title={me.name} />
+    </>
   );
 };
 
@@ -32,20 +37,22 @@ interface ItemProps {
 }
 
 const ItemComponent: FC<ItemProps> = (event): JSX.Element => {
-  const {width} = useWindowDimensions();
-  const imageWidth = width - 16 * 2 - 8 * 2;
+  const { width } = useWindowDimensions();
+  const imageWidth = width - 28 * 2 - 8 * 2;
 
   return (
-    <View style={[t.pX4, t.mB4]}>
+    <View style={[s.pX7, t.mB4]}>
       <TouchableOpacity onPress={() => {}}>
-        <Card style={[t.pX2]}>
+        <Card style={[t.pX2, t.pY4]}>
           <Image source={event.image || imgEvent} width={imageWidth} />
-          <Text style={[t.textXs, s.textGray, t.mT3]}>
-            { event.date }
-          </Text>
-          <Title style={[t.textBase, t.mT1]}>
-            { event.title }
-          </Title>
+          <View style={[t.pX4, t.mT6]}>
+            <Text style={[t.textBase, s.textGray]}>
+              { event.date }
+            </Text>
+            <Title style={[t.text2xl, t.mT1]}>
+              { event.title }
+            </Title>
+          </View>
         </Card>
       </TouchableOpacity>
     </View>
@@ -85,7 +92,7 @@ const Events: FC = (): JSX.Element => {
       >
       </FlatList>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 export default Events;

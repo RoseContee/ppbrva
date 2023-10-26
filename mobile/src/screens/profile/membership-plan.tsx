@@ -1,74 +1,87 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import {
-  Image,
+  BackHandler,
   View
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import Layouts from '../../components/layouts/home-layouts';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useAppSelector } from '../../store';
+import { getMe, getPlan } from '../../store/user';
+import Layouts from '../../components/layouts/home';
 import Card from '../../components/basic/card';
 import Text from '../../components/basic/text';
 import Title from '../../components/basic/title';
 import Link from '../../components/basic/link';
 import Button from '../../components/basic/button';
 import Select, { SelectItemProps } from '../../components/basic/select';
+import ProfileImage from '../../components/basic/profile-image';
 import IconPDF from '../../assets/img/icons/pdf.svg';
-
-import imgProfile from '../../assets/img/tmp/profile.png';
 
 import { t } from 'react-native-tailwindcss';
 import s from '../../utils/styles';
 
 const ProfileMembershipPlan: FC = (): JSX.Element => {
   const navigation = useNavigation();
+  const me = useAppSelector(getMe);
+  const plan = useAppSelector(getPlan);
   const [plans, setPlans] = useState<SelectItemProps[]>([
     { label: 'Plan1', value: 'Plan1' },
     { label: 'Plan2', value: 'Plan2' },
   ]);
 
+  useFocusEffect(
+    useCallback(() => {
+      const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
+        navigation.navigate('Profile' as never);
+        return true;
+      });
+      return () => subscribe.remove();
+    }, [])
+  );
+
   return (
     <Layouts>
-      <View style={[t.pX4]}>
-        <Card style={[t.pY4, t.mT5]}>
+      <View style={[s.pX7]}>
+        <Card style={[t.pY6, t.mY5]}>
           <View style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.mB2]}>
-            <View style={[t.flexShrink]}>
-              <Title style={[t.textXs, s.textPrimary]}>
-                Elite Team Membership
+            <View style={[t.flexShrink, t.pR3]}>
+              <Title style={[t.textXl, s.textPrimary]}>
+                { plan.name }
               </Title>
-              <Text style={[s.fontBodyLight, s.textTiny, s.textGray, t.mT1]}>
-                Member #PB1054
+              <Text style={[s.fontBodyLight, t.textBase, s.textGray, t.mT1]}>
+                Member #{ me.memberID }
               </Text>
             </View>
-            <Image source={imgProfile} style={[s.cardListImage]} />
+            <ProfileImage image={me.avatar} style={[s.membershipCardImage]} />
           </View>
-          <View style={[t.flexRow, t.itemsCenter, t.pX2, t.mT2]}>
-            <IconPDF width={25} height={25} />
-            <Link style={[t.pL3, t.textXs]}>
+          <View style={[t.flexRow, t.itemsCenter, t.pX2, t.mT5]}>
+            <IconPDF width={35} height={35} />
+            <Link style={[t.textBase, t.pL4]}>
               Member Agreement
             </Link>
           </View>
-          <View style={[t.flexRow, t.itemsCenter, t.pX2, t.mT2]}>
-            <IconPDF width={25} height={25} />
-            <Link style={[t.pL3, t.textXs]}>
+          <View style={[t.flexRow, t.itemsCenter, t.pX2, t.mT5]}>
+            <IconPDF width={35} height={35} />
+            <Link style={[t.textBase, t.pL4]}>
               Another Doc
             </Link>
           </View>
         </Card>
-        <Title style={[t.mT10]}>
+        <Title style={[t.textXl, t.mT12]}>
           Update Plan
         </Title>
-        <Select style={[t.mT4]}
+        <Select style={[t.mT5]}
           placeholder="Change plan..."
           data={plans}
           onChange={() => {}}
         />
-        <Button style={[s.bgPrimary, t.mT4]}
+        <Button style={[s.bgPrimary, s.mT7]}
           onPress={() => {}}
         >
           Request
         </Button>
       </View>
     </Layouts>
-  )
-}
+  );
+};
 
 export default ProfileMembershipPlan;

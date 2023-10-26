@@ -9,13 +9,15 @@ import {
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useAppSelector } from '../store';
 import { getMe, getPlan } from '../store/user';
-import Layouts from '../components/layouts/home-layouts';
+import Layouts from '../components/layouts/home';
+import PageTitle from '../components/basic/page-title';
 import Message from '../components/basic/message';
 import Link from '../components/basic/link';
 import Button from '../components/basic/button';
 import Card from '../components/basic/card';
 import Text from '../components/basic/text';
 import Title from '../components/basic/title';
+import SettingCard from '../components/basic/setting-card';
 
 import imgPlay from '../assets/img/dashboard/play.png';
 import imgImprove from '../assets/img/dashboard/improve.png';
@@ -39,11 +41,11 @@ const CardWidget: FC<CardProps> = ({
   text,
 }): JSX.Element => {
   return (
-    <Card style={[t.itemsCenter, {width: cardWidth}]}>
+    <Card style={[t.itemsCenter, t.p4, {width: cardWidth}]}>
       <Image source={image} resizeMode="contain"
         style={{width: imgSize, height: imgSize}}
       />
-      <Title style={[s.textGray, t.textBase, t.mT1]}>
+      <Title style={[s.textGray, t.text2xl]}>
         { text }
       </Title>
     </Card>
@@ -55,13 +57,13 @@ const Dashboard: FC = (): JSX.Element => {
   const me = useAppSelector(getMe);
   const plan = useAppSelector(getPlan);
   const { width } = useWindowDimensions();
-  const padding = 16; //t.p4
+  const padding = 28; //t.p7
   const cardWidth = (width - (padding * 2) - padding) / 2;
-  const cardImgSize = cardWidth - (padding * 2);
+  const cardImgSize = cardWidth - (16 * 2); //t.pX4
 
   useFocusEffect(
     useCallback(() => {
-      const subscribe = BackHandler.addEventListener("hardwareBackPress", () => {
+      const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
         BackHandler.exitApp();
         return true;
       });
@@ -71,24 +73,22 @@ const Dashboard: FC = (): JSX.Element => {
 
   return (
     <Layouts>
-      <Text style={[s.fontBodyLight, s.textTiny, s.textTitle, t.pX4]}>
-        Welcome back { me.name }!
-      </Text>
+      <PageTitle title={`Welcome back ${ me.name }!`} />
       {
         !me.card_id &&
         <Message style={[t.mT4]}>
-          <Text style={[t.flexShrink, s.textTiny, s.textGray, t.pR2]}>
-            Please update your <Link onPress={() => navigation.navigate('ProfileScreen' as never)}>billing profile</Link>
+          <Text style={[t.flexShrink, t.textBase, s.textGray, t.pR4]}>
+            Please update your <Link onPress={() => navigation.navigate('BillingProfile' as never)}>billing profile</Link>
           </Text>
-          <Button style={[s.bgPrimary, s.messageBtn]} titleStyle={[s.textTiny]}
-            onPress={() => navigation.navigate('ProfileScreen' as never)}
+          <Button style={[s.bgPrimary, s.messageBtn, t.pX5]} titleStyle={[t.textSm]}
+            onPress={() => navigation.navigate('BillingProfile' as never)}
           >
             Fix
           </Button>
         </Message>
       }
-      <View style={[t.pX4]}>
-        <View style={[t.flexRow, t.flexWrap, {gap: padding}, t.mT6]}>
+      <View style={[s.pX7]}>
+        <View style={[t.flexRow, t.flexWrap, {gap: padding}, t.mT8]}>
           <CardWidget cardWidth={cardWidth}
             image={imgPlay} imgSize={cardImgSize}
             text="Play"
@@ -106,20 +106,15 @@ const Dashboard: FC = (): JSX.Element => {
             text="Shop"
           />
         </View>
-        <Card style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.mT6]}>
-          <View style={[t.flexShrink]}>
-            <Title style={[s.textPrimary, t.textSm]}>
-              { plan.name }
-            </Title>
-            <Text style={[s.fontBodyLight, s.textTiny, s.textGray, t.mT1]}>
-              Member #{ me.memberID }
-            </Text>
-          </View>
-          <Image source={{uri: me.avatar}} style={[s.cardListImage]} />
-        </Card>
+        <View style={[t.mT8]}>
+          <SettingCard title={plan.name} description={`Member #${ me.memberID }`}
+            image={me.avatar}
+            onPress={() => navigation.navigate('MembershipPlan' as never)}
+          />
+        </View>
       </View>
     </Layouts>
-  )
-}
+  );
+};
 
 export default Dashboard;

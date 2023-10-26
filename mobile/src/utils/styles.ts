@@ -26,6 +26,9 @@ const styles = StyleSheet.create({
   fontBodyBold: {
     fontFamily: theme.font.OpenSansBold,
   },
+  fontBodyBoldCond: {
+    fontFamily: theme.font.OpenSansSemiCondensedBold,
+  },
   textTitle: {
     color: theme.color.title,
   },
@@ -76,6 +79,87 @@ const styles = StyleSheet.create({
   circle: {
     borderRadius: theme.borderRadius.circle,
   },
+  p7: {
+    padding: 28,
+  },
+  pX7: {
+    paddingHorizontal: 28,
+  },
+  pY7: {
+    paddingVertical: 28,
+  },
+  pT7: {
+    paddingTop: 28,
+  },
+  pR7: {
+    paddingRight: 28,
+  },
+  pB7: {
+    paddingBottom: 28,
+  },
+  pL7: {
+    paddingLeft: 28,
+  },
+  pS7: {
+    paddingStart: 28,
+  },
+  pE7: {
+    paddingEnd: 28,
+  },
+  m7: {
+    margin: 28,
+  },
+  mX7: {
+    marginHorizontal: 28,
+  },
+  mY7: {
+    marginVertical: 28,
+  },
+  mT7: {
+    marginTop: 28,
+  },
+  mR7: {
+    marginRight: 28,
+  },
+  mB7: {
+    marginBottom: 28,
+  },
+  mL7: {
+    marginLeft: 28,
+  },
+  mS7: {
+    marginStart: 28,
+  },
+  mE7: {
+    marginEnd: 28,
+  },
+  _m7: {
+    margin: -28,
+  },
+  _mX7: {
+    marginHorizontal: -28,
+  },
+  _mY7: {
+    marginVertical: -28,
+  },
+  _mT7: {
+    marginTop: -28,
+  },
+  _mR7: {
+    marginRight: -28,
+  },
+  _mB7: {
+    marginBottom: -28,
+  },
+  _mL7: {
+    marginLeft: -28,
+  },
+  _mS7: {
+    marginStart: -28,
+  },
+  _mE7: {
+    marginEnd: -28,
+  },
 
   /* Input Start */
   input: {
@@ -83,14 +167,14 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.input,
     color: theme.color.body,
     backgroundColor: theme.color.inputBg,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderRadius: theme.borderRadius.input,
     ...theme.inputShadow,
   },
   inputOne: {
     flexShrink: 1,
     maxWidth: 50,
-    paddingHorizontal: 5,
     textAlign: 'center',
   },
   /* Input End */
@@ -100,9 +184,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: theme.color.inputBg,
-    paddingLeft: 10,
-    paddingRight: 25,
-    paddingVertical: 2,
+    paddingLeft: 15,
+    paddingRight: 35,
+    paddingVertical: 11,
+    borderRadius: theme.borderRadius.input,
     ...theme.inputShadow,
   },
   searchInput: {
@@ -117,12 +202,13 @@ const styles = StyleSheet.create({
   /* Select Start */
   selectContainer: {
     backgroundColor: theme.color.inputBg,
+    borderRadius: theme.borderRadius.input,
     ...theme.inputShadow,
   },
   selectButton: {
     width: '100%',
     height: 'auto',
-    paddingVertical: 9,
+    paddingVertical: 16,
     borderRadius: theme.borderRadius.input,
   },
   selectButtonText: {
@@ -141,14 +227,21 @@ const styles = StyleSheet.create({
   btn: {
     backgroundColor: theme.color.bodyBg,
     alignItems: 'center',
-    padding: 11,
+    paddingHorizontal: 16,
+    paddingVertical: 17,
+    borderRadius: theme.borderRadius.input,
     ...theme.inputShadow,
   },
   btnXs: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
   },
   /* Button End */
+
+  card: {
+    backgroundColor: '#ffffff',
+    ...theme.cardShadow,
+  },
 
   /* Message Start */
   message: {
@@ -158,13 +251,13 @@ const styles = StyleSheet.create({
     backgroundColor: theme.color.messageBg,
   },
   messageText: {
-    fontSize: theme.fontSize.tiny,
+    fontSize: 16,
     color: theme.color.title,
     textAlign: 'center',
   },
   messageBtn: {
-    paddingVertical: 5,
-    marginVertical: -4,
+    paddingVertical: 9,
+    marginVertical: -8,
   },
   /* Message End */
 
@@ -173,32 +266,37 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
   },
   profileCardTitle: {
-    fontFamily: theme.font.GrangeDemiBold,
+    fontFamily: theme.font.OpenSansSemiCondensedBold,
     color: theme.color.title,
-    fontSize: 22,
+    fontSize: 34,
   },
   menuImage: {
-    width: 28,
-    height: 28,
+    width: 45,
+    height: 45,
   },
   profileImage: {
-    width: 95,
-    height: 95,
+    width: 140,
+    height: 140,
     borderRadius: theme.borderRadius.circle,
   },
   cardListImage: {
-    width: 40,
-    height: 40,
+    width: 65,
+    height: 65,
     borderRadius: theme.borderRadius.circle,
   },
   profileCardImage: {
-    width: 75,
-    height: 75,
+    width: 110,
+    height: 110,
+    borderRadius: theme.borderRadius.circle,
+  },
+  membershipCardImage: {
+    width: 65,
+    height: 65,
     borderRadius: theme.borderRadius.circle,
   },
   dot: {
-    width: 6,
-    height: 6,
+    width: 9,
+    height: 9,
     backgroundColor: theme.color.inactive,
   },
   loadingContainer: {

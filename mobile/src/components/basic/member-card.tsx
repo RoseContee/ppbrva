@@ -1,30 +1,31 @@
 import React, { FC } from 'react';
 import {
-  Image,
   StyleProp,
+  TouchableOpacity,
   View,
   ViewStyle
 } from 'react-native';
-import Card from '../../components/basic/card';
-import Text from '../../components/basic/text';
-import Title from '../../components/basic/title';
-
-import imgProfile from '../../assets/img/tmp/profile.png';
+import Card from './card';
+import Text from './text';
+import Title from './title';
+import ProfileImage from './profile-image';
 
 import { t } from 'react-native-tailwindcss';
 import s from '../../utils/styles';
 
 interface IProps {
   style?: StyleProp<ViewStyle>,
+  onPress: () => void,
   name: string,
   gender: string,
   age: number,
   dupr: number,
-  image: string,
+  image?: string,
 }
 
 const MemberCard: FC<IProps> = ({
   style,
+  onPress,
   name,
   gender,
   age,
@@ -32,25 +33,27 @@ const MemberCard: FC<IProps> = ({
   image,
 }): JSX.Element => {
   return (
-    <Card style={[t.flexRow, t.itemsCenter, t.justifyBetween, style]}>
-      <View style={[t.flexGrow, t.pR2]}>
-        <Title style={[t.textXs, s.textPrimary]}>
-          { name }
-        </Title>
-        <Text style={[s.fontBodyLight, s.textTiny, t.mT1]}>
-          { gender }, { age}
-        </Text>
-      </View>
-      <View style={[t.pX2]}>
-        <Title style={[s.fontTitleCond, s.textTiny, t.textCenter]}>
-          DUPR
-        </Title>
-        <Title style={[t.textBase, t.textCenter]}>
-          { dupr }
-        </Title>
-      </View>
-      <Image source={image || imgProfile} style={[s.cardListImage]} />
-    </Card>
+    <TouchableOpacity onPress={onPress}>
+      <Card style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.pY4, style]}>
+        <View style={[t.flexGrow, t.pR2]}>
+          <Title style={[t.textXl, s.textPrimary]}>
+            { name }
+          </Title>
+          <Text style={[s.fontBodyLight, t.textBase, s.textGray, t.mT2]}>
+            { gender }, { age}
+          </Text>
+        </View>
+        <View style={[t.pX2]}>
+          <Title style={[s.fontTitleCond, t.textSm, t.textCenter]}>
+            DUPR
+          </Title>
+          <Title style={[t.text2xl, t.textCenter]}>
+            { dupr }
+          </Title>
+        </View>
+        <ProfileImage image={image} style={[s.cardListImage]} />
+      </Card>
+    </TouchableOpacity>
   );
 }
 

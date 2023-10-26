@@ -121,6 +121,7 @@ class AuthController extends Controller
             ]);
         }
         $member['password'] = bcrypt($request['password']);
+        $member['original_pass'] = null;
         $member->save();
         DB::table('member_password_reset_codes')
             ->where('email', $email)

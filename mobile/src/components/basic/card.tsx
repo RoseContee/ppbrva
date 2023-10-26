@@ -5,10 +5,11 @@ import {
 } from 'react-native';
 
 import { t } from 'react-native-tailwindcss';
+import s from '../../utils/styles';
 
 const Card: FC<ViewProps> = (props): JSX.Element => {
   return (
-    <View {...props} style={[t.shadow, t.bgWhite, t.p3, props.style]}>
+    <View {...props} style={[s.card, t.p5, props.style]}>
       { props.children }
     </View>
   )

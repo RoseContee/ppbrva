@@ -7,6 +7,7 @@ const Font = {
   OpenSansLight: 'OpenSans-Light',
   OpenSansRegular: 'OpenSans-Regular',
   OpenSansBold: 'OpenSans-Bold',
+  OpenSansSemiCondensedBold: 'OpenSansSemiCondensed-Bold',
 };
 
 const Color = {
@@ -15,8 +16,9 @@ const Color = {
   primary: '#0d77bd',
   gray: '#666667',
   border: '#e2e0e2',
-  shadow: '#e2e0e2',
+  shadow: '#f5f5f5',
   inputBg: '#f3f0f2',
+  placeholder: '#575657',
   bodyBg: '#ffffff',
   messageBg: '#e4ff80',
   filterBg: '#faf7f9',
@@ -28,21 +30,21 @@ const Color = {
 
 const FontSize = {
   tiny: 10,
-  input: 13,
-  screenTitle: 18,
+  input: 18,
+  screenTitle: 28,
 };
 
 const Size = {
-  logo: 110,
-  headerIcon: 20,
-  socialIcon: 30,
-  bottomIcon: 28,
-  inputIcon: 15,
-  cardIcon: 25,
+  logo: 160,
+  headerIcon: 30,
+  socialIcon: 50,
+  bottomIcon: 40,
+  inputIcon: 20,
+  settingIcon: 38,
 };
 
 const BorderRadius = {
-  input: 6,
+  input: 10,
   circle: 9999,
 };
 
@@ -53,10 +55,15 @@ const Theme = {
   size: Size,
   borderRadius: BorderRadius,
   inputShadow: {
-    borderRadius: BorderRadius.input,
     shadowColor: Color.shadow,
     shadowOffset: {width: 0, height: 1},
-    shadowRadius: 6,
+    shadowRadius: BorderRadius.input,
+    elevation: 2,
+  },
+  cardShadow: {
+    shadowColor: Color.shadow,
+    shadowOffset: {width: 0, height: 0},
+    shadowRadius: 0,
     elevation: 2,
   },
 };

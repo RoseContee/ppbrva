@@ -33,7 +33,7 @@ const Select: FC<IProps> = ({
       <SelectDropDown
         buttonStyle={[s.selectButton]}
         buttonTextStyle={[s.selectButtonText]}
-        rowStyle={{height: 35}}
+        rowStyle={{height: 50}}
         rowTextStyle={[s.selectItemText]}
         renderDropdownIcon={() => (
           <IconDown fill={theme.color.primary}
