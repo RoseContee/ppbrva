@@ -20,9 +20,9 @@
 		791C0A8EC2DD430887862C13 /* OpenSans-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2FC2BFECF934483DB8BA5DEF /* OpenSans-Light.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		8EFDD7764A1F44DCB74B02E0 /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CC3FF2CDAD614B358682DA93 /* OpenSans-Regular.ttf */; };
+		9386B31D614946B4B1604657 /* OpenSansSemiCondensed-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5B5740259FAC4DABA20A3F7B /* OpenSansSemiCondensed-Bold.ttf */; };
 		B914E0F984C34EB8828622D6 /* OpenSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D8B4DD8CFDF94A9694DE2EC1 /* OpenSans-Bold.ttf */; };
 		E6780057F85B423999FDBCDB /* Grange-DemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 483E9C214B32482BA2155625 /* Grange-DemiBold.ttf */; };
-		9386B31D614946B4B1604657 /* OpenSansSemiCondensed-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5B5740259FAC4DABA20A3F7B /* OpenSansSemiCondensed-Bold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +51,7 @@
 		3B4392A12AC88292D35C810B /* Pods-ppbrva.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ppbrva.debug.xcconfig"; path = "Target Support Files/Pods-ppbrva/Pods-ppbrva.debug.xcconfig"; sourceTree = "<group>"; };
 		483E9C214B32482BA2155625 /* Grange-DemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Grange-DemiBold.ttf"; path = "../src/assets/fonts/Grange-DemiBold.ttf"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-ppbrva.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ppbrva.release.xcconfig"; path = "Target Support Files/Pods-ppbrva/Pods-ppbrva.release.xcconfig"; sourceTree = "<group>"; };
+		5B5740259FAC4DABA20A3F7B /* OpenSansSemiCondensed-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSansSemiCondensed-Bold.ttf"; path = "../src/assets/fonts/OpenSansSemiCondensed-Bold.ttf"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-ppbrva-ppbrvaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ppbrva-ppbrvaTests.debug.xcconfig"; path = "Target Support Files/Pods-ppbrva-ppbrvaTests/Pods-ppbrva-ppbrvaTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-ppbrva.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ppbrva.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		71BEA2E24D4540BF8BA5FA88 /* GillSansMT-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "GillSansMT-Bold.ttf"; path = "../src/assets/fonts/GillSansMT-Bold.ttf"; sourceTree = "<group>"; };
@@ -61,7 +62,6 @@
 		CC3FF2CDAD614B358682DA93 /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Regular.ttf"; path = "../src/assets/fonts/OpenSans-Regular.ttf"; sourceTree = "<group>"; };
 		D8B4DD8CFDF94A9694DE2EC1 /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Bold.ttf"; path = "../src/assets/fonts/OpenSans-Bold.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		5B5740259FAC4DABA20A3F7B /* OpenSansSemiCondensed-Bold.ttf */ = {isa = PBXFileReference; name = "OpenSansSemiCondensed-Bold.ttf"; path = "../src/assets/fonts/OpenSansSemiCondensed-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -656,7 +656,10 @@
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 			};
@@ -726,7 +729,10 @@
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
