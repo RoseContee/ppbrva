@@ -30,6 +30,7 @@ import {
   Members, MemberInvite, FriendRequest, AcceptedFriend
 } from './src/screens/members';
 import KitchenBar from './src/screens/kitchen-bar';
+import { HeaderLeft } from './src/components/header-options';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -37,7 +38,11 @@ const Drawer = createDrawerNavigator();
 
 const AuthScreen: FC = (): JSX.Element => {
   return (
-    <Stack.Navigator initialRouteName="Login" screenOptions={{headerMode: 'screen', header: Header}}>
+    <Stack.Navigator initialRouteName="Login"
+      screenOptions={({ route, navigation }) => ({
+        headerLeft: () => <HeaderLeft route={route} navigation={navigation} />
+      })}
+    >
       <Stack.Screen name="Login" component={Login} options={{headerShown: false}} />
       <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{title: 'Forgot Password'}} />
       <Stack.Screen name="EnterCode" component={EnterCode} options={{title: 'Enter Code'}} />
@@ -50,7 +55,10 @@ const MainScreen: FC = (): JSX.Element => {
   const name = useAppSelector(getName);
 
   return (
-    <Tab.Navigator initialRouteName="Dashboard" screenOptions={{header: Header}} tabBar={BottomTabs}>
+    <Tab.Navigator initialRouteName="Dashboard"
+      screenOptions={{header: Header}}
+      tabBar={BottomTabs}
+    >
       <Tab.Screen name="Dashboard" component={Dashboard} options={{title: 'Dashboard'}} />
 
       <Tab.Screen name="Activity" component={Activity} options={{title: 'Activity'}} />
@@ -79,7 +87,10 @@ const MainScreen: FC = (): JSX.Element => {
 
 const HomeScreen: FC = (): JSX.Element => {
   return (
-    <Drawer.Navigator initialRouteName="MainScreen" drawerContent={MainMenu} screenOptions={{ drawerStyle: {width: '100%'} }}>
+    <Drawer.Navigator initialRouteName="MainScreen"
+      drawerContent={MainMenu}
+      screenOptions={{ drawerStyle: {width: '100%'} }}
+    >
       <Drawer.Screen name="MainScreen" component={MainScreen} options={{headerShown: false}} />
     </Drawer.Navigator>
   );
@@ -112,7 +123,9 @@ const App: FC = (): JSX.Element => {
   if (!initialRoute) return <Loading show={true} />
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={initialRoute} screenOptions={{header: Header}}>
+      <Stack.Navigator initialRouteName={initialRoute}
+        screenOptions={{header: Header}}
+      >
         <Stack.Screen name="AuthScreen" component={AuthScreen} options={{headerShown: false}} />
         <Stack.Screen name="SetNewPassword" component={ResetPassword} options={{title: 'Set New Password'}} />
         <Stack.Screen name="HomeScreen" component={HomeScreen} options={{headerShown: false}} />
