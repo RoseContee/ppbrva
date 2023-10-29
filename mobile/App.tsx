@@ -37,7 +37,7 @@ const Drawer = createDrawerNavigator();
 
 const AuthScreen: FC = (): JSX.Element => {
   return (
-    <Stack.Navigator initialRouteName="Login"> {/* screenOptions={{header: Header}} */}
+    <Stack.Navigator initialRouteName="Login">
       <Stack.Screen name="Login" component={Login} options={{headerShown: false}} />
       <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{title: 'Forgot Password'}} />
       <Stack.Screen name="EnterCode" component={EnterCode} options={{title: 'Enter Code'}} />
