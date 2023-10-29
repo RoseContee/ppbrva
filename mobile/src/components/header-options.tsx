@@ -9,6 +9,7 @@ import Title from './basic/title';
 import IconBack from '../assets/img/icons/back.svg';
 import IconMenu from '../assets/img/icons/menu.svg';
 
+import { t } from 'react-native-tailwindcss';
 import theme from '../utils/theme';
 
 interface IProps {
@@ -57,7 +58,9 @@ const HeaderLeft: FC<IProps> = ({ route: { name }, navigation }): JSX.Element =>
   };
 
 	return (
-		<MenuButton Icon={IconBack} onPress={onBack} />
+		<View style={[t.mL4]}>
+			<MenuButton Icon={IconBack} onPress={onBack} />
+		</View>
 	);
 };
 

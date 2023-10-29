@@ -40,6 +40,7 @@ const AuthScreen: FC = (): JSX.Element => {
   return (
     <Stack.Navigator initialRouteName="Login"
       screenOptions={({ route, navigation }) => ({
+        headerMode: 'screen',
         headerLeft: () => <HeaderLeft route={route} navigation={navigation} />
       })}
     >
