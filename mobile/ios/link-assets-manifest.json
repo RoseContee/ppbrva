@@ -14,12 +14,24 @@
       "sha1": "2ac5fcabea069e7b4aebc7e58982ac2604c8143d"
     },
     {
+      "path": "src/assets/fonts/Grange-DemiBold.woff",
+      "sha1": "863e3aad394c0d5e846980cd1bc35b956885427d"
+    },
+    {
       "path": "src/assets/fonts/Grange-DemiBoldCond.ttf",
       "sha1": "3e041f082dee060f7a04938c8135f69e22b40029"
     },
     {
+      "path": "src/assets/fonts/Grange-DemiBoldCond.woff",
+      "sha1": "2ae83a1137c09d6c74c92d6cb9e4fe4431172317"
+    },
+    {
       "path": "src/assets/fonts/Grange-Light.ttf",
       "sha1": "229e26cfa6693e53a7cc744efc276c80bec65e82"
+    },
+    {
+      "path": "src/assets/fonts/Grange-Light.woff",
+      "sha1": "dfefaad9912e1c6681031b08ce330d0c62a41bef"
     },
     {
       "path": "src/assets/fonts/OpenSans-Bold.ttf",
