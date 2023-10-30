@@ -35,6 +35,7 @@ const FontSize = {
 };
 
 const Size = {
+  headerHeight: 68,
   logo: 160,
   headerIcon: 30,
   socialIcon: 50,

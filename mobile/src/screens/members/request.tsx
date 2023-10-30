@@ -21,6 +21,7 @@ const FriendRequest: FC = (): JSX.Element => {
 
   useFocusEffect(
     useCallback(() => {
+      navigation.setOptions({title: member.name});
       const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
         navigation.navigate('PendingRequests' as never);
         return true;
@@ -67,10 +68,7 @@ const FriendRequest: FC = (): JSX.Element => {
           onPress={() => {
             navigation.navigate({
               name: 'AcceptedFriend',
-              params: {
-                heaterTitle: member.name,
-                member,
-              },
+              params: {member},
             } as never);
           }}
         >

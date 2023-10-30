@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import {
   View
 } from 'react-native';
@@ -18,6 +18,10 @@ const Profile: FC = (): JSX.Element => {
   const me = useAppSelector(getMe);
   const profile = useAppSelector(getProfile);
   const plan = useAppSelector(getPlan);
+
+  useEffect(() => {
+    navigation.setOptions({title: (me || {}).name});
+  }, [me]);
 
   return (
     <Layouts>

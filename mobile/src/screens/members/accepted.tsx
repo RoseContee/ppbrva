@@ -23,6 +23,7 @@ const AcceptedFriend: FC = (): JSX.Element => {
 
   useFocusEffect(
     useCallback(() => {
+      navigation.setOptions({title: member.name});
       const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
         navigation.navigate('Friends' as never);
         return true;

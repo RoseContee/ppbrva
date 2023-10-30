@@ -20,6 +20,7 @@ const MemberInvite: FC = (): JSX.Element => {
 
   useFocusEffect(
     useCallback(() => {
+      navigation.setOptions({title: member.name});
       const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
         navigation.navigate('Members' as never);
         return true;

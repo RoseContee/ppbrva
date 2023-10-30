@@ -73,10 +73,7 @@ const ItemComponent: FC<MemberProps> = (member): JSX.Element => {
           if (route.name === 'Friends') {
             navigation.navigate({
               name: 'AcceptedFriend',
-              params: {
-                heaterTitle: member.name,
-                member,
-              },
+              params: {member},
             } as never);
           } else if (route.name === 'PendingRequests') {
             navigation.navigate({
@@ -86,10 +83,7 @@ const ItemComponent: FC<MemberProps> = (member): JSX.Element => {
           } else if (route.name === 'Members') {
             navigation.navigate({
               name: 'MemberInvite',
-              params: {
-                heaterTitle: member.name,
-                member,
-              },
+              params: {member},
             } as never);
           }
         }}

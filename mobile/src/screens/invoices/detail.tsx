@@ -41,6 +41,7 @@ const InvoiceDetail: FC = (): JSX.Element => {
 
   useFocusEffect(
     useCallback(() => {
+      navigation.setOptions({title: invoice.date});
       const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
         navigation.navigate('Invoices' as never);
         return true;

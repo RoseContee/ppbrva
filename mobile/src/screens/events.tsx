@@ -24,7 +24,7 @@ const HeaderComponent: FC = (): JSX.Element => {
 
   return (
     <>
-      <PageTitle title={me.name} />
+      <PageTitle title={me.name} style={[t.mB3]} />
     </>
   );
 };
