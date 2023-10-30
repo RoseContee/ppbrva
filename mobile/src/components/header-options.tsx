@@ -94,7 +94,7 @@ const HeaderOptions = ({
 }) => {
 	return {
 		// headerShadowVisible: false,
-		headerStyle: {height: theme.size.headerHeight},
+		// headerStyle: {height: theme.size.headerHeight},
 		headerLeftContainerStyle: {...t.justifyEnd, ...t.pB2},
 		headerLeft: () => <HeaderLeft route={route} navigation={navigation} />,
 		headerTitleAlign: 'center',
