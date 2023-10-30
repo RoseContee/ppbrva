@@ -82,7 +82,7 @@ interface IHeaderTitleProps {
 
 const HeaderTitle: FC<IHeaderTitleProps> = ({ title, style }): JSX.Element => {
 	return (
-		<Title style={[s.screenTitle, style, s.testBorder]}>{ title }</Title>
+		<Title style={[s.screenTitle, style]}>{ title }</Title>
 	);
 };
 
@@ -94,13 +94,12 @@ const HeaderOptions = ({
 }) => {
 	return {
 		// headerShadowVisible: false,
-		// headerStyle: {height: theme.size.headerHeight},
-		headerLeftContainerStyle: {...t.justifyEnd, ...t.pB2},
+		headerLeftContainerStyle: {...t.justifyEnd},
 		headerLeft: () => <HeaderLeft route={route} navigation={navigation} />,
 		headerTitleAlign: 'center',
-		headerTitleContainerStyle: {...t.justifyEnd, ...t.pB2},
+		headerTitleContainerStyle: {...t.justifyEnd},
 		headerTitle: ({ children }) => <HeaderTitle title={children} />,
-		headerRightContainerStyle: {...t.justifyEnd, ...t.pB2},
+		headerRightContainerStyle: {...t.justifyEnd},
 		headerRight: () => <HeaderRight route={route} navigation={navigation} />
 	} as StackNavigationOptions | BottomTabNavigationOptions;
 };
