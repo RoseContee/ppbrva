@@ -45,6 +45,9 @@
 		<string>OpenSans-Light.ttf</string>
 		<string>OpenSans-Bold.ttf</string>
 		<string>OpenSansSemiCondensed-Bold.ttf</string>
+		<string>Grange-DemiBold.ttf</string>
+		<string>Grange-DemiBoldCond.ttf</string>
+		<string>Grange-Light.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

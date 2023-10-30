@@ -10,6 +10,18 @@
       "sha1": "2247b20e88aaf8bfef070a2f8e7aab45c337ff5d"
     },
     {
+      "path": "src/assets/fonts/Grange-DemiBold.ttf",
+      "sha1": "2d57f12dc1fd59de02de3beaf04e8cd30fdc9829"
+    },
+    {
+      "path": "src/assets/fonts/Grange-DemiBoldCond.ttf",
+      "sha1": "135851e35901978b8b75c968ff5557c95353e8d6"
+    },
+    {
+      "path": "src/assets/fonts/Grange-Light.ttf",
+      "sha1": "24a9277c3c0b6289e510b39e3c132abcec8cffa6"
+    },
+    {
       "path": "src/assets/fonts/OpenSans-Bold.ttf",
       "sha1": "1f22568081c57eb8980ccbec86decd452f35d6b0"
     },
