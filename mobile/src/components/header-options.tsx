@@ -93,13 +93,10 @@ const HeaderOptions = ({
 	navigation: any,
 }) => {
 	return {
-		// headerShadowVisible: false,
-		headerLeftContainerStyle: {...t.justifyEnd},
+		headerShadowVisible: false,
 		headerLeft: () => <HeaderLeft route={route} navigation={navigation} />,
 		headerTitleAlign: 'center',
-		headerTitleContainerStyle: {...t.justifyEnd},
 		headerTitle: ({ children }) => <HeaderTitle title={children} />,
-		headerRightContainerStyle: {...t.justifyEnd},
 		headerRight: () => <HeaderRight route={route} navigation={navigation} />
 	} as StackNavigationOptions | BottomTabNavigationOptions;
 };
