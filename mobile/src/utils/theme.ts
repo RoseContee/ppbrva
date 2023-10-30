@@ -1,13 +1,13 @@
 const Font = {
-  GrangeLight: 'Grange-Light',
-  GrangeDemiBold: 'Grange-DemiBold',
-  GrangeDemiBoldCond: 'Grange-DemiBoldCond',
-  GillSansMT: 'GillSansMT',
-  GillSansMTBold: 'GillSansMT-Bold',
-  OpenSansLight: 'OpenSans-Light',
-  OpenSansRegular: 'OpenSans-Regular',
-  OpenSansBold: 'OpenSans-Bold',
-  OpenSansSemiCondensedBold: 'OpenSansSemiCondensed-Bold',
+  titleLight: 'Grange-Light',
+  title: 'Grange-DemiBold',
+  titleCond: 'Grange-DemiBoldCond',
+  button: 'GillSansMT',
+  buttonBold: 'GillSansMT-Bold',
+  bodyLight: 'OpenSans-Light',
+  body: 'OpenSans-Regular',
+  bodyBold: 'OpenSans-Bold',
+  bodyCondBold: 'OpenSansSemiCondensed-Bold',
 };
 
 const Color = {

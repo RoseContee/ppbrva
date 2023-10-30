@@ -3,31 +3,31 @@ import theme from './theme';
 
 const styles = StyleSheet.create({
   fontTitleLight: {
-    fontFamily: theme.font.GrangeLight,
+    fontFamily: theme.font.titleLight,
   },
   fontTitle: {
-    fontFamily: theme.font.GrangeDemiBold,
+    fontFamily: theme.font.title,
   },
   fontTitleCond: {
-    fontFamily: theme.font.GrangeDemiBoldCond,
+    fontFamily: theme.font.titleCond,
   },
   fontButton: {
-    fontFamily: theme.font.GillSansMT,
+    fontFamily: theme.font.button,
   },
   fontButtonBold: {
-    fontFamily: theme.font.GillSansMTBold,
+    fontFamily: theme.font.buttonBold,
   },
   fontBodyLight: {
-    fontFamily: theme.font.OpenSansLight,
+    fontFamily: theme.font.bodyLight,
   },
   fontBody: {
-    fontFamily: theme.font.OpenSansRegular,
+    fontFamily: theme.font.body,
   },
   fontBodyBold: {
-    fontFamily: theme.font.OpenSansBold,
+    fontFamily: theme.font.bodyBold,
   },
-  fontBodyBoldCond: {
-    fontFamily: theme.font.OpenSansSemiCondensedBold,
+  fontBodyCondBold: {
+    fontFamily: theme.font.bodyCondBold,
   },
   textTitle: {
     color: theme.color.title,
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
 
   /* Input Start */
   input: {
-    fontFamily: theme.font.OpenSansRegular,
+    fontFamily: theme.font.body,
     fontSize: theme.fontSize.input,
     color: theme.color.body,
     backgroundColor: theme.color.inputBg,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     width: '100%',
-    fontFamily: theme.font.OpenSansRegular,
+    fontFamily: theme.font.body,
     fontSize: theme.fontSize.input,
     color: theme.color.body,
     padding: 0,
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.input,
   },
   selectButtonText: {
-    fontFamily: theme.font.OpenSansRegular,
+    fontFamily: theme.font.body,
     fontSize: theme.fontSize.input,
     color: theme.color.body,
     textAlign: 'left',
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
   },
   profileCardTitle: {
-    fontFamily: theme.font.OpenSansSemiCondensedBold,
+    fontFamily: theme.font.bodyCondBold,
     color: theme.color.title,
     fontSize: 34,
   },
