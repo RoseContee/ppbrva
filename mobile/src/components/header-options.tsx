@@ -82,7 +82,7 @@ interface IHeaderTitleProps {
 
 const HeaderTitle: FC<IHeaderTitleProps> = ({ title, style }): JSX.Element => {
 	return (
-		<Title style={[s.screenTitle, style]}>{ title }</Title>
+		<Title style={[s.screenTitle, style, s.testBorder]}>{ title }</Title>
 	);
 };
 
