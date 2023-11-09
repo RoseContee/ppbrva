@@ -1,14 +1,21 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import {
   FlatList,
+  Linking,
   SafeAreaView,
   TouchableOpacity,
   View,
   useWindowDimensions
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import axios from 'axios';
+import rssParser from 'react-native-rss-parser';
 import Image from 'react-native-scalable-image';
-import { useAppSelector } from '../store';
+import { useAppDispatch, useAppSelector } from '../store';
 import { getMe } from '../store/user';
+import { getEvents, saveEvents, IEventProps } from '../store/events';
+import { dateFormat } from '../utils/lib';
+import Loading from '../components/basic/loading';
 import PageTitle from '../components/basic/page-title';
 import Card from '../components/basic/card';
 import Text from '../components/basic/text';
@@ -19,35 +26,22 @@ import imgEvent from '../assets/img/tmp/event.png';
 import { t } from 'react-native-tailwindcss';
 import s from '../utils/styles';
 
-const HeaderComponent: FC = (): JSX.Element => {
-  const me = useAppSelector(getMe);
-
-  return (
-    <>
-      <PageTitle title={me.name} style={[t.mB3]} />
-    </>
-  );
-};
-
 interface ItemProps {
-  id: string,
-  image: string,
-  date: string,
-  title: string,
+  width: number,
+  event: IEventProps,
 }
 
-const ItemComponent: FC<ItemProps> = (event): JSX.Element => {
-  const { width } = useWindowDimensions();
-  const imageWidth = width - 28 * 2 - 8 * 2;
-
+const ItemComponent: FC<ItemProps> = ({width, event}): JSX.Element => {
   return (
     <View style={[s.pX7, t.mB4]}>
-      <TouchableOpacity onPress={() => {}}>
+      <TouchableOpacity onPress={() => Linking.openURL(event.link)}>
         <Card style={[t.pX2, t.pY4]}>
-          <Image source={event.image || imgEvent} width={imageWidth} />
+          <Image source={event.image ? {uri: event.image} : imgEvent}
+            width={width - 28 * 2 - 8 * 2}
+          />
           <View style={[t.pX4, t.mT6]}>
             <Text style={[t.textBase, s.textGray]}>
-              { event.date }
+              { dateFormat(event.date) }
             </Text>
             <Title style={[t.text2xl, t.mT1]}>
               { event.title }
@@ -60,38 +54,52 @@ const ItemComponent: FC<ItemProps> = (event): JSX.Element => {
 };
 
 const Events: FC = (): JSX.Element => {
-  const [events, setEvents] = useState<ItemProps[]>([{
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    image: '',
-    date: '8/27/23',
-    title: 'Omnitech Partnership Puts PPBRVA on the Cutting-Edge',
-  }, {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28bb',
-    image: '',
-    date: '8/27/23',
-    title: 'Omnitech Partnership Puts PPBRVA on the Cutting-Edge',
-  }, {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28bc',
-    image: '',
-    date: '8/27/23',
-    title: 'Omnitech Partnership Puts PPBRVA on the Cutting-Edge',
-  }, {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28bd',
-    image: '',
-    date: '8/27/23',
-    title: 'Omnitech Partnership Puts PPBRVA on the Cutting-Edge',
-  }])
+  const dispatch = useAppDispatch();
+  const me = useAppSelector(getMe);
+  const events = useAppSelector(getEvents);
+  const { width } = useWindowDimensions();
+  const [loading, setLoading] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      setLoading(true);
+      axios.get(`https://ppbrva.com/feed/`)
+      .then(({ data }) => {
+        rssParser.parse(data)
+        .then(rss => {
+          dispatch(saveEvents(
+            rss.items.map(item => ({
+              id: item.id,
+              image: (item.enclosures[0] || {}).url,
+              date: item.published,
+              title: item.title,
+              link: item.links[0].url
+            }))
+          ));
+        }).finally(() => setLoading(false));
+      }).finally(() => setLoading(false));
+    }, [])
+  );
 
   return (
-    <SafeAreaView style={[t.bgWhite]}>
-      <FlatList style={[t.hFull]}
-        data={events}
-        keyExtractor={item => item.id}
-        ListHeaderComponent={() => <HeaderComponent />}
-        renderItem={({item}) => <ItemComponent {...item} />}
-      >
-      </FlatList>
-    </SafeAreaView>
+    <>
+      <Loading show={loading} />
+      <SafeAreaView style={[t.bgWhite]}>
+        <FlatList style={[t.hFull]}
+          data={events}
+          keyExtractor={item => item.id}
+          ListHeaderComponent={() => <PageTitle title={me.name} style={[t.mB3]} />}
+          ListEmptyComponent={() => {
+            return (
+              <Text style={[s.textGray, t.textXl, t.textCenter, s.pX7, t.pY10]}>
+                Events not found.
+              </Text>
+            );
+          }}
+          renderItem={({ item }) => <ItemComponent width={width} event={item} />}
+        />
+      </SafeAreaView>
+    </>
   );
 };
 

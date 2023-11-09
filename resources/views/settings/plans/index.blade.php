@@ -4,7 +4,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">
-                        {{ __('Plans') }}
+                        Plans
                     </h2>
 
                     <x-messages />
@@ -87,6 +87,12 @@
                                            :href="'{{ route('settings.plans.index') }}/' + plan.id + '/edit'">
                                             Edit
                                         </a>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                                    v-if="!filteredPlans.length">
+                                    <td class="px-6 py-4 italic" colspan="6">
+                                        No plans found.
                                     </td>
                                 </tr>
                             </tbody>

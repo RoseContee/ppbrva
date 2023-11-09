@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../../store';
-import { saveMe, getMe } from '../../store/user';
+import { getMe, saveMe } from '../../store/user';
 import axios, { getErrorMessage } from '../../utils/axios';
 import MaskInput from 'react-native-mask-input';
 import Layouts from '../../components/layouts/home';
@@ -15,7 +15,7 @@ import Message from '../../components/basic/message';
 import Button from '../../components/basic/button';
 import Text from '../../components/basic/text';
 import Title from '../../components/basic/title';
-import IconVisa from '../../assets/img/icons/cards/visa.svg';
+import Brand from '../../components/basic/card-brand';
 
 import { t } from 'react-native-tailwindcss';
 import s from '../../utils/styles';
@@ -39,38 +39,31 @@ const BillingProfile: FC = (): JSX.Element => {
         navigation.navigate('Profile' as never);
         return true;
       });
-      return () => subscribe.remove();
+      return () => {
+        setMessage('');
+        setNumber('');
+        setExpires('');
+        setCvv('');
+        setAddress('');
+        setZipcode('');
+        subscribe.remove();
+      }
     }, [])
   );
 
   const addCard = () => {
-    if (!number) {
-      setMessage('The card number field is required.');
-      return;
-    }
-    if (!expires) {
-      setMessage('The expires field is required.');
-      return;
-    }
-    if (!cvv) {
-      setMessage('The cvv field is required.');
-      return;
-    }
-    if (!address) {
-      setMessage('The address field is required.');
-      return;
-    }
-    if (!zipcode) {
-      setMessage('The zipcode field is required.');
-      return;
-    }
     setLoading(true);
     setMessage('');
-    axios.post(`update-card`, {
+    axios.post(`update-billing`, {
       number, expires, cvv, address, zipcode
     }).then(({ data: { user } }) => {
       dispatch(saveMe(user));
       setMessage('New card added successfully');
+      setNumber('');
+      setExpires('');
+      setCvv('');
+      setAddress('');
+      setZipcode('');
     }).catch(error => {
       setMessage(getErrorMessage(error));
     }).finally(() => setLoading(false));
@@ -88,9 +81,9 @@ const BillingProfile: FC = (): JSX.Element => {
         <View style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.mT10]}>
           <Title style={[t.textXl, t.pB1]}>Add New Card</Title>
           {
-            me.card_id &&
+            me.card_last4 &&
             <View style={[t.flexRow, t.itemsCenter]}>
-              <IconVisa width={60} height={30} />
+              <Brand brand={me.card_type} />
               <Text style={[s.textGray, t.textXl, t.pL2]}>**** { me.card_last4 }</Text>
             </View>
           }
@@ -132,6 +125,7 @@ const BillingProfile: FC = (): JSX.Element => {
           </View>
         </View>
         <Button style={[s.bgPrimary, s.mT7]}
+          disabled={!number || !expires || !cvv || !address || !zipcode}
           onPress={addCard}
         >
           Add Card

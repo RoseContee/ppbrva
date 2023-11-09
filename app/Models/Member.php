@@ -15,7 +15,8 @@ class Member extends Authenticatable
     protected $fillable = [
         'memberID', 'name', 'email', 'password', 'original_pass',
         'phone', 'location_id', 'plan_id', 'avatar',
-        'customer_id', 'card_id', 'card_last4', 'active',
+        'customer_id', 'card_last4', 'card_type',
+        'active',
     ];
 
     protected $hidden = [
@@ -25,6 +26,13 @@ class Member extends Authenticatable
     protected $casts = [
         'password' => 'hashed',
     ];
+
+    public function getAvatarAttribute() {
+        if (is_file(public_path($this->attributes['avatar']))) {
+            return asset($this->attributes['avatar']);
+        }
+        return asset('img/user-profile.png');
+    }
 
     public function scopeActive($query) {
         $query->where('active', true);
@@ -42,23 +50,24 @@ class Member extends Authenticatable
         return $this->hasOne(MemberProfile::class);
     }
 
-    public function getInfo($member) {
-        $member['original_pass'] = !empty($member['original_pass']);
-        if ($member['avatar'] && file_exists(public_path($member['avatar']))) {
-            $member['avatar'] = asset($member['avatar']);
-        } else {
-            $member['avatar'] = null;
-        }
-        $member['profile'] = $member['profile'];
-        $member['location'] = $member['location'];
-        if ($member['location']) {
-            if ($member['location']['image'] && file_exists(public_path($member['location']['image']))) {
-                $member['location']['image'] = asset($member['location']['image']);
-            } else {
-                $member['location']['image'] = null;
-            }
-        }
-        $member['plan'] = $member['plan'];
-        return $member;
+    public function activities() {
+        return $this->hasMany(Activity::class);
+    }
+
+    public function invoices() {
+        return $this->hasMany(Invoice::class);
+    }
+
+    public function removeAvatar() {
+        $avatar = public_path($this->attributes['avatar']);
+        if (is_file($avatar)) unlink($avatar);
+    }
+
+    public function getInfo() {
+        $this['original_pass'] = !empty($this->original_pass);
+        $this['profile'] = $this->profile;
+        $this['location'] = $this->location;
+        $this['plan'] = $this->plan;
+        return $this;
     }
 }

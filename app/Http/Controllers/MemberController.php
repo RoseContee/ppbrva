@@ -16,11 +16,6 @@ class MemberController extends Controller
     public function index() {
         $members = Member::with(['plan'])->get();
         foreach ($members as $member) {
-            if ($member['avatar'] && file_exists(public_path($member['avatar']))) {
-                $member['avatar'] = asset($member['avatar']);
-            } else {
-                $member['avatar'] = asset('img/user-profile.svg');
-            }
             $member['plan_name'] = $member['plan']['name'] ?? '';
             $member['original_pass'] = !empty($member['original_pass']);
         }
@@ -46,18 +41,14 @@ class MemberController extends Controller
             'plan' => ['required', 'exists:plans,id'],
             'avatar' => ['nullable', 'image'],
         ]);
-        $name = $request['name'];
-        $email = $request['email'];
-        $phone = $request['phone'];
-
         $clover = new Clover();
         $customer = $clover->createCustomer([
-            'name' => $name,
-            'email' => $email,
-            'phone' => $phone,
+            'name' => $request['name'],
+            'email' => $request['email'],
+            'phone' => $request['phone'],
         ]);
-        if (!$customer) {
-            return back()->with('error_message', 'Clover API error.');
+        if (empty($customer['id'])) {
+            return back()->with('error_message', $customer);
         }
         $password = Str::random(8);
         $member = Member::create([
@@ -81,7 +72,7 @@ class MemberController extends Controller
             $member['memberID'] = 'PPB'.$member['id'];
         }
         $member->save();
-        $member->profile()->create([
+        $member->profile()->updateOrCreate([
             'member_id' => $member['id'],
         ]);
         if ($this->notifyInvite($member)) {
@@ -114,41 +105,51 @@ class MemberController extends Controller
             'plan' => ['required', 'exists:plans,id'],
             'avatar' => ['nullable', 'image'],
         ]);
-        $name = $request['name'];
-        $email = $request['email'];
-        $phone = $request['phone'];
-
-        if ($member['name'] != $name
-            || $member['email'] != $email
-            || $member['phone'] != $phone
+        if ($member['name'] != $request['name']
+            || $member['email'] != $request['email']
+            || $member['phone'] != $request['phone']
         ) {
             $clover = new Clover();
-            $clover->updateCustomer($member['customer_id'], [
-                'name' => $name,
-                'email' => $email,
-                'phone' => $phone,
+            $customer = $clover->getCustomer($member['customer_id']);
+            if (empty($customer['id'])) {
+                return back()->with('error_message', $customer);
+            }
+            $customer = $clover->updateCustomer($member['customer_id'], [
+                'name' => $request['name'],
+                'email' => [
+                    'id' => $customer['emailAddresses']['elements'][0]['id'] ?? '',
+                    'value' => $request['email'],
+                ],
+                'phone' => [
+                    'id' => $customer['phoneNumbers']['elements'][0]['id'] ?? '',
+                    'value' => $request['phone'],
+                ],
             ]);
+            if (empty($customer['id'])) {
+                return back()->with('error_message', $customer);
+            }
+            $member['name'] = $request['name'];
+            $member['email'] = $request['email'];
+            $member['phone'] = $request['phone'];
         }
-        $member['name'] = $name;
-        $member['email'] = $email;
-        $member['phone'] = $phone;
         $member['location_id'] = $request['location'];
         $member['plan_id'] = $request['plan'];
         if ($request->hasFile('avatar')) {
-            if ($member['avatar'] && file_exists(public_path($member['avatar']))) {
-                unlink(public_path($member['avatar']));
-            }
+            $member->removeAvatar();
             $member['avatar'] = 'uploads/'.$request->file('avatar')->store('avatars');
         }
         $member['active'] = !empty($request['status']);
         $member->save();
+        $member->profile()->updateOrCreate([
+            'member_id' => $member['id'],
+        ]);
         return back()->with('info_message', 'Member has been updated.');
     }
 
     public function destroy(Request $request) {
         $members = explode(',', $request['members']);
         Member::whereIn('id', $members)->delete();
-        return back()->with('error_message', 'Members has been removed.');
+        return back()->with('error_message', 'Members have been removed.');
     }
 
     public function sendInvite(Request $request) {

@@ -60,6 +60,6 @@ class PlanController extends Controller
     public function destroy(Request $request) {
         $plans = explode(',', $request['plans']);
         Plan::whereIn('id', $plans)->delete();
-        return back()->with('error_message', 'Plans has been removed.');
+        return back()->with('error_message', 'Plans have been removed.');
     }
 }

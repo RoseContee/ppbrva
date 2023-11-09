@@ -5,7 +5,8 @@ import {
   View
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { useAppDispatch, useAppSelector } from '../../store';
+import { launchImageLibrary, Asset } from 'react-native-image-picker';
+import store, { useAppDispatch, useAppSelector } from '../../store';
 import { saveMe, getMe, getProfile } from '../../store/user';
 import axios, { getErrorMessage } from '../../utils/axios';
 import MaskInput from 'react-native-mask-input';
@@ -28,6 +29,7 @@ const MemberProfile: FC = (): JSX.Element => {
   const profile = useAppSelector(getProfile);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string>();
+  const [avatar, setAvatar] = useState<Asset | string | undefined>(me.avatar);
   const [name, setName] = useState<string>(me.name);
   const [email, setEmail] = useState<string>(me.email);
   const [phone, setPhone] = useState<string>(me.phone);
@@ -39,9 +41,25 @@ const MemberProfile: FC = (): JSX.Element => {
         navigation.navigate('Profile' as never);
         return true;
       });
-      return () => subscribe.remove();
+      return () => {
+        const me = store.getState().user.me;
+        setMessage('');
+        setAvatar(me.avatar);
+        setName(me.name);
+        setEmail(me.email);
+        setPhone(me.phone);
+        setShare(!!((me || {}).profile || {}).share_age_gender);
+        subscribe.remove();
+      }
     }, [])
   );
+
+  const chooseAvatar = () => {
+    launchImageLibrary({mediaType: 'photo'}, (response) => {
+      if (response.didCancel) setAvatar(me.avatar);
+      else setAvatar(response.assets ? response.assets[0] : undefined);
+    });
+  };
 
   const updateProfile = () => {
     if (!name) {
@@ -54,8 +72,22 @@ const MemberProfile: FC = (): JSX.Element => {
     }
     setLoading(true);
     setMessage('');
-    axios.post(`profile`, {
-      name, email, phone, share
+    const formData = new FormData();
+    if (avatar && typeof avatar !== 'string') {
+      formData.append('avatar', {
+        uri: avatar.uri,
+        name: avatar.fileName,
+        type: avatar.type
+      });
+    }
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('phone', phone);
+    formData.append('share', share);
+    axios.post(`profile`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
     }).then(({ data: { user } }) => {
       dispatch(saveMe(user));
       setMessage('Profile has been updated.');
@@ -67,8 +99,12 @@ const MemberProfile: FC = (): JSX.Element => {
   return (
     <Layouts loading={loading}>
       <View style={[t.itemsCenter, t.mT10]}>
-        <ProfileImage image={me.avatar} style={[s.profileImage]} />
-        <Link style={[t.textLg, t.mT3]}>Change Avatar</Link>
+        <ProfileImage image={avatar} style={[s.profileImage]} />
+        <Link style={[t.textLg, t.mT3]}
+          onPress={chooseAvatar}
+        >
+          Change Avatar
+        </Link>
       </View>
       <Message style={[t.mT4]} text={message} />
       <View style={[s.pX7]}>
@@ -95,6 +131,14 @@ const MemberProfile: FC = (): JSX.Element => {
           value={share} onChange={() => setShare(!share)}
         />
         <Button style={[s.bgPrimary, t.mT10]}
+          disabled={
+            !name || !email ||
+            (avatar === me.avatar
+            && name === me.name
+            && email === me.email
+            && phone === me.phone
+            && share === !!profile.share_age_gender)
+          }
           onPress={updateProfile}
         >
           Update

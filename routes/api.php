@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\SettingsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,8 +28,13 @@ Route::prefix('app')->group(function() {
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('me', [ProfileController::class, 'me']);
         Route::post('profile', [ProfileController::class, 'updateProfile']);
-        Route::post('update-card', [ProfileController::class, 'updateCard']);
+        Route::post('update-billing', [ProfileController::class, 'updateBilling']);
         Route::post('update-password', [ProfileController::class, 'updatePassword']);
+        Route::prefix('settings')->group(function() {
+            Route::get('appicons', [SettingsController::class, 'appicons']);
+            Route::get('plans', [SettingsController::class, 'plans']);
+        });
+        Route::post('plan-change-request', [SettingsController::class, 'planChangeRequest']);
         Route::get('logout', function (Request $request) {
             $request->user()->currentAccessToken()->delete();
             return response()->json(null, 204);

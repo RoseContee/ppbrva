@@ -15,13 +15,19 @@
                                     Manage Plans
                                 </a>
                             </li>
-                            <li class="py-2">
+                            <li class="pt-2">
                                 <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
                                    href="{{ route('settings.roles.index') }}">
                                     Manage Roles
                                 </a>
                             </li>
-                            <li>
+                            <li class="pt-2">
+                                <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
+                                   href="{{ route('settings.categories.index') }}">
+                                    Transaction Categories
+                                </a>
+                            </li>
+                            <li class="pt-2">
                                 <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
                                    href="{{ route('settings.appicons.index') }}">
                                     Dashboard Icons

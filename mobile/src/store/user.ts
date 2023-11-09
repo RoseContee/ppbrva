@@ -4,7 +4,7 @@ import { RootState } from '.';
 interface StateProps {
   access_token: string | null,
   me: any
-};
+}
 
 const initialState: StateProps = {
   access_token: null,

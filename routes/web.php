@@ -9,6 +9,7 @@ use App\Http\Controllers\UsersController;
 use App\Http\Controllers\Settings\IndexController as SettingsController;
 use App\Http\Controllers\Settings\PlanController;
 use App\Http\Controllers\Settings\RoleController;
+use App\Http\Controllers\Settings\CategoryController;
 use App\Http\Controllers\Settings\AppiconsController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,7 @@ Route::middleware(['auth', 'role'])->group(function () {
     ]);
     Route::post('members/send-invite', [MemberController::class, 'sendInvite'])->name('members.send-invite');
     Route::delete('members', [MemberController::class, 'destroy'])->name('members.destroy');
+    Route::delete('activity', [ActivityController::class, 'destroy'])->name('activity.destroy');
     Route::delete('users', [UsersController::class, 'destroy'])->name('users.destroy');
 
     Route::prefix('settings')->group(function () {
@@ -46,12 +48,14 @@ Route::middleware(['auth', 'role'])->group(function () {
         Route::resources([
             'plans' => PlanController::class,
             'roles' => RoleController::class,
+            'categories' => CategoryController::class,
             'appicons' => AppiconsController::class,
         ], [
             'as' => 'settings'
         ]);
         Route::delete('plans', [PlanController::class, 'destroy'])->name('settings.plans.destroy');
         Route::delete('roles', [RoleController::class, 'destroy'])->name('settings.roles.destroy');
+        Route::delete('categories', [CategoryController::class, 'destroy'])->name('settings.categories.destroy');
     });
 
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');

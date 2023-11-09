@@ -79,6 +79,6 @@ class RoleController extends Controller
     public function destroy(Request $request) {
         $roles = explode(',', $request['roles']);
         Role::whereIn('id', $roles)->delete();
-        return back()->with('error_message', 'Roles has been removed.');
+        return back()->with('error_message', 'Roles have been removed.');
     }
 }

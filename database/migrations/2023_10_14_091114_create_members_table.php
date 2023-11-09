@@ -23,8 +23,8 @@ return new class extends Migration
             $table->integer('plan_id');
             $table->string('avatar')->nullable();
             $table->string('customer_id');
-            $table->string('card_id')->nullable();
             $table->string('card_last4', 4)->nullable();
+            $table->enum('card_type', ['visa', 'mc', 'amex', 'discover', 'diners_club', 'jcb', 'unknown'])->default('unknown');
             $table->boolean('active')->nullable()->default(true);
             $table->timestamps();
             $table->softDeletes();

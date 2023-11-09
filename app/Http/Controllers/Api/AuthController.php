@@ -35,7 +35,7 @@ class AuthController extends Controller
         }
         return response()->json([
             'access_token' => $member->createToken($request['device'])->plainTextToken,
-            'user' => $member->getInfo($member),
+            'user' => $member->getInfo(),
         ]);
     }
 

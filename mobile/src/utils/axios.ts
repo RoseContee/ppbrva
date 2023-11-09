@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import store from '../store';
 
-const SERVER_URL = 'http://192.168.137.100/ppbrva/public';
+const SERVER_URL = 'http://192.168.137.9/ppbrva/public';
 // const SERVER_URL = 'https://app.ppbrva.com';
 
 const axios = Axios.create({

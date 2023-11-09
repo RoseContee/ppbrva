@@ -9,7 +9,7 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">
-                        {{ $add ? 'Add' : 'Edit' }} Member
+                        {{ $add ? 'Add' : 'Edit' }} Member @if (!$add) #{{ $member['memberID'] }} @endif
                     </h2>
 
                     <x-messages />
@@ -23,7 +23,7 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
                             @endif
                             <div class="w-full max-w-lg">
                                 <div class="flex flex-wrap -mx-3 mb-6">
-                                    <div class="w-full px-3 mb-6 md:mb-0">
+                                    <div class="w-full px-3">
                                         <label for="name" class="block uppercase tracking-wide text-gray-900 text-xs font-bold mb-2">
                                             Member Name
                                         </label>
@@ -189,7 +189,7 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
                 setup() {
                     const original_avatar = '{{ $add || !$member['avatar'] ? '' : asset($member['avatar']) }}';
                     const avatar = ref(original_avatar);
-                    const selectAvatar = (e) => {
+                    const selectAvatar = e => {
                         const files = e.target.files;
                         if (!files.length) {
                             avatar.value = original_avatar;

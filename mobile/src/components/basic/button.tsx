@@ -4,6 +4,7 @@ import {
   Text,
   TextStyle,
   TouchableOpacity,
+  View,
   ViewStyle
 } from 'react-native';
 
@@ -15,6 +16,7 @@ interface IProps {
   onPress: () => void,
   style?: StyleProp<ViewStyle>,
   titleStyle?: StyleProp<TextStyle>,
+  disabled?: boolean,
 }
 
 const Button: FC<IProps> = ({
@@ -22,13 +24,25 @@ const Button: FC<IProps> = ({
   onPress,
   style,
   titleStyle,
+  disabled,
 }): JSX.Element => {
   return (
-    <TouchableOpacity style={[s.btn, style]} onPress={() => onPress()}>
-      <Text style={[s.fontButtonBold, t.textLg, t.textWhite, t.uppercase, titleStyle]}>
-        { children }
-      </Text>
-    </TouchableOpacity>
+    <>
+      {
+        disabled ?
+        <View style={[s.btn, style, {opacity: 0.6}]}>
+          <Text style={[s.fontButtonBold, t.textLg, t.textWhite, t.uppercase, titleStyle]}>
+            { children }
+          </Text>
+        </View>
+        :
+        <TouchableOpacity style={[s.btn, style]} onPress={() => onPress()}>
+          <Text style={[s.fontButtonBold, t.textLg, t.textWhite, t.uppercase, titleStyle]}>
+            { children }
+          </Text>
+        </TouchableOpacity>
+      }
+    </>
   )
 };
 

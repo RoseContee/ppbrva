@@ -80,6 +80,6 @@ class UsersController extends Controller
             return $id != 1;
         });
         User::whereIn('id', $users)->delete();
-        return back()->with('error_message', 'Users has been removed.');
+        return back()->with('error_message', 'Users have been removed.');
     }
 }

@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import {
   StyleProp,
   View,
@@ -10,27 +10,36 @@ import IconDown from '../../assets/img/icons/arrow-down.svg';
 import s from '../../utils/styles';
 import theme from '../../utils/theme';
 
-export interface SelectItemProps {
+interface IItemProps {
   label: string,
   value: string,
 }
 
 interface IProps {
-  data: SelectItemProps[],
-  onChange: (value: SelectItemProps, index: number) => void,
+  data: IItemProps[],
+  value?: IItemProps | null,
+  onChange: (value: IItemProps, index: number) => void,
   style?: StyleProp<ViewStyle>,
   placeholder?: string,
 }
 
 const Select: FC<IProps> = ({
   data,
+  value,
   onChange,
   style,
   placeholder,
 }): JSX.Element => {
+  const selectRef = useRef<SelectDropDown>(null);
+
+  useEffect(() => {
+    if (!value) selectRef.current?.reset();
+  }, [value]);
+
   return (
     <View style={[s.selectContainer, style]}>
       <SelectDropDown
+        ref={selectRef}
         buttonStyle={[s.selectButton]}
         buttonTextStyle={[s.selectButtonText]}
         rowStyle={{height: 50}}
@@ -40,8 +49,8 @@ const Select: FC<IProps> = ({
             width={theme.size.inputIcon} height={theme.size.inputIcon}
           />
         )}
-        buttonTextAfterSelection={(item: SelectItemProps) => item.label}
-        rowTextForSelection={(item: SelectItemProps) => item.label}
+        buttonTextAfterSelection={(item: IItemProps) => item.label}
+        rowTextForSelection={(item: IItemProps) => item.label}
         defaultButtonText={placeholder}
         data={data}
         onSelect={onChange}

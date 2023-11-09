@@ -4,37 +4,35 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">
-                        {{ __('Activity') }}
+                        Activity
                     </h2>
+
+                    <x-messages />
 
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg py-4">
                         <div class="flex items-center justify-between p-4 bg-white dark:bg-gray-900">
                             <div>
-                                <button id="dropdownActionButton" data-dropdown-toggle="dropdownAction" class="inline-flex items-center text-gray-500 bg-white border border-slate-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" type="button">
+                                <button class="inline-flex items-center text-gray-500 bg-white border border-slate-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                                        v-on:click="toggleMenu">
                                     <span class="sr-only">Action button</span>
                                     Action
                                     <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                                     </svg>
                                 </button>
-                                <div id="dropdownAction" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
-                                    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownActionButton">
+                                <div class="absolute hidden z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
+                                     :style="{display: showMenu ? 'block' : 'none'}">
+                                    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
                                         <li>
-                                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Reward</a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Promote</a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Activate account</a>
+                                            <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                               href="javascript:void(0);"
+                                               v-on:click="deleteItems">
+                                                Delete
+                                            </a>
                                         </li>
                                     </ul>
-                                    <div class="py-1">
-                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete User</a>
-                                    </div>
                                 </div>
                             </div>
-
 
                             <label for="table-search" class="sr-only">Search</label>
                             <div class="relative">
@@ -43,12 +41,15 @@
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                                     </svg>
                                 </div>
-                                <input type="text" id="table-search-users" class="block p-2 pl-10 text-sm text-gray-900 border border-slate-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search by keyword...">
+                                <input class="block p-2 pl-10 text-sm text-gray-900 border border-slate-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                       type="text"
+                                       placeholder="Search by keyword..."
+                                       v-model="keyword">
                             </div>
 
                             <a class="inline-flex items-center px-4 py-2 bg-blue border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
                                href="{{ route('activity.create') }}">
-                                + Add Transaction
+                                + Add Activity
                             </a>
                         </div>
                         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-2">
@@ -56,168 +57,192 @@
                                 <tr class="bg-zinc-100 text-navy">
                                     <th scope="col" class="p-4">
                                         <div class="flex items-center">
-                                            <input id="checkbox-all-search" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                            <label for="checkbox-all-search" class="sr-only">checkbox</label>
+                                            <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                   type="checkbox"
+                                                   id="select-all"
+                                                   v-model="selectedAll"
+                                                   v-on:change="e => selectAll(e.target.checked)">
+                                            <label for="select-all" class="sr-only">Select All</label>
                                         </div>
                                     </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        Member
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        Category
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        Item
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        Amount
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 items-center">
-                                    </th>
+                                    <th scope="col" class="px-6 py-3">Member</th>
+                                    <th scope="col" class="px-6 py-3">Category</th>
+                                    <th scope="col" class="px-6 py-3">Detail</th>
+                                    <th scope="col" class="px-6 py-3">Amount</th>
+                                    <th scope="col" class="px-6 py-3 items-center"></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                                    v-for="(activity, index) in filteredActivities" key="index">
                                     <td class="w-4 p-4">
-                                        <div class="flex items-center">
-                                            <input id="checkbox-table-search-1" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                            <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
+                                        <div class="flex items-center"
+                                             v-if="activity.from === 'admin' && !activity.invoice_id">
+                                            <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                   type="checkbox"
+                                                   :id="'activity-' + activity.id"
+                                                   :checked="selectedItems.includes(activity.id)"
+                                                   v-on:change="e => selectItem(activity, e.target.checked)">
+                                            <label :for="'activity-' + activity.id" class="sr-only">Select</label>
                                         </div>
                                     </td>
                                     <td scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                                        <img class="w-10 h-10 rounded-full" src="{{ url('/img/profile-picture-1.jpg') }}" alt="Jese image">
-                                        <div class="pl-3">
-                                            <div class="text-base font-semibold"><a href="#" class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray">Neil Sims</a></div>
-                                            <div class="font-normal text-gray-500">#PPB1054</div>
+                                        <img class="w-10 h-10 rounded-full"
+                                             :src="activity.member.avatar"
+                                             :alt="activity.member.name"
+                                             v-if="activity.member">
+                                        <div class="pl-3" v-if="activity.member">
+                                            <div class="text-base font-semibold">
+                                                <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
+                                                   :href="'{{ route('members.index') }}/' + activity.member.id + '/edit'"
+                                                   v-text="activity.member.name"></a>
+                                            </div>
+                                            <div class="font-normal text-gray-500"
+                                                 v-text="'#' + activity.member.memberID"></div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4">
-                                        Food &amp; Beverage
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        Club Sandwich Combo
-                                    </td>
-                                    <td class="px-6 py-4">
-                                             $18.92
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <a href="#" class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray">Edit</a>
+                                    <td class="px-6 py-4" v-text="activity.category"></td>
+                                    <td class="px-6 py-4" v-text="activity.detail"></td>
+                                    <td class="px-6 py-4" v-text="currencyFormat(activity.price)"></td>
+                                    <td class="px-6 py-4 text-center">
+                                        <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
+                                           :href="'{{ route('activity.index') }}/' + activity.id + '/edit'"
+                                           v-if="activity.from === 'admin' && !activity.invoice_id">
+                                            Edit
+                                        </a>
                                     </td>
                                 </tr>
-                                <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td class="w-4 p-4">
-                                        <div class="flex items-center">
-                                            <input id="checkbox-table-search-2" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                            <label for="checkbox-table-search-2" class="sr-only">checkbox</label>
-                                        </div>
-                                    </td>
-                                    <th scope="row" class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        <img class="w-10 h-10 rounded-full" src="{{ url('/img/profile-picture-3.jpg') }}" alt="Jese image">
-                                        <div class="pl-3">
-                                            <div class="text-base font-semibold"><a href="#" class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray">Bonnie Green</a></div>
-                                            <div class="font-normal text-gray-500">#PPB1023</div>
-                                        </div>
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        Lessons
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        1-Hour, Sandy Roads
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        $75.00
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <a href="#" class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray">Edit</a>
-                                    </td>
-                                </tr>
-                                <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td class="w-4 p-4">
-                                        <div class="flex items-center">
-                                            <input id="checkbox-table-search-2" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                            <label for="checkbox-table-search-2" class="sr-only">checkbox</label>
-                                        </div>
-                                    </td>
-                                    <th scope="row" class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        <img class="w-10 h-10 rounded-full" src="{{ url('/img/profile-picture-2.jpg') }}" alt="Jese image">
-                                        <div class="pl-3">
-                                            <div class="text-base font-semibold"><a href="#" class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray">Jese Leos</a></div>
-                                            <div class="font-normal text-gray-500">#PPB1011</div>
-                                        </div>
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        Rentals
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        1-Hour, Ball Machine
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        $27.50
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <a href="#" class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray">Edit</a>
-                                    </td>
-                                </tr>
-                                <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td class="w-4 p-4">
-                                        <div class="flex items-center">
-                                            <input id="checkbox-table-search-2" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                            <label for="checkbox-table-search-2" class="sr-only">checkbox</label>
-                                        </div>
-                                    </td>
-                                    <th scope="row" class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        <img class="w-10 h-10 rounded-full" src="{{ url('/img/profile-picture-5.jpg') }}" alt="Jese image">
-                                        <div class="pl-3">
-                                            <div class="text-base font-semibold"><a href="#" class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray">Thomas Lean</a></div>
-                                            <div class="font-normal text-gray-500">#PPB1076</div>
-                                        </div>
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        Merchandise
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        Wilson Pickleballs, 4-count
-                                    </td>
-                                    <td class="px-6 py-4">
-                                       $9.95
-                                    </td>
-                                    <td class="px-6 py-4 items-center">
-                                        <a href="#" class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray">Edit</a>
-                                    </td>
-                                </tr>
-                                <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <td class="w-4 p-4">
-                                        <div class="flex items-center">
-                                            <input id="checkbox-table-search-3" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                            <label for="checkbox-table-search-3" class="sr-only">checkbox</label>
-                                        </div>
-                                    </td>
-                                    <th scope="row" class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        <img class="w-10 h-10 rounded-full" src="{{ url('/img/profile-picture-4.jpg') }}" alt="Jese image">
-                                        <div class="pl-3">
-                                            <div class="text-base font-semibold"><a href="#" class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray">Leslie Livingston</a></div>
-                                            <div class="font-normal text-gray-500">#PPB1003</div>
-                                        </div>
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        Court Fees
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        2-Hours, Court #16
-
-                                    </td>
-                                    <td class="px-6 py-4">
-                                       $50.00
-                                    </td>
-                                    <td class="px-6 py-4 items-center">
-                                        <a href="#" class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray">Edit</a>
+                                <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                                    v-if="!filteredActivities.length">
+                                    <td class="px-6 py-4 italic" colspan="6">
+                                        No activities found.
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
+
+                        <nav class="flex items-center justify-between text-sm p-4"
+                             v-if="activities.length">
+                            <span v-text="pagination_info"></span>
+                            <ul class="flex -space-x-px h-8">
+                                <li>
+                                    <a class="flex items-center justify-center bg-white border border-slate-300 focus:outline-none hover:bg-gray-100 focus:ring-gray-200 font-medium rounded-l-lg text-sm px-3 h-8 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 text-gray-500"
+                                       :class="{'cursor-not-allowed': firstPage}"
+                                       v-on:click="prevPage">
+                                        <span class="sr-only">Previous</span>
+                                        <svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+                                        </svg>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="flex items-center justify-center bg-white border border-slate-300 focus:outline-none hover:bg-gray-100 focus:ring-gray-200 font-medium rounded-r-lg text-sm px-3 h-8 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 text-gray-500"
+                                       :class="{'cursor-not-allowed': lastPage}"
+                                       v-on:click="nextPage">
+                                        <span class="sr-only">Next</span>
+                                        <svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                                        </svg>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <form name="deleteForm" action="{{ route('activity.destroy') }}" method="POST">
+        @csrf
+        @method('DELETE')
+        <input type="hidden" name="activities" v-model="selectedItems">
+    </form>
+
+    @push('scripts')
+        <script type="module">
+            const { createApp, ref, computed } = Vue
+
+            createApp({
+                setup() {
+                    const per_page = 50;
+                    const activities = ref({!! $activities !!});
+                    const keyword = ref('');
+                    const page = ref(1);
+                    const pagination_info = computed(() => {
+                        const total = activities.value.length;
+                        const from = (page.value - 1) * per_page + 1;
+                        const to = Math.min(page.value * per_page, total);
+                        return `From ${from} to ${to} of ${total} activities`;
+                    });
+                    const firstPage = computed(() => page.value === 1);
+                    const prevPage = () => {
+                        if (!firstPage.value) page.value--;
+                    }
+                    const lastPage = computed(() => page.value * per_page >= activities.value.length);
+                    const nextPage = () => {
+                        if (!lastPage.value) page.value++;
+                    }
+                    const filteredActivities = computed(() => {
+                        return activities.value.filter((activity, index) => {
+                            const q = keyword.value.toLowerCase();
+                            return ((activity.member
+                                        && (activity.member.name.toLowerCase().indexOf(q) !== -1
+                                            || activity.member.memberID.toLowerCase().indexOf(q) !== -1
+                                        )
+                                    ) || activity.category.toLowerCase().indexOf(q) !== -1
+                                    || activity.detail.toLowerCase().indexOf(q) !== -1
+                                ) && (page.value - 1) * per_page <= index
+                                && index < Math.min(page.value * per_page, activities.value.length);
+                        });
+                    });
+                    const selectedAll = ref(false);
+                    const selectedItems = ref([]);
+                    const selectAll = (checked) => {
+                        if (checked) {
+                            selectedItems.value = activities.value
+                                .filter(activity => activity.from === 'admin' && !activity.invoice_id)
+                                .map(item => item.id);
+                        } else {
+                            selectedItems.value = [];
+                        }
+                    }
+                    const selectItem = (item, checked) => {
+                        if (checked) selectedItems.value.push(item.id);
+                        else selectedItems.value = selectedItems.value.filter(el => el !== item.id);
+                        let all = true;
+                        activities.value
+                            .filter(activity => activity.from === 'admin' && !activity.invoice_id)
+                            .forEach(item => {
+                                if (!selectedItems.value.includes(item.id)) all = false;
+                            });
+                        selectedAll.value = all;
+                    };
+                    const showMenu = ref(false);
+                    const toggleMenu = () => {
+                        showMenu.value = !showMenu.value;
+                    }
+                    const deleteItems = () => {
+                        toggleMenu();
+                        if (selectedItems.value.length && confirm('Are you sure to delete?')) {
+                            document.deleteForm.submit();
+                        }
+                    }
+                    const currencyFormat = value => {
+                        return new Intl.NumberFormat('en-US', {
+                            style: 'currency',
+                            currency: 'USD',
+                        }).format(value);
+                    }
+
+                    return {
+                        activities, keyword,
+                        pagination_info, firstPage, prevPage, lastPage, nextPage, filteredActivities,
+                        selectedAll, selectAll, selectedItems, selectItem,
+                        showMenu, toggleMenu, deleteItems,
+                        currencyFormat,
+                    }
+                }
+            }).mount('#app');
+        </script>
+    @endpush
 </x-app-layout>

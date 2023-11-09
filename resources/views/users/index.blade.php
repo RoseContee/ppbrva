@@ -110,6 +110,12 @@
                                         </a>
                                     </td>
                                 </tr>
+                                <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                                    v-if="!filteredUsers.length">
+                                    <td class="px-6 py-4 italic" colspan="8">
+                                        No users found.
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
 

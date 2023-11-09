@@ -3,12 +3,19 @@ import {
   BackHandler,
   Image,
   ImageSourcePropType,
+  Linking,
+  Platform,
+  TouchableOpacity,
   View,
   useWindowDimensions
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { useAppSelector } from '../store';
+import { useAppDispatch, useAppSelector } from '../store';
 import { getMe, getPlan } from '../store/user';
+import {
+  getPlayIcon, getImproveIcon, getRentIcon, getShopIcon, saveAppicons
+} from '../store/settings';
+import axios from '../utils/axios';
 import Layouts from '../components/layouts/home';
 import PageTitle from '../components/basic/page-title';
 import Message from '../components/basic/message';
@@ -29,40 +36,58 @@ import s from '../utils/styles';
 
 interface CardProps {
   cardWidth: number,
-  image: ImageSourcePropType,
+  image?: string,
+  defaultImage: ImageSourcePropType,
   imgSize: number,
   text: string,
+  onPress: () => void,
 }
 
 const CardWidget: FC<CardProps> = ({
   cardWidth,
   image,
+  defaultImage,
   imgSize,
   text,
+  onPress,
 }): JSX.Element => {
   return (
-    <Card style={[t.itemsCenter, t.p4, {width: cardWidth}]}>
-      <Image source={image} resizeMode="contain"
-        style={{width: imgSize, height: imgSize}}
-      />
-      <Title style={[s.textGray, t.text2xl]}>
-        { text }
-      </Title>
-    </Card>
+    <TouchableOpacity onPress={onPress}>
+      <Card style={[t.itemsCenter, t.p4, {width: cardWidth}]}>
+        <Image source={image ? {uri: image} : defaultImage}
+          resizeMode="contain"
+          style={{width: imgSize, height: imgSize}}
+        />
+        <Title style={[s.textGray, t.text2xl]}>
+          { text }
+        </Title>
+      </Card>
+    </TouchableOpacity>
   );
 };
 
 const Dashboard: FC = (): JSX.Element => {
   const navigation = useNavigation();
+  const dispatch = useAppDispatch();
   const me = useAppSelector(getMe);
   const plan = useAppSelector(getPlan);
+  const playIcon = useAppSelector(getPlayIcon);
+  const improveIcon = useAppSelector(getImproveIcon);
+  const rentIcon = useAppSelector(getRentIcon);
+  const shopIcon = useAppSelector(getShopIcon);
   const { width } = useWindowDimensions();
   const padding = 28; //t.p7
   const cardWidth = (width - (padding * 2) - padding) / 2;
   const cardImgSize = cardWidth - (16 * 2); //t.pX4
+  const link = Platform.OS == 'android' ? 'https://play.google.com/store/apps/details?id=com.courtreserve'
+          : 'https://apps.apple.com/us/app/courtreserve/id1392556575';
 
   useFocusEffect(
     useCallback(() => {
+      axios.get(`settings/appicons`)
+      .then(({ data: { appicons } }) => {
+        dispatch(saveAppicons(appicons));
+      });
       const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
         BackHandler.exitApp();
         return true;
@@ -75,7 +100,7 @@ const Dashboard: FC = (): JSX.Element => {
     <Layouts>
       <PageTitle title={`Welcome back ${ me.name }!`} />
       {
-        !me.card_id &&
+        !me.ecommerce_customer_id &&
         <Message style={[t.mT4]}>
           <Text style={[t.flexShrink, t.textBase, s.textGray, t.pR4]}>
             Please update your <Link onPress={() => navigation.navigate('BillingProfile' as never)}>billing profile</Link>
@@ -89,21 +114,21 @@ const Dashboard: FC = (): JSX.Element => {
       }
       <View style={[s.pX7]}>
         <View style={[t.flexRow, t.flexWrap, {gap: padding}, t.mT8]}>
-          <CardWidget cardWidth={cardWidth}
-            image={imgPlay} imgSize={cardImgSize}
-            text="Play"
+          <CardWidget cardWidth={cardWidth} defaultImage={imgPlay}
+            image={playIcon} imgSize={cardImgSize} text="Play"
+            onPress={() => Linking.openURL(link)}
           />
-          <CardWidget cardWidth={cardWidth}
-            image={imgImprove} imgSize={cardImgSize}
-            text="Improve"
+          <CardWidget cardWidth={cardWidth} defaultImage={imgImprove}
+            image={improveIcon} imgSize={cardImgSize} text="Improve"
+            onPress={() => Linking.openURL(link)}
           />
-          <CardWidget cardWidth={cardWidth}
-            image={imgRent} imgSize={cardImgSize}
-            text="Rent"
+          <CardWidget cardWidth={cardWidth} defaultImage={imgRent}
+            image={rentIcon} imgSize={cardImgSize} text="Rent"
+            onPress={() => Linking.openURL(link)}
           />
-          <CardWidget cardWidth={cardWidth}
-            image={imgShop} imgSize={cardImgSize}
-            text="Shop"
+          <CardWidget cardWidth={cardWidth} defaultImage={imgShop}
+            image={shopIcon} imgSize={cardImgSize} text="Shop"
+            onPress={() => Linking.openURL(link)}
           />
         </View>
         <View style={[t.mT8]}>

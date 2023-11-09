@@ -9,9 +9,6 @@ class LocationController extends Controller
 {
     public function index() {
         $locations = Location::orderBy('created_at', 'desc')->get();
-        foreach ($locations as $location) {
-            $location['image'] = asset($location['image']);
-        }
         return view('locations.index', [
             'locations' => $locations,
         ]);
@@ -25,6 +22,8 @@ class LocationController extends Controller
         $request->validate([
             'name' => ['required'],
             'address' => ['required'],
+            'lat' => ['required', 'numeric'],
+            'lng' => ['required', 'numeric'],
             'phone' => ['required'],
             'email' => ['required', 'email'],
             'website' => ['required', 'url'],
@@ -34,6 +33,8 @@ class LocationController extends Controller
             Location::create([
                 'name' => $request['name'],
                 'address' => $request['address'],
+                'lat' => $request['lat'],
+                'lng' => $request['lng'],
                 'phone' => $request['phone'],
                 'email' => $request['email'],
                 'website' => $request['website'],
@@ -59,6 +60,8 @@ class LocationController extends Controller
         $request->validate([
             'name' => ['required'],
             'address' => ['required'],
+            'lat' => ['required', 'numeric'],
+            'lng' => ['required', 'numeric'],
             'phone' => ['required'],
             'email' => ['required', 'email'],
             'website' => ['required', 'url'],
@@ -66,15 +69,14 @@ class LocationController extends Controller
         ]);
         $location['name'] = $request['name'];
         $location['address'] = $request['address'];
+        $location['lat'] = $request['lat'];
+        $location['lng'] = $request['lng'];
         $location['phone'] = $request['phone'];
         $location['email'] = $request['email'];
         $location['website'] = $request['website'];
         if ($request->hasFile('image')) {
-            if ($location['image'] && file_exists(public_path($location['image']))) {
-                unlink(public_path($location['image']));
-            }
-            $image = 'uploads/'.$request->file('image')->store('locations');
-            $location['image'] = $image;
+            $location->removeImage();
+            $location['image'] = 'uploads/'.$request->file('image')->store('locations');
         }
         $location->save();
         return back()->with('info_message', 'Location has been updated.');

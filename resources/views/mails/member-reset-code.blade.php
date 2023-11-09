@@ -1,64 +1,58 @@
-<table class="x_wrapper" width="100%" cellpadding="0" cellspacing="0" role="presentation"
-       style="box-sizing: border-box; background-color: #fff; margin: 0; padding: 0; width: 100%;">
+<table class="x_wrapper" role="presentation" style="width:100%; background-color:#fff;">
     <tbody>
     <tr>
-        <td align="center" style="box-sizing:border-box">
-            <table class="x_content" width="100%" cellpadding="0" cellspacing="0" role="presentation"
-                   style="box-sizing:border-box; margin:0; padding:0; width:100%">
+        <td>
+            <table class="x_content" role="presentation" style="width:100%">
                 <tbody>
                 <tr>
-                    <td class="x_header" style="box-sizing:border-box; padding:25px 0; text-align:center">
-                        <a href="{{ url('/') }}"
-                           target="_blank"
-                           style="box-sizing:border-box; color:#3d4852; font-size:19px; font-weight:bold; text-decoration:none; display:inline-block">
+                    <td class="x_header" style="padding:25px 0; text-align:center;">
+                        <a href="{{ url('/') }}" target="_blank"
+                           style="display:inline-block; color:#3d4852; font-size:19px; font-weight:bold; text-decoration:none;">
                             <img class="x_logo" src="{{ asset('img/logo.png') }}" alt="Performance Pickleball"
-                                 style="box-sizing:border-box; max-width:100%; border:none; height:120px; max-height:120px; width:120px;">
+                                 style="max-width:100%; max-height:120px; width:120px; height:120px;">
                         </a>
                     </td>
                 </tr>
                 <tr>
-                    <td class="x_body" width="100%" cellpadding="0" cellspacing="0"
-                        style="box-sizing:border-box; background-color:#fff; border-bottom:1px solid #edf2f7; border-top:1px solid #edf2f7; margin:0; padding:0; width:100%; border:hidden!important">
-                        <table class="x_inner-body" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation"
-                               style="box-sizing:border-box; background-color:#ffffff; border-color:#e8e5ef; border-radius:2px; border-width:1px; box-shadow:0 0.125rem 1rem 1px rgba(0,0,0,.075); margin:0 auto; padding:0; width:570px">
+                    <td class="x_body" style="width:100%; background-color:#fff; border:hidden!important">
+                        <table class="x_inner-body" role="presentation"
+                               style="width:570px; margin:0 auto; background-color:#ffffff; border: 1px #e8e5ef; border-radius:2px; box-shadow:0 0.125rem 1rem 1px rgba(0,0,0,.075);">
                             <tbody>
                             <tr>
-                                <td class="x_content-cell" style="box-sizing:border-box; max-width:100vw; padding:32px">
-                                    <h1 style="box-sizing:border-box; color:#1a2755; font-size:22px; font-weight:bold; margin-top:0; text-align:left">
+                                <td class="x_content-cell" style="max-width:100vw; padding:32px">
+                                    <h1 style="color:#1a2755; font-size:22px; font-weight:bold;">
                                         Hi,
                                     </h1>
-                                    <p style="box-sizing:border-box; font-size:16px; line-height:1.5em; margin-top:0; margin-bottom:24px; text-align:left">
+                                    <p style="color:#707070; font-size:16px; line-height:1.5em; margin:0 0 24px 0;">
                                         You are receiving this email because we received a password reset request for your account.
                                     </p>
-                                    <p style="box-sizing:border-box; font-size:16px; line-height:1.5em; margin-top:0; margin-bottom:24px; text-align:left">
+                                    <p style="color:#707070; font-size:16px; line-height:1.5em; margin:0 0 24px 0;">
                                         Please use following code to reset your password.
                                     </p>
-                                    <p style="box-sizing:border-box; font-size:16px; line-height:1.5em; margin-top:0; text-align:left">
-                                        <b style="text-transform: uppercase; color: #0d77bd;">{{ $code }}</b>
+                                    <p style="color:#0d77bd; font-size:16px; font-weight:bold; line-height:1.5em; margin:0;">
+                                        {{ $code }}
                                     </p>
-                                    <p style="box-sizing:border-box; font-size:16px; line-height:1.5em; margin-top:0; margin-bottom:24px; text-align:left">
+                                    <p style="color:#707070; font-size:16px; line-height:1.5em; margin:0 0 24px 0;">
                                         This code will expire in {{ $expiration }} minutes.
                                     </p>
-                                    <p style="box-sizing:border-box; font-size:16px; line-height:1.5em; margin-top:0; margin-bottom:24px; text-align:left">
+                                    <p style="color:#707070; font-size:16px; line-height:1.5em; margin:0;">
                                         If you did not request a password reset, no further action is required.
                                     </p>
-                                    <table class="x_subcopy" width="100%" cellpadding="0" cellspacing="0" role="presentation"
-                                           style="box-sizing:border-box; padding-top:25px; text-align:center;">
+                                    <table class="x_subcopy" role="presentation"
+                                           style="text-align:center; margin:24px auto 0;">
                                         <tbody>
                                         <tr>
-                                            <td style="box-sizing:border-box">
-                                                <p style="box-sizing:border-box; line-height:1.5em; margin-top:0;">
-                                                    <a href="https://apps.apple.com/us/app"
-                                                       target="_blank"
-                                                       style="text-decoration:none;">
+                                            <td>
+                                                <p style="line-height:1.5em; margin:0 0 12px 0;">
+                                                    <a href="{{ env('APP_STORE_LINK') }}" target="_blank"
+                                                       style="display:inline-block; text-decoration:none;">
                                                         <img src="{{ asset('img/app-store.png') }}" alt="App Store"
                                                              style="width:180px;" />
                                                     </a>
                                                 </p>
-                                                <p style="box-sizing:border-box; line-height:1.5em; margin-top:0;">
-                                                    <a href="https://play.google.com/store/apps"
-                                                       target="_blank"
-                                                       style="text-decoration:none;">
+                                                <p style="line-height:1.5em; margin:0;">
+                                                    <a href="{{ env('GOOGLE_PLAY_LINK') }}" target="_blank"
+                                                       style="display:inline-block; text-decoration:none;">
                                                         <img src="{{ asset('img/google-play.png') }}" alt="App Store"
                                                              style="width:180px;" />
                                                     </a>
@@ -74,22 +68,20 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="box-sizing:border-box">
-                        <table class="x_footer" align="center" width="100%" cellpadding="0" cellspacing="0" role="presentation"
-                               style="box-sizing:border-box; margin:0 auto; padding:0; text-align:center; width:100%; background-color: #0d77bd;">
+                    <td>
+                        <table class="x_footer" role="presentation"
+                               style="width:100%; margin:0 auto; text-align:center; background-color: #0d77bd;">
                             <tbody>
                             <tr>
-                                <td class="x_content-cell" align="center"
-                                    style="box-sizing:border-box; color:#fff; max-width:100vw; padding:32px;">
-                                    <p style="box-sizing:border-box; font-size:16px; font-weight: bold; line-height:1.5em; margin-top:0; margin-bottom:2px; color:#d0ff24;">
+                                <td class="x_content-cell" style="max-width:100vw; color:#fff; padding:32px;">
+                                    <p style="color:#d0ff24; font-size:16px; font-weight: bold; line-height:1.5em; margin:0 0 2px 0;">
                                         {{ config('app.name') }}
                                     </p>
-                                    <p style="box-sizing:border-box; font-size:16px; line-height:1.5em; margin-top:0; margin-bottom:32px;">
-                                        8641 Quioccasin Rd, Henrico, VA 23229
+                                    <p style="font-size:16px; line-height:1.5em; margin:0 0 32px 0;">
+                                        {{ env('CONTACT_ADDRESS') }}
                                     </p>
-                                    <p style="box-sizing:border-box; line-height:1.5em; margin-top:0; font-size:12px;">
-                                        <a href="{{ url('/') }}" target="_blank"
-                                           style="color:#d0ff24;">www.ppbrva.com</a>
+                                    <p style="font-size:12px; line-height:1.5em; margin:0;">
+                                        <a href="{{ url('/') }}" target="_blank" style="color:#d0ff24;">www.ppbrva.com</a>
                                     </p>
                                 </td>
                             </tr>

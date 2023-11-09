@@ -4,7 +4,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">
-                        {{ __('Locations') }}
+                        Locations
                     </h2>
 
                     <x-messages />
@@ -50,6 +50,9 @@
                                     Manage
                                 </a>
                             </div>
+                        </div>
+                        <div class="m-6 italic" v-if="!filteredLocations.length">
+                            No locations found.
                         </div>
                     </div>
                 </div>

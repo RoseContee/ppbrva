@@ -24,6 +24,8 @@ export default {
     },
     plugins: [forms],
     safelist: [
+        'grid-cols-7',
+
         'border-green-400',
         'bg-green-100',
         'text-green-500',
