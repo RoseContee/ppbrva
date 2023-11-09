@@ -38,7 +38,7 @@
 		</dict>
 	</dict>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string></string>
+	<string>This app requires an access to the photo library for uploading personal avatar photo.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>GillSansMT-Bold.ttf</string>
