@@ -16,7 +16,7 @@ const Color = {
   primary: '#0d77bd',
   gray: '#666667',
   border: '#e2e0e2',
-  shadow: '#f5f5f5',
+  shadow: '#555555',
   inputBg: '#f3f0f2',
   placeholder: '#575657',
   bodyBg: '#ffffff',
@@ -62,9 +62,9 @@ const Theme = {
   },
   cardShadow: {
     shadowColor: Color.shadow,
-    shadowOffset: {width: 0, height: 0},
+    shadowOffset: {width: 0, height: 1},
     shadowRadius: 0,
-    elevation: 2,
+    elevation: 1.5,
   },
 };
 

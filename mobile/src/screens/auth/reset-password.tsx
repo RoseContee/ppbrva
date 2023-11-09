@@ -18,7 +18,7 @@ const ResetPassword: FC = (): JSX.Element => {
   const route = useRoute();
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<string>('Passwords do not match. Please try again.');
+  const [message, setMessage] = useState<string>();
   const [password, setPassword] = useState<string>();
   const [password_confirmation, setPasswordConfirmation] = useState<string>();
   const resetPasswordPage = route.name === 'ResetPassword';
