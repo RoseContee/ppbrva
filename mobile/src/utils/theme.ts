@@ -63,7 +63,7 @@ const Theme = {
   },
   cardShadow: {
     shadowColor: Color.shadow,
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: {width: 1, height: 2},
     shadowOpacity: 0.5,
     shadowRadius: 0,
     elevation: 1.5,
