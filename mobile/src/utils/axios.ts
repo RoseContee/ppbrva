@@ -1,5 +1,5 @@
 import Axios from 'axios';
-import BlobUtil from 'react-native-blob-util';
+import RNFetchBlob from 'rn-fetch-blob';
 import store from '../store';
 
 // const SERVER_URL = 'http://192.168.100.30/ppbrva/public';
@@ -19,14 +19,14 @@ axios.interceptors.request.use(config => {
 
 export const downloadInvoice = (invoiceID: string) => {
   const access_token = store.getState().user.access_token;
-  return BlobUtil.config({
+  return RNFetchBlob.config({
     addAndroidDownloads : {
       useDownloadManager : true,
       notification : true,
       title : 'Invoice Downloading...',
       description : 'Downloading an invoice from ppbrva',
       mime : 'application/pdf',
-      path: `${BlobUtil.fs.dirs.DownloadDir}/${invoiceID}.pdf`,
+      path: `${RNFetchBlob.fs.dirs.DownloadDir}/${invoiceID}.pdf`,
     }
   }).fetch('GET', `${BASE_URL}/invoices/${invoiceID}/download`, {
     Authorization : `Bearer ${access_token}`,
