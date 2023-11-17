@@ -16,7 +16,7 @@ const Color = {
   primary: '#0d77bd',
   gray: '#666667',
   border: '#e2e0e2',
-  shadow: '#555555',
+  shadow: '#000000',
   inputBg: '#f3f0f2',
   placeholder: '#575657',
   bodyBg: '#ffffff',
