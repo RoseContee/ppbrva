@@ -17,15 +17,14 @@ class Role
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
-        $permissions = explode(',', $user['role']['permissions'] ?? '');
         if ($user['id'] != 1 &&
-            (($request->routeIs('dashboard') && !in_array(RoleModel::PERMISSION_DASHBOARD, $permissions))
-            || ($request->routeIs('locations.*') && !in_array(RoleModel::PERMISSION_LOCATIONS, $permissions))
-            || ($request->routeIs('members.*') && !in_array(RoleModel::PERMISSION_MEMBERS, $permissions))
-            || ($request->routeIs('activity.*') && !in_array(RoleModel::PERMISSION_ACTIVITY, $permissions))
-            || ($request->routeIs('invoices.*') && !in_array(RoleModel::PERMISSION_INVOICES, $permissions))
-            || ($request->routeIs('users.*') && !in_array(RoleModel::PERMISSION_USERS, $permissions))
-            || ($request->routeIs('settings.*') && !in_array(RoleModel::PERMISSION_SETTINGS, $permissions)))
+            (($request->routeIs('dashboard') && !$user->canAccess(RoleModel::PERMISSION_DASHBOARD))
+            || ($request->routeIs('locations.*') && !$user->canAccess(RoleModel::PERMISSION_LOCATIONS))
+            || ($request->routeIs('members.*') && !$user->canAccess(RoleModel::PERMISSION_MEMBERS))
+            || ($request->routeIs('activity.*') && !$user->canAccess(RoleModel::PERMISSION_ACTIVITY))
+            || ($request->routeIs('invoices.*') && !$user->canAccess(RoleModel::PERMISSION_INVOICES))
+            || ($request->routeIs('users.*') && !$user->canAccess(RoleModel::PERMISSION_USERS))
+            || ($request->routeIs('settings.*') && !$user->canAccess(RoleModel::PERMISSION_SETTINGS)))
         ) {
             return redirect()->route('profile.edit');
         }

@@ -1,11 +1,14 @@
 import Axios from 'axios';
+import BlobUtil from 'react-native-blob-util';
 import store from '../store';
 
 // const SERVER_URL = 'http://192.168.100.30/ppbrva/public';
 const SERVER_URL = 'https://app.ppbrva.com';
 
+const BASE_URL = `${SERVER_URL}/api/app`
+
 const axios = Axios.create({
-	baseURL: `${SERVER_URL}/api/app`,
+	baseURL: `${BASE_URL}`,
 });
 
 axios.interceptors.request.use(config => {
@@ -13,6 +16,23 @@ axios.interceptors.request.use(config => {
   config.headers.Authorization = `Bearer ${access_token}`;
   return config;
 });
+
+export const downloadInvoice = (invoiceID: string) => {
+  const access_token = store.getState().user.access_token;
+  return BlobUtil.config({
+    addAndroidDownloads : {
+      useDownloadManager : true,
+      notification : true,
+      title : 'Invoice Downloading...',
+      description : 'Downloading an invoice from ppbrva',
+      mime : 'application/pdf',
+      path: `${BlobUtil.fs.dirs.DownloadDir}/${invoiceID}.pdf`,
+    }
+  }).fetch('GET', `${BASE_URL}/invoices/${invoiceID}/download`, {
+    Authorization : `Bearer ${access_token}`,
+    Accept: 'application/json',
+  });
+};
 
 export const getErrorMessage = (error: any, defaultMessage?: string) => {
   let message;

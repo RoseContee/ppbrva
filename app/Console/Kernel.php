@@ -14,8 +14,14 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('app:get-clover-orders')
             ->everyFifteenMinutes();
+        $schedule->command('app:get-kitchen-bar-items')
+            ->daily();
+        $schedule->command('app:get-dupr')
+            ->daily();
         $schedule->command('app:create-invoices')
             ->monthly();
+        $schedule->command('app:update-clover-orders')
+            ->daily();
     }
 
     /**

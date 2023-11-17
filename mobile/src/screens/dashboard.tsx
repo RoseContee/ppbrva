@@ -11,12 +11,10 @@ import {
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../store';
-import { getMe, getPlan } from '../store/user';
-import {
-  getPlayIcon, getImproveIcon, getRentIcon, getShopIcon, saveAppicons
-} from '../store/settings';
+import { getMe } from '../store/user';
+import { getAppicons, saveAppicons } from '../store/settings';
 import axios from '../utils/axios';
-import Layouts from '../components/layouts/home';
+import Layouts from '../components/layouts';
 import PageTitle from '../components/basic/page-title';
 import Message from '../components/basic/message';
 import Link from '../components/basic/link';
@@ -70,11 +68,7 @@ const Dashboard: FC = (): JSX.Element => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const me = useAppSelector(getMe);
-  const plan = useAppSelector(getPlan);
-  const playIcon = useAppSelector(getPlayIcon);
-  const improveIcon = useAppSelector(getImproveIcon);
-  const rentIcon = useAppSelector(getRentIcon);
-  const shopIcon = useAppSelector(getShopIcon);
+  const appicons = useAppSelector(getAppicons);
   const { width } = useWindowDimensions();
   const padding = 28; //t.p7
   const cardWidth = (width - (padding * 2) - padding) / 2;
@@ -100,7 +94,7 @@ const Dashboard: FC = (): JSX.Element => {
     <Layouts>
       <PageTitle title={`Welcome back ${ me.name }!`} />
       {
-        !me.ecommerce_customer_id &&
+        !me.card_last4 &&
         <Message style={[t.mT4]}>
           <Text style={[t.flexShrink, t.textBase, s.textGray, t.pR4]}>
             Please update your <Link onPress={() => navigation.navigate('BillingProfile' as never)}>billing profile</Link>
@@ -115,24 +109,24 @@ const Dashboard: FC = (): JSX.Element => {
       <View style={[s.pX7]}>
         <View style={[t.flexRow, t.flexWrap, {gap: padding}, t.mT8]}>
           <CardWidget cardWidth={cardWidth} defaultImage={imgPlay}
-            image={playIcon} imgSize={cardImgSize} text="Play"
+            image={appicons.play} imgSize={cardImgSize} text="Play"
             onPress={() => Linking.openURL(link)}
           />
           <CardWidget cardWidth={cardWidth} defaultImage={imgImprove}
-            image={improveIcon} imgSize={cardImgSize} text="Improve"
+            image={appicons.improve} imgSize={cardImgSize} text="Improve"
             onPress={() => Linking.openURL(link)}
           />
           <CardWidget cardWidth={cardWidth} defaultImage={imgRent}
-            image={rentIcon} imgSize={cardImgSize} text="Rent"
+            image={appicons.rent} imgSize={cardImgSize} text="Rent"
             onPress={() => Linking.openURL(link)}
           />
           <CardWidget cardWidth={cardWidth} defaultImage={imgShop}
-            image={shopIcon} imgSize={cardImgSize} text="Shop"
+            image={appicons.shop} imgSize={cardImgSize} text="Shop"
             onPress={() => Linking.openURL(link)}
           />
         </View>
         <View style={[t.mT8]}>
-          <SettingCard title={plan.name} description={`Member #${ me.memberID }`}
+          <SettingCard title={me.plan?.name} description={`Member #${ me.memberID }`}
             image={me.avatar}
             onPress={() => navigation.navigate('MembershipPlan' as never)}
           />

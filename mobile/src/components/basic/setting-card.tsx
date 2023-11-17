@@ -6,9 +6,9 @@ import {
   View,
   ViewStyle
 } from 'react-native';
-import Card from '../../components/basic/card';
-import Text from '../../components/basic/text';
-import Title from '../../components/basic/title';
+import Card from './card';
+import Text from './text';
+import Title from './title';
 import IconSettings from '../../assets/img/icons/settings.svg';
 
 import { t } from 'react-native-tailwindcss';

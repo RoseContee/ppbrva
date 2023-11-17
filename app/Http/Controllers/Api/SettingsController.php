@@ -3,12 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Mail\PlanChangeRequest;
 use App\Models\Appicon;
+use App\Models\KitchenBar;
 use App\Models\Plan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Validation\Rule;
 
 class SettingsController extends Controller
 {
@@ -19,34 +17,33 @@ class SettingsController extends Controller
     }
 
     public function plans() {
-        $plans = Plan::get(['id', 'name', 'price']);
+        $plans = Plan::query()
+            ->get(['id', 'name', 'price']);
         return response()->json([
             'plans' => $plans,
         ]);
     }
 
-    public function planChangeRequest(Request $request) {
-        $member = $request->user();
-        $request->validate([
-            'plan' => [
-                'required',
-                'exists:plans,id',
-                Rule::notIn([$member['plan_id']]),
-            ],
-        ], [
-            'plan.notIn' => 'Please select another plan.',
-        ]);
-        try {
-            $plan = Plan::find($request['plan']);
-            Mail::to('info@divstrong.com')->send(new PlanChangeRequest([
-                'member' => $member,
-                'plan' => $plan['name'],
-            ]));
-        } catch (\Exception $exception) {
-            return response()->json([
-                'message' => 'Something went wrong. Please try again later.',
-            ], 500);
+    public function kitchenBars() {
+        $inventoryItems = KitchenBar::query()
+            ->orderBy('sortOrder')
+            ->orderBy('category')
+            ->get(['itemID', 'category', 'item', 'price']);
+        $items = [];
+        foreach ($inventoryItems as $item) {
+            for ($i = 0; $i < count($items); $i++) {
+                if ($items[$i]['category'] == $item['category']) break;
+            }
+            if ($i === count($items)) {
+                $items[] = [
+                    'category' => $item['category'],
+                    'data' => [],
+                ];
+            }
+            $items[$i]['data'][] = $item;
         }
-        return response()->json(null);
+        return response()->json([
+            'items' => $items,
+        ]);
     }
 }

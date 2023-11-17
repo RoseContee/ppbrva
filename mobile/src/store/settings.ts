@@ -24,10 +24,7 @@ const settingsSlice = createSlice({
   },
 });
 
-export const { saveAppicons } = settingsSlice.actions;
-export const getPlayIcon = (state: RootState) => state.settings.appicons.play;
-export const getImproveIcon = (state: RootState) => state.settings.appicons.improve;
-export const getRentIcon = (state: RootState) => state.settings.appicons.rent;
-export const getShopIcon = (state: RootState) => state.settings.appicons.shop;
+export const { saveAppicons } = settingsSlice.actions || {};
+export const getAppicons = (state: RootState) => state.settings.appicons;
 
 export default settingsSlice.reducer;

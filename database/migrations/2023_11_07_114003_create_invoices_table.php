@@ -12,16 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('invoices', function (Blueprint $table) {
-            $table->string('id')->primary();
+            $table->id();
+            $table->string('invoiceID')->unique();
             $table->bigInteger('member_id');
             $table->string('period');
             $table->decimal('amount');
             $table->boolean('paid')->default(false);
-            $table->string('plan_name')->nullable();
-            $table->decimal('plan_price')->nullable();
+            $table->string('plan_name');
+            $table->decimal('plan_price');
             $table->string('card_type', 11)->nullable();
             $table->string('card_last4', 4)->nullable();
             $table->dateTime('paid_at')->nullable();
+            $table->string('reason')->nullable();
             $table->timestamps();
         });
     }

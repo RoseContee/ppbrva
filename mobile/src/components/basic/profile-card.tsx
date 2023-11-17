@@ -5,47 +5,56 @@ import {
   View,
   ViewStyle
 } from 'react-native';
-import Card from '../../components/basic/card';
-import Text from '../../components/basic/text';
-import Title from '../../components/basic/title';
+import { useNavigation } from '@react-navigation/native';
+import Card from './card';
+import Text from './text';
+import Title from './title';
 import ProfileImage from './profile-image';
+import Button from './button';
+import { MemberProps } from '../../screens/members/members';
 
 import { t } from 'react-native-tailwindcss';
 import s from '../../utils/styles';
 
 interface IProps {
   style?: StyleProp<ViewStyle>,
-  image?: string,
-  dupr: number,
-  gender: string,
-  age: number,
-  matches: number,
-  wins: number,
-  losses: number,
+  isMe?: boolean,
+  needInputId?: boolean,
+  member: MemberProps,
 }
 
 const ProfileCard: FC<IProps> = ({
   style,
-  image,
-  dupr,
-  gender,
-  age,
-  matches,
-  wins,
-  losses,
+  isMe,
+  needInputId,
+  member,
 }): JSX.Element => {
+  const navigation = useNavigation();
+
   return (
     <Card style={[style]}>
       <View style={[t.flexRow, t.itemsCenter]}>
-        <ProfileImage image={image} style={[s.profileCardImage]} />
+        <ProfileImage image={member.avatar} style={[s.profileCardImage]} />
         <View style={[t.flexShrink, t.pL6]}>
           <Title style={[s.profileCardTitle]}>
-            DUPR <BaseText style={[s.fontBodyBold, t.text4xl]}>{ dupr }</BaseText>
+            DUPR <BaseText style={[s.fontBodyBold, t.text4xl]}>{ member.profile.rating }</BaseText>
           </Title>
-          <Text style={[t.textXl, s.textGray, t.mT1]}>{ gender }, { age }</Text>
+          {
+            isMe && needInputId ? (
+              <Button style={[s.bgPrimary, t.mT1]}
+                onPress={() => navigation.navigate('MemberProfile' as never)}
+              >
+                Add Dupr ID
+              </Button>
+            ) : isMe || member.profile.share_age_gender ? (
+              <Text style={[t.textXl, s.textGray, t.capitalize, t.mT1]}>
+                { member.profile.gender }, { member.profile.age }
+              </Text>
+            ) : (<></>)
+          }
         </View>
       </View>
-      <View style={[t.flexRow, t.itemsCenter, t.mT10]}>
+      {/* <View style={[t.flexRow, t.itemsCenter, t.mT10]}>
         <Text style={[t.textCenter, t.textSm, s.textGray, t.w1_3]}>
           MATCHES
         </Text>
@@ -58,15 +67,15 @@ const ProfileCard: FC<IProps> = ({
       </View>
       <View style={[t.flexRow, t.itemsCenter, t.mT2]}>
         <Text style={[s.fontBodyBold, t.textCenter, t.text2xl, s.textTitle, t.w1_3]}>
-          { matches }
+          { member.profile.matches }
         </Text>
         <Text style={[s.fontBodyBold, t.textCenter, t.text2xl, s.textTitle, s.borderL, s.borderR, t.w1_3]}>
-          { wins }
+          { member.profile.wins }
         </Text>
         <Text style={[s.fontBodyBold, t.textCenter, t.text2xl, s.textTitle, t.w1_3]}>
-          { losses }
+          { member.profile.losses }
         </Text>
-      </View>
+      </View> */}
     </Card>
   )
 }

@@ -40,7 +40,8 @@ Route::middleware(['auth', 'role'])->group(function () {
     ]);
     Route::post('members/send-invite', [MemberController::class, 'sendInvite'])->name('members.send-invite');
     Route::delete('members', [MemberController::class, 'destroy'])->name('members.destroy');
-    Route::delete('activity', [ActivityController::class, 'destroy'])->name('activity.destroy');
+    Route::get('invoices/{id}/download', [InvoicesController::class, 'download'])->name('invoices.download');
+    Route::post('invoices/{id}/pay', [InvoicesController::class, 'pay'])->name('invoices.pay');
     Route::delete('users', [UsersController::class, 'destroy'])->name('users.destroy');
 
     Route::prefix('settings')->group(function () {

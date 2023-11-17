@@ -78,7 +78,7 @@
                                 <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                                     v-for="(user, index) in filteredUsers" key="index">
                                     <td class="w-4 p-4">
-                                        <div class="flex items-center">
+                                        <div class="flex items-center" v-if="user.id !== 1">
                                             <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                                    type="checkbox"
                                                    :id="'user-' + user.id"
@@ -95,10 +95,10 @@
                                     <td class="px-6 py-4" v-text="user.email"></td>
                                     <td class="px-6 py-4" v-text="user.phone"></td>
                                     <td class="px-6 py-4" v-text="user.last_login"></td>
-                                    <td class="px-6 py-4" v-text="user.role_name"></td>
+                                    <td class="px-6 py-4" v-text="user.id === 1 ? 'Admin' : user.role.name"></td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center">
-                                            <div class="h-2.5 w-2.5 rounded-full bg-green-500 mr-2"
+                                            <div class="h-2.5 w-2.5 rounded-full mr-2"
                                                  :class="{'bg-green-500': user.active, 'bg-red-500': !user.active}"></div>
                                             <span v-text="user.active ? 'Active' : 'Inactive'"></span>
                                         </div>
@@ -182,9 +182,10 @@
                     }
                     const filteredUsers = computed(() => {
                         return users.value.filter((user, index) => {
-                            return (user.name.toLowerCase().indexOf(keyword.value.toLowerCase()) !== -1
-                                    || user.email.toLowerCase().indexOf(keyword.value.toLowerCase()) !== -1
-                                    || (user.phone || '').toLowerCase().indexOf(keyword.value.toLowerCase()) !== -1
+                            const q = keyword.value.toLowerCase();
+                            return (user.name.toLowerCase().includes(q)
+                                    || user.email.toLowerCase().includes(q)
+                                    || (user.phone || '').toLowerCase().includes(q)
                                 ) && (page.value - 1) * per_page <= index
                                 && index < Math.min(page.value * per_page, users.value.length);
                         });
@@ -192,16 +193,22 @@
                     const selectedAll = ref(false);
                     const selectedItems = ref([]);
                     const selectAll = (checked) => {
-                        if (checked) selectedItems.value = users.value.map(item => item.id);
-                        else selectedItems.value = [];
+                        if (checked) {
+                            selectedItems.value = users.value
+                                .filter(user => user.id !== 1)
+                                .map(item => item.id);
+                        } else {
+                            selectedItems.value = [];
+                        }
                     }
                     const selectItem = (item, checked) => {
                         if (checked) selectedItems.value.push(item.id);
                         else selectedItems.value = selectedItems.value.filter(el => el !== item.id);
                         let all = true;
-                        users.value.forEach(item => {
-                            if (!selectedItems.value.includes(item.id)) all = false;
-                        });
+                        users.value.filter(user => user.id !== 1)
+                            .forEach(item => {
+                                if (!selectedItems.value.includes(item.id)) all = false;
+                            });
                         selectedAll.value = all;
                     };
                     const showMenu = ref(false);

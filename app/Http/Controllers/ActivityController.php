@@ -10,8 +10,12 @@ use Illuminate\Http\Request;
 class ActivityController extends Controller
 {
     public function index() {
-        $activities = Activity::with(['member'])
-            ->orderBy('date', 'desc')
+        $activities = Activity::query()
+            ->with(['member'])
+            ->orderByDesc('date')
+            ->orderBy('member_id')
+            ->orderBy('category')
+            ->orderBy('detail')
             ->get();
         return view('activity.index', [
             'activities' => $activities,
@@ -19,8 +23,8 @@ class ActivityController extends Controller
     }
 
     public function create() {
-        $members = Member::get();
-        $categories = Category::get();
+        $members = Member::query()->get();
+        $categories = Category::query()->get();
         return view('activity.add', [
             'members' => $members,
             'categories' => $categories,
@@ -35,7 +39,7 @@ class ActivityController extends Controller
             'amount' => ['required', 'numeric'],
             'date' => ['required', 'date_format:m/d/Y'],
         ]);
-        Activity::create([
+        Activity::query()->create([
             'member_id' => $request['member'],
             'category' => $request['category'],
             'detail' => $request['detail'],
@@ -48,13 +52,13 @@ class ActivityController extends Controller
     }
 
     public function edit($id) {
-        $activity = Activity::where('id', $id)
-            ->where('from', 'admin')
-            ->whereNull('invoice_id')
+        $activity = Activity::query()
+            ->editable()
+            ->where('id', $id)
             ->first();
         if (!$activity) return back();
-        $members = Member::get();
-        $categories = Category::get();
+        $members = Member::query()->get();
+        $categories = Category::query()->get();
         return view('activity.add', [
             'members' => $members,
             'categories' => $categories,
@@ -63,9 +67,9 @@ class ActivityController extends Controller
     }
 
     public function update(Request $request, $id) {
-        $activity = Activity::where('id', $id)
-            ->where('from', 'admin')
-            ->whereNull('invoice_id')
+        $activity = Activity::query()
+            ->editable()
+            ->where('id', $id)
             ->first();
         if (!$activity) return back();
         $request->validate([
@@ -85,11 +89,12 @@ class ActivityController extends Controller
         return back()->with('info_message', 'Activity has been updated.');
     }
 
-    public function destroy(Request $request) {
-        Activity::whereIn('id', explode(',', $request['activities']))
-            ->where('from', 'admin')
-            ->whereNotNull('invoice_id')
+    public function destroy($id) {
+        Activity::query()
+            ->editable()
+            ->where('id', $id)
             ->delete();
-        return back()->with('error_message', 'Activities have been removed.');
+        return redirect()->route('activity.index')
+            ->with('error_message', 'Activity has been removed.');
     }
 }

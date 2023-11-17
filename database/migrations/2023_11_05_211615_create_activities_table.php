@@ -19,7 +19,7 @@ return new class extends Migration
             $table->decimal('price');
             $table->date('date');
             $table->enum('from', ['clover', 'admin'])->default('clover');
-            $table->string('invoice_id')->nullable();
+            $table->string('invoiceID')->nullable();
             $table->timestamps();
         });
     }

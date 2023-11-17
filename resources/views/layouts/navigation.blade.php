@@ -1,6 +1,5 @@
 @php
 $user = auth()->user();
-$permissions = explode(',', $user['role']['permissions'] ?? '');
 @endphp
 
 <nav x-data="{ open: false }" class="bg-white shadow-md">
@@ -16,7 +15,7 @@ $permissions = explode(',', $user['role']['permissions'] ?? '');
                 </div>
 
                 <!-- Navigation Links -->
-                @if ($user['id'] == 1 || in_array(\App\Models\Role::PERMISSION_DASHBOARD, $permissions))
+                @if ($user['id'] == 1 || $user->canAccess(\App\Models\Role::PERMISSION_DASHBOARD))
                     <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                             {{ __('Dashboard') }}
@@ -24,7 +23,7 @@ $permissions = explode(',', $user['role']['permissions'] ?? '');
                     </div>
                 @endif
 
-                @if ($user['id'] == 1 || in_array(\App\Models\Role::PERMISSION_LOCATIONS, $permissions))
+                @if ($user['id'] == 1 || $user->canAccess(\App\Models\Role::PERMISSION_LOCATIONS))
                     <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                         <x-nav-link :href="route('locations.index')" :active="request()->routeIs('locations.*')">
                             {{ __('Locations') }}
@@ -32,7 +31,7 @@ $permissions = explode(',', $user['role']['permissions'] ?? '');
                     </div>
                 @endif
 
-                @if ($user['id'] == 1 || in_array(\App\Models\Role::PERMISSION_MEMBERS, $permissions))
+                @if ($user['id'] == 1 || $user->canAccess(\App\Models\Role::PERMISSION_MEMBERS))
                     <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                         <x-nav-link :href="route('members.index')" :active="request()->routeIs('members.*')">
                             {{ __('Members') }}
@@ -40,7 +39,7 @@ $permissions = explode(',', $user['role']['permissions'] ?? '');
                     </div>
                 @endif
 
-                @if ($user['id'] == 1 || in_array(\App\Models\Role::PERMISSION_ACTIVITY, $permissions))
+                @if ($user['id'] == 1 || $user->canAccess(\App\Models\Role::PERMISSION_ACTIVITY))
                     <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                         <x-nav-link :href="route('activity.index')" :active="request()->routeIs('activity.*')">
                             {{ __('Activity') }}
@@ -48,7 +47,7 @@ $permissions = explode(',', $user['role']['permissions'] ?? '');
                     </div>
                 @endif
 
-                @if ($user['id'] == 1 || in_array(\App\Models\Role::PERMISSION_INVOICES, $permissions))
+                @if ($user['id'] == 1 || $user->canAccess(\App\Models\Role::PERMISSION_INVOICES))
                     <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                         <x-nav-link :href="route('invoices.index')" :active="request()->routeIs('invoices.*')">
                             {{ __('Invoices') }}
@@ -56,7 +55,7 @@ $permissions = explode(',', $user['role']['permissions'] ?? '');
                     </div>
                 @endif
 
-                @if ($user['id'] == 1 || in_array(\App\Models\Role::PERMISSION_USERS, $permissions))
+                @if ($user['id'] == 1 || $user->canAccess(\App\Models\Role::PERMISSION_USERS))
                     <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                         <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
                             {{ __('Users') }}
@@ -64,7 +63,7 @@ $permissions = explode(',', $user['role']['permissions'] ?? '');
                     </div>
                 @endif
 
-                @if ($user['id'] == 1 || in_array(\App\Models\Role::PERMISSION_SETTINGS, $permissions))
+                @if ($user['id'] == 1 || $user->canAccess(\App\Models\Role::PERMISSION_SETTINGS))
                     <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                         <x-nav-link :href="route('settings.index')" :active="request()->routeIs('settings.*')">
                             {{ __('Settings') }}
@@ -120,7 +119,7 @@ $permissions = explode(',', $user['role']['permissions'] ?? '');
 
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        @if ($user['id'] == 1 || in_array(\App\Models\Role::PERMISSION_DASHBOARD, $permissions))
+        @if ($user['id'] == 1 || $user->canAccess(\App\Models\Role::PERMISSION_DASHBOARD))
             <div class="pt-2 pb-3 space-y-1">
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                     {{ __('Dashboard') }}

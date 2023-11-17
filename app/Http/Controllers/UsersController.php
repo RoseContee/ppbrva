@@ -10,18 +10,14 @@ use Illuminate\Validation\Rule;
 class UsersController extends Controller
 {
     public function index() {
-        $users = User::with(['role'])->get();
-        foreach ($users as $user) {
-            $user['last_login'] = $user['last_login'] ? date('n/j/y @ g:ia', strtotime($user['last_login'])) : '';
-            $user['role_name'] = $user['id'] == 1 ? 'Admin' : $user['role']['name'] ?? '';
-        }
+        $users = User::query()->with(['role'])->get();
         return view('users.index', [
             'users' => $users,
         ]);
     }
 
     public function create() {
-        $roles = Role::get();
+        $roles = Role::query()->get();
         return view('users.add', [
             'roles' => $roles,
         ]);
@@ -34,7 +30,7 @@ class UsersController extends Controller
             'password' => ['required', 'min:8', 'confirmed'],
             'role' => ['required', 'exists:roles,id'],
         ]);
-        User::create([
+        User::query()->create([
             'name' => $request['name'],
             'email' => $request['email'],
             'password' => bcrypt($request['password']),
@@ -47,9 +43,9 @@ class UsersController extends Controller
     }
 
     public function edit($id) {
-        $user = User::find($id);
+        $user = User::query()->find($id);
         if (!$user) return back();
-        $roles = Role::get();
+        $roles = Role::query()->get();
         return view('users.add', [
             'user' => $user,
             'roles' => $roles,
@@ -57,7 +53,7 @@ class UsersController extends Controller
     }
 
     public function update(Request $request, $id) {
-        $user = User::find($id);
+        $user = User::query()->find($id);
         if (!$user) return back();
         $request->validate([
             'name' => ['required'],
@@ -76,10 +72,11 @@ class UsersController extends Controller
     }
 
     public function destroy(Request $request) {
-        $users = array_filter(explode(',', $request['users']), function($id) {
-            return $id != 1;
-        });
-        User::whereIn('id', $users)->delete();
+        $users = explode(',', $request['users']);
+        User::query()
+            ->where('id', '<>', 1)
+            ->whereIn('id', $users)
+            ->delete();
         return back()->with('error_message', 'Users have been removed.');
     }
 }

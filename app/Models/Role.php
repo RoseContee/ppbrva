@@ -9,7 +9,7 @@ class Role extends Model
 {
     use HasFactory;
 
-    const PERMISSION_DASHBOARD  = 1;
+    public const PERMISSION_DASHBOARD  = 1;
     const PERMISSION_LOCATIONS  = 2;
     const PERMISSION_MEMBERS    = 3;
     const PERMISSION_ACTIVITY   = 4;
@@ -34,11 +34,15 @@ class Role extends Model
         return $this->hasMany(User::class);
     }
 
+    public function hasPermission($permission) {
+        return in_array($permission, explode(',', $this['permissions']));
+    }
+
     public static function getPermissions() {
         return array_keys(self::PERMISSIONS);
     }
 
-    public static function gerPermissionsRule() {
+    public static function getPermissionsRule() {
         return 'in:'.implode(',', self::getPermissions());
     }
 }

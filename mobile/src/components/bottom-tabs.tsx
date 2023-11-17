@@ -48,7 +48,7 @@ const BottomTabs: FC<BottomTabBarProps> = (props): JSX.Element => {
   const { navigation, state: { index } } = props;
 
   return (
-    <View style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.bgWhite, t.pX6, t.pY3]}>
+    <View style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.bgWhite, t.pX6, t.pT3, t.pB5]}>
       <MenuItem Icon={IconActivity} text="Activity"
         color={index === 1 ? theme.color.active : theme.color.title}
         onPress={() => navigation.navigate('Activity')}

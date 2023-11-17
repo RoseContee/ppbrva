@@ -10,15 +10,27 @@ class Invoice extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id', 'member_id', 'period', 'amount', 'paid',
+        'invoiceID', 'member_id', 'period', 'amount', 'paid',
         'plan_name', 'plan_price', 'card_type', 'card_last4', 'paid_at',
+        'reason',
     ];
 
+    protected $appends = [
+        'period_timestamp',
+    ];
+
+    public function getPeriodTimeStampAttribute() {
+        return strtotime($this->attributes['period']);
+    }
+
     public function member() {
-        return $this->belongsTo(Member::class);
+        return $this->belongsTo(Member::class)->withDefault([
+            'memberID' => '',
+            'name' => '',
+        ]);
     }
 
     public function activities() {
-        return $this->hasMany(Activity::class);
+        return $this->hasMany(Activity::class, 'invoiceID', 'invoiceID');
     }
 }

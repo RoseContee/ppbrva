@@ -9,27 +9,18 @@ use Illuminate\Http\Request;
 class RoleController extends Controller
 {
     public function index() {
-        $roles = Role::with(['users'])->get();
+        $roles = Role::query()->withCount(['users'])->get();
         $all_permissions = Role::getPermissions();
         foreach ($roles as $role) {
+            $all = true; $permissions = [];
             $role_permissions = explode(',', $role['permissions']);
-            $permissions_description = 'No access to any views';
-            $permissions = [];
-            $all = true;
             foreach ($all_permissions as $permission) {
-                if (in_array($permission, $role_permissions)) {
-                    $permissions[] = Role::PERMISSIONS[$permission];
-                } else {
-                    $all = false;
-                }
+                if (!in_array($permission, $role_permissions)) $all = false;
+                else $permissions[] = Role::PERMISSIONS[$permission];
             }
-            if ($all) {
-                $permissions_description = 'Access to all views';
-            } else if (!empty($permissions)) {
-                $permissions_description = implode(', ', $permissions);
-            }
-            $role['permission'] = $permissions_description;
-            $role['usersNumber'] = count($role['users']);
+            if ($all) $role['permission'] = 'Access to all views';
+            else if (empty($permissions)) $role['permission'] = 'No access to any views';
+            else $role['permission'] = implode(', ', $permissions);
         }
         return view('settings.roles.index', [
             'roles' => $roles,
@@ -44,9 +35,9 @@ class RoleController extends Controller
         $request->validate([
             'name' => ['required'],
             'permissions' => ['required', 'array'],
-            'permissions.*' => ['required', 'numeric', Role::gerPermissionsRule()],
+            'permissions.*' => ['required', 'numeric', Role::getPermissionsRule()],
         ]);
-        Role::create([
+        Role::query()->create([
             'name' => $request['name'],
             'permissions' => implode(',', $request['permissions']),
         ]);
@@ -55,7 +46,7 @@ class RoleController extends Controller
     }
 
     public function edit($id) {
-        $role = Role::find($id);
+        $role = Role::query()->find($id);
         if (!$role) return back();
         return view('settings.roles.add', [
             'role' => $role,
@@ -63,12 +54,12 @@ class RoleController extends Controller
     }
 
     public function update(Request $request, $id) {
-        $role = Role::find($id);
+        $role = Role::query()->find($id);
         if (!$role) return back();
         $request->validate([
             'name' => ['required'],
             'permissions' => ['required', 'array'],
-            'permissions.*' => ['required', 'numeric', Role::gerPermissionsRule()],
+            'permissions.*' => ['required', 'numeric', Role::getPermissionsRule()],
         ]);
         $role['name'] = $request['name'];
         $role['permissions'] = implode(',', $request['permissions']);
@@ -78,7 +69,7 @@ class RoleController extends Controller
 
     public function destroy(Request $request) {
         $roles = explode(',', $request['roles']);
-        Role::whereIn('id', $roles)->delete();
+        Role::query()->whereIn('id', $roles)->delete();
         return back()->with('error_message', 'Roles have been removed.');
     }
 }

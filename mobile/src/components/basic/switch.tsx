@@ -11,12 +11,46 @@ import Text from './text';
 import { t } from 'react-native-tailwindcss';
 import theme from '../../utils/theme';
 
+interface ILabelProps {
+  right?: true,
+  Icon?: () => JSX.Element,
+  iconRight?: true,
+  text: string,
+  style?: StyleProp<TextStyle>,
+}
+
+const Label: FC<ILabelProps> = ({
+  right,
+  Icon,
+  iconRight,
+  text,
+  style,
+}): JSX.Element => {
+  return (
+    <View style={[t.flexShrink, t.flexRow, !right ? t.pR8 : t.pL3]}>
+      {
+        !iconRight && Icon &&
+        <Icon />
+      }
+      <Text style={[t.textLg, !iconRight ? t.pL2 : t.pR2, style]}>
+        { text }
+      </Text>
+      {
+        iconRight && Icon &&
+        <Icon />
+      }
+    </View>
+  );
+}
+
 interface IProps {
   value?: boolean,
   onChange?: (value: boolean) => void,
   style?: StyleProp<ViewStyle>,
-  label?: string,
-  labelPosition?: 'left',
+  Icon?: () => JSX.Element,
+  iconRight?: true,
+  label: string,
+  labelRight?: true,
   labelStyle?: StyleProp<TextStyle>,
 }
 
@@ -24,17 +58,22 @@ const Switch: FC<IProps> = ({
   value,
   onChange,
   style,
+  Icon,
+  iconRight,
   label,
-  labelPosition,
+  labelRight,
   labelStyle,
 }): JSX.Element => {
   return (
-    <View style={[t.flexRow, t.itemsCenter, t.justifyCenter, style]}>
+    <View style={[t.flexRow, t.itemsCenter, t.justifyBetween, style]}>
       {
-        label && labelPosition === 'left' &&
-        <Text style={[t.textXs, t.pR3, labelStyle]}>
-          { label }
-        </Text>
+        !labelRight &&
+        <Label right={labelRight}
+          Icon={Icon}
+          iconRight={iconRight}
+          text={label}
+          style={labelStyle}
+        />
       }
       <NativeSwitch
         activeText=""
@@ -52,10 +91,13 @@ const Switch: FC<IProps> = ({
         onValueChange={onChange}
       />
       {
-        label && !labelPosition &&
-        <Text style={[t.textLg, t.pL3, labelStyle]}>
-          { label }
-        </Text>
+        labelRight && 
+        <Label right={labelRight}
+          Icon={Icon}
+          iconRight={iconRight}
+          text={label}
+          style={labelStyle}
+        />
       }
     </View>
   )

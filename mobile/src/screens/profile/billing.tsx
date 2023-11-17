@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from '../../store';
 import { getMe, saveMe } from '../../store/user';
 import axios, { getErrorMessage } from '../../utils/axios';
 import MaskInput from 'react-native-mask-input';
-import Layouts from '../../components/layouts/home';
+import Layouts from '../../components/layouts';
 import SettingCard from '../../components/basic/setting-card';
 import Message from '../../components/basic/message';
 import Button from '../../components/basic/button';
@@ -73,7 +73,7 @@ const BillingProfile: FC = (): JSX.Element => {
     <Layouts loading={loading}>
       <View style={[s.pX7, t.mT5]}>
         <SettingCard title="Monthly Invoices" description="View your billing history"
-          onPress={() => navigation.navigate('Invoices' as never)}
+          onPress={() => navigation.navigate('InvoiceScreen' as never)}
         />
       </View>
       <Message style={[t.mT8]} text={message} />
@@ -90,7 +90,7 @@ const BillingProfile: FC = (): JSX.Element => {
         </View>
         <MaskInput inputMode="numeric" style={[s.input, s.mT7]}
           keyboardType="number-pad"
-          placeholder="1234 1234 1234 1234" placeholderTextColor={theme.color.placeholder}
+          placeholder="Enter card number" placeholderTextColor={theme.color.placeholder}
           mask={[/\d/, /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/]}
           value={number} onChangeText={masked => setNumber(masked)}
         />
@@ -107,20 +107,20 @@ const BillingProfile: FC = (): JSX.Element => {
             <TextInput inputMode="numeric" style={[s.input]}
               keyboardType="number-pad"
               placeholder="CVV" placeholderTextColor={theme.color.placeholder}
-              value={cvv} onChange={e => setCvv(e.nativeEvent.text)}
+              value={cvv} onChangeText={setCvv}
             />
           </View>
         </View>
         <TextInput inputMode="text" style={[s.input, s.mT7]}
           placeholder="Billing address..." placeholderTextColor={theme.color.placeholder}
-          value={address} onChange={e => setAddress(e.nativeEvent.text)}
+          value={address} onChangeText={setAddress}
         />
         <View style={[t.flexRow, s.mT7]}>
           <View style={[t.w3_5, t.pR4]}>
             <TextInput inputMode="numeric" style={[s.input]}
               keyboardType="number-pad"
               placeholder="Zip code..." placeholderTextColor={theme.color.placeholder}
-              value={zipcode} onChange={e => setZipcode(e.nativeEvent.text)}
+              value={zipcode} onChangeText={setZipcode}
             />
           </View>
         </View>

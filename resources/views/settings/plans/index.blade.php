@@ -63,7 +63,7 @@
                                 <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                                     v-for="(plan, index) in filteredPlans" key="index">
                                     <td class="w-4 p-4">
-                                        <div class="flex items-center">
+                                        <div class="flex items-center" v-if="!plan.members.length">
                                             <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                                    type="checkbox"
                                                    :id="'plan-' + plan.id"
@@ -166,16 +166,23 @@
                     const selectedAll = ref(false);
                     const selectedItems = ref([]);
                     const selectAll = (checked) => {
-                        if (checked) selectedItems.value = plans.value.map(item => item.id);
-                        else selectedItems.value = [];
+                        if (checked) {
+                            selectedItems.value = plans.value
+                                .filter(plan => !plan.members.length)
+                                .map(item => item.id);
+                        } else {
+                            selectedItems.value = [];
+                        }
                     }
                     const selectItem = (item, checked) => {
                         if (checked) selectedItems.value.push(item.id);
                         else selectedItems.value = selectedItems.value.filter(el => el !== item.id);
                         let all = true;
-                        plans.value.forEach(item => {
-                            if (!selectedItems.value.includes(item.id)) all = false;
-                        });
+                        plans.value
+                            .filter(plan => !plan.members.length)
+                            .forEach(item => {
+                                if (!selectedItems.value.includes(item.id)) all = false;
+                            });
                         selectedAll.value = all;
                     };
                     const showMenu = ref(false);

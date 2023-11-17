@@ -30,33 +30,33 @@ class GetCloverOrders extends Command
     public function handle()
     {
         $clover = new Clover();
-        $orders = $clover->getOrders();
         $members = [];
+        $orders = $clover->getOrders();
         foreach (($orders['elements'] ?? []) as $order) {
             if ($order['paymentState'] !== 'PAID'
                 || ($order['payments']['elements'][0]['tender']['labelKey'] ?? '') !== 'com.clover.tender.check'
+                || !($customerId = $order['customers']['elements'][0]['id'] ?? '')
             ) continue;
-            $customerId = $order['customers']['elements'][0]['id'] ?? '';
-            if (!isset($members[$customerId])) {
-                $members[$customerId] = Member::withTrashed()
+            $member = $members[$customerId] ?? ($members[$customerId] = Member::withTrashed()
                     ->with(['location'])
-                    ->where('customer_id', $customerId)
-                    ->first();
-            }
-            $member = $members[$customerId] ?? null;
-            Activity::updateOrCreate([
+                    ->where('customerID', $customerId)
+                    ->first());
+            //if (!$member) continue;
+            $activity = Activity::updateOrCreate([
                 'detail' => $order['id'],
             ], [
                 'member_id' => $member['id'] ?? '',
-                'category' => ($member['location']['name'] ?? '').' POS',
+                'category' => $member['location']['name'].' POS',
                 'price' => $order['total'] / 100,
                 'date' => gmdate('Y-m-d', $order['createdTime'] / 1000),
                 'from' => 'clover',
             ]);
-            $lineItems = $order['lineItems']['elements'] ?? [];
-            foreach ($lineItems as $item) {
+            if ($activity['invoiceID']) {
+                $clover->updateOrderStatus($order['id']);
+            }
+            foreach (($order['lineItems']['elements'] ?? []) as $item) {
                 ActivityItem::updateOrCreate([
-                    'order_id' => $order['id'],
+                    'orderID' => $order['id'],
                 ], [
                     'name' => $item['name'],
                     'price' => $item['price'] / 100,

@@ -4,135 +4,105 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">
-                        {{ __('Invoice #1209329') }}
+                        Invoice #{{ $invoice['invoiceID'] }}
                     </h2>
 
-                    <a href="#" class="inline-flex float-right mt-5 px-4 py-2 bg-blue border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">Download PDF</a>
-
-                    <div class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                        <img class="w-10 h-10 rounded-full" src="{{ url('/img/profile-picture-1.jpg') }}" alt="Jese image">
-                        <div class="pl-3">
-                            <div class="text-base font-semibold"><a href="{{ route('members.index') }}" class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray">Neil Sims</a></div>
-                            <div class="font-normal text-gray-500">December 2023</div>
-                        </div>
-                    </div>
+                    <x-messages />
 
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg py-4">
+                        <div class="flex items-center justify-between p-4 bg-white dark:bg-gray-900">
+                            <div class="flex items-center">
+                                @if ($invoice['member'])
+                                    <img class="w-10 h-10 rounded-full"
+                                         src="{{ $invoice['member']['avatar'] }}"
+                                         alt="{{ $invoice['member']['name'] }}">
+                                @endif
+                                <div class="pl-3">
+                                    @if ($invoice['member'])
+                                        <div class="text-base font-semibold">
+                                            <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
+                                               href="{{ route('members.edit', $invoice['member']['id']) }}">
+                                                {{ $invoice['member']['name'] }}
+                                            </a>
+                                        </div>
+                                    @endif
+                                    <div class="font-normal text-gray-500">{{ $invoice['period'] }}</div>
+                                </div>
+                            </div>
 
-                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-2">
+                            <a class="inline-flex items-center px-4 py-2 bg-blue border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                               href="{{ route('invoices.download', $invoice['id']) }}">
+                                Download PDF
+                            </a>
+                        </div>
+                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-2">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr class="bg-zinc-100 text-navy">
-                                    <th scope="col" class="px-6 py-3">
-                                        Item
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        Detail
-                                    </th>
-                                    <th scope="col" class="px-6 py-3">
-                                        Amount
-                                    </th>
-
-                                    <th scope="col" class="px-6 py-3 items-center">
-
-                                    </th>
+                                    <th scope="col" class="px-6 py-3">Category</th>
+                                    <th scope="col" class="px-6 py-3">Detail</th>
+                                    <th scope="col" class="px-6 py-3">Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach ($invoice['activities'] as $activity)
+                                    <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        <th class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white text-base font-semibold">
+                                            {{ $activity['category'] }}
+                                        </th>
+                                        <td class="px-6 py-4">
+                                            {{ ($activity['from'] == 'clover' ? '#' : '').$activity['detail'] }}
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            ${{ number_format($activity['price'], 2) }}
+                                        </td>
+                                    </tr>
+                                @endforeach
                                 <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                                        <div class="pl-3">
-                                            <div class="text-base font-semibold">Food & Beverage</div>
-                                        </div>
+                                    <th class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white text-base font-semibold">
+                                        Membership Dues
                                     </th>
                                     <td class="px-6 py-4">
-                                        2 Guinness, 1 Club Sandwich
+                                        {{ $invoice['plan_name'] }}
                                     </td>
                                     <td class="px-6 py-4">
-                                        $32.00
+                                        ${{ number_format($invoice['plan_price'], 2) }}
                                     </td>
                                 </tr>
                                 <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                                        <div class="pl-3">
-                                            <div class="text-base font-semibold">Lessons</div>
-                                        </div>
+                                    <th class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white text-base font-semibold">
+                                        TOTAL
                                     </th>
+                                    <td class="px-6 py-4"></td>
                                     <td class="px-6 py-4">
-                                        2x 1-hour session
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        $200.00
-                                    </td>
-                                </tr>
-                                <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                                        <div class="pl-3">
-                                            <div class="text-base font-semibold">Court Usage</div>
-                                        </div>
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        4x, 1-hour session
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        $250.00
-                                    </td>
-                                </tr>
-                                <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                                        <div class="pl-3">
-                                            <div class="text-base font-semibold">Rentals</div>
-                                        </div>
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        N/A
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        $0.00
-                                    </td>
-                                </tr>
-                                <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                                        <div class="pl-3">
-                                            <div class="text-base font-semibold">Merchandise</div>
-                                        </div>
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        N/A
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        $0.00
-                                    </td>
-                                </tr>
-                                <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                                        <div class="pl-3">
-                                            <div class="text-base font-semibold">Membership Dues</div>
-                                        </div>
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        Elite Team Membership
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        $119.00
-                                    </td>
-                                </tr>
-                                <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                                        <div class="pl-3">
-                                            <div class="text-base font-semibold">TOTAL</div>
-                                        </div>
-                                    </th>
-                                    <td class="px-6 py-4">
-
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        $601.00
+                                        ${{ number_format($invoice['amount'], 2) }}
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
 
-                        <p class="m-6 text-center">Paid on 12/31/23 @ 11:02PM using VISA ending in ****1234
+                        @if ($invoice['paid'])
+                            <p class="text-center m-6">
+                                Paid on {{ date('n/j/y @ h:i A', strtotime($invoice['paid_at'])) }}
+                                using {{ strtoupper($invoice['card_type']) }} ending in ****{{ $invoice['card_last4'] }}
+                            </p>
+                        @else
+                            <div class="flex justify-center m-6">
+                                <p class="flex items-center mr-3">
+                                    <b class="mr-1">Unpaid Reason:</b>
+                                    {{ $invoice['reason'] ?? 'Unknown' }}
+                                </p>
+                                @if ($invoice['member'])
+                                    <form action="{{ route('invoices.pay', $invoice['id']) }}"
+                                          method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <button class="inline-flex items-center px-4 py-2 bg-blue border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                                type="submit">
+                                            Retry
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

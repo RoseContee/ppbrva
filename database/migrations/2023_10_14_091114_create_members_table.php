@@ -22,7 +22,7 @@ return new class extends Migration
             $table->bigInteger('location_id');
             $table->integer('plan_id');
             $table->string('avatar')->nullable();
-            $table->string('customer_id');
+            $table->string('customerID');
             $table->string('card_last4', 4)->nullable();
             $table->enum('card_type', ['visa', 'mc', 'amex', 'discover', 'diners_club', 'jcb', 'unknown'])->default('unknown');
             $table->boolean('active')->nullable()->default(true);

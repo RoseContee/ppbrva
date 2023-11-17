@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	 xmlns:media="http://search.yahoo.com/mrss/" >
+
+<channel>
+	<title>Performance Pickleball RVA</title>
+	<atom:link href="https://ppbrva.com/feed/" rel="self" type="application/rss+xml" />
+	<link>https://ppbrva.com</link>
+	<description>Pickleball Paradise Is Here</description>
+	<lastBuildDate>Fri, 10 Nov 2023 14:18:14 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://ppbrva.com/wp-content/uploads/2023/05/cropped-logo_header_sm-32x32.png</url>
+	<title>Performance Pickleball RVA</title>
+	<link>https://ppbrva.com</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Brunch with Santa</title>
+		<link>https://ppbrva.com/brunch-with-santa-news/</link>
+		
+		<dc:creator><![CDATA[ppbadmin]]></dc:creator>
+		<pubDate>Tue, 07 Nov 2023 16:48:32 +0000</pubDate>
+				<category><![CDATA[news]]></category>
+		<guid isPermaLink="false">https://ppbrva.com/?p=1034</guid>
+
+					<description><![CDATA[Join us for a special Brunch with Santa! Come and share in the holiday spirit as we enjoy Brunch with Santa on December 16, 2024 at Performance Pickleball! We&#8217;ll serve up a hot breakfast brunch from 9:00am-12:00pm for the young and young-at-heart!   Enjoy our new pickleball facility, meet fellow pickleballers, and children can get photo [&#8230;]]]></description>
+										<content:encoded><![CDATA[		<div data-elementor-type="wp-post" data-elementor-id="1034" class="elementor elementor-1034" data-elementor-post-type="post">
+							<div class="elementor-element elementor-element-2077e01 e-flex e-con-boxed e-con e-parent" data-id="2077e01" data-element_type="container" data-settings="{&quot;container_type&quot;:&quot;flex&quot;,&quot;content_width&quot;:&quot;boxed&quot;}" data-core-v316-plus="true">
+					<div class="e-con-inner">
+		<div class="elementor-element elementor-element-136100b e-con-full e-flex e-con e-child" data-id="136100b" data-element_type="container" data-settings="{&quot;content_width&quot;:&quot;full&quot;,&quot;container_type&quot;:&quot;flex&quot;}">
+				<div class="elementor-element elementor-element-f400cd8 elementor-widget elementor-widget-heading" data-id="f400cd8" data-element_type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+			<style>/*! elementor - v3.17.0 - 08-11-2023 */
+.elementor-heading-title{padding:0;margin:0;line-height:1}.elementor-widget-heading .elementor-heading-title[class*=elementor-size-]>a{color:inherit;font-size:inherit;line-height:inherit}.elementor-widget-heading .elementor-heading-title.elementor-size-small{font-size:15px}.elementor-widget-heading .elementor-heading-title.elementor-size-medium{font-size:19px}.elementor-widget-heading .elementor-heading-title.elementor-size-large{font-size:29px}.elementor-widget-heading .elementor-heading-title.elementor-size-xl{font-size:39px}.elementor-widget-heading .elementor-heading-title.elementor-size-xxl{font-size:59px}</style><h2 class="elementor-heading-title elementor-size-default">Join us for a special Brunch with Santa!</h2>		</div>
+				</div>
+				<div class="elementor-element elementor-element-39d1549 elementor-widget elementor-widget-text-editor" data-id="39d1549" data-element_type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+			<style>/*! elementor - v3.17.0 - 08-11-2023 */
+.elementor-widget-text-editor.elementor-drop-cap-view-stacked .elementor-drop-cap{background-color:#69727d;color:#fff}.elementor-widget-text-editor.elementor-drop-cap-view-framed .elementor-drop-cap{color:#69727d;border:3px solid;background-color:transparent}.elementor-widget-text-editor:not(.elementor-drop-cap-view-default) .elementor-drop-cap{margin-top:8px}.elementor-widget-text-editor:not(.elementor-drop-cap-view-default) .elementor-drop-cap-letter{width:1em;height:1em}.elementor-widget-text-editor .elementor-drop-cap{float:left;text-align:center;line-height:1;font-size:50px}.elementor-widget-text-editor .elementor-drop-cap-letter{display:inline-block}</style>				<p>Come and share in the holiday spirit as we enjoy Brunch with Santa on <b>December 16, 2024</b> at Performance Pickleball!    </p><p>We&#8217;ll serve up a hot breakfast brunch from <b>9:00am-12:00pm</b> for the young and young-at-heart!   Enjoy our new pickleball facility, meet fellow pickleballers, and children can get photo with Santa right here in Pickleball Paradise at Regency.  </p><p>To sign up, click the button below and get ready for a Pickleball Party with us!  </p>						</div>
+				</div>
+				<div class="elementor-element elementor-element-7a1ba75 elementor-cta--skin-classic elementor-animated-content elementor-bg-transform elementor-bg-transform-zoom-in elementor-widget elementor-widget-call-to-action" data-id="7a1ba75" data-element_type="widget" data-widget_type="call-to-action.default">
+				<div class="elementor-widget-container">
+			<link rel="stylesheet" href="https://ppbrva.com/wp-content/plugins/elementor-pro/assets/css/widget-call-to-action.min.css">		<div class="elementor-cta">
+							<div class="elementor-cta__content">
+				
+									<h2 class="elementor-cta__title elementor-cta__content-item elementor-content-item">
+						Tickets for Brunch with Santa					</h2>
+				
+				
+									<div class="elementor-cta__button-wrapper elementor-cta__content-item elementor-content-item ">
+					<a class="elementor-cta__button elementor-button elementor-size-sm" href="https://ppbrva.com/brunch-with-santa/">
+						Buy Online					</a>
+					</div>
+							</div>
+						</div>
+				</div>
+				</div>
+				</div>
+		<div class="elementor-element elementor-element-71eb0e8 e-con-full e-flex e-con e-child" data-id="71eb0e8" data-element_type="container" data-settings="{&quot;content_width&quot;:&quot;full&quot;,&quot;container_type&quot;:&quot;flex&quot;}">
+				<div class="elementor-element elementor-element-d18f870 elementor-widget elementor-widget-image" data-id="d18f870" data-element_type="widget" data-widget_type="image.default">
+				<div class="elementor-widget-container">
+			<style>/*! elementor - v3.17.0 - 08-11-2023 */
+.elementor-widget-image{text-align:center}.elementor-widget-image a{display:inline-block}.elementor-widget-image a img[src$=".svg"]{width:48px}.elementor-widget-image img{vertical-align:middle;display:inline-block}</style>												<img fetchpriority="high" decoding="async" width="791" height="1024" src="https://ppbrva.com/wp-content/uploads/2023/11/Santa-Brunch-PPB-8.5-11-RGB-791x1024.png" class="attachment-large size-large wp-image-1015" alt="" srcset="https://ppbrva.com/wp-content/uploads/2023/11/Santa-Brunch-PPB-8.5-11-RGB-791x1024.png 791w, https://ppbrva.com/wp-content/uploads/2023/11/Santa-Brunch-PPB-8.5-11-RGB-232x300.png 232w, https://ppbrva.com/wp-content/uploads/2023/11/Santa-Brunch-PPB-8.5-11-RGB-768x994.png 768w, https://ppbrva.com/wp-content/uploads/2023/11/Santa-Brunch-PPB-8.5-11-RGB-1187x1536.png 1187w, https://ppbrva.com/wp-content/uploads/2023/11/Santa-Brunch-PPB-8.5-11-RGB-1583x2048.png 1583w, https://ppbrva.com/wp-content/uploads/2023/11/Santa-Brunch-PPB-8.5-11-RGB-600x776.png 600w" sizes="(max-width: 791px) 100vw, 791px" />															</div>
+				</div>
+				</div>
+					</div>
+				</div>
+							</div>
+		<p id="rss-image"><img decoding="async" src="https://ppbrva.com/wp-content/uploads/2023/11/Santa-Brunch-PPB-8.5-11-RGB.png</></p>]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>The Pickle Ball &#8211; Tickets Now Available</title>
+		<link>https://ppbrva.com/the-pickle-ball-tickets-now-available/</link>
+		
+		<dc:creator><![CDATA[ppbadmin]]></dc:creator>
+		<pubDate>Mon, 25 Sep 2023 13:28:21 +0000</pubDate>
+				<category><![CDATA[news]]></category>
+		<guid isPermaLink="false">https://ppbrva.com/?p=805</guid>
+
+					<description><![CDATA[Tickets for The Pickle Ball Now Available Join us on Wednesday, December 20, 2023 for &#8220;The Pickle Ball&#8221; at Performance Pickleball Richmond. Buy Tickets Online]]></description>
+										<content:encoded><![CDATA[		<div data-elementor-type="wp-post" data-elementor-id="805" class="elementor elementor-805" data-elementor-post-type="post">
+							<div class="elementor-element elementor-element-5a9ea82 e-flex e-con-boxed e-con e-parent" data-id="5a9ea82" data-element_type="container" data-settings="{&quot;container_type&quot;:&quot;flex&quot;,&quot;content_width&quot;:&quot;boxed&quot;}" data-core-v316-plus="true">
+					<div class="e-con-inner">
+				<div class="elementor-element elementor-element-dfb7843 elementor-widget elementor-widget-heading" data-id="dfb7843" data-element_type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+			<h1 class="elementor-heading-title elementor-size-default">Tickets for The Pickle Ball Now Available</h1>		</div>
+				</div>
+				<div class="elementor-element elementor-element-770deee elementor-widget elementor-widget-image" data-id="770deee" data-element_type="widget" data-widget_type="image.default">
+				<div class="elementor-widget-container">
+															<img decoding="async" width="800" height="275" src="https://ppbrva.com/wp-content/uploads/2023/09/Pickle-Ball-Banner-1024x352.jpg" class="attachment-large size-large wp-image-755" alt="The Pickle Ball" srcset="https://ppbrva.com/wp-content/uploads/2023/09/Pickle-Ball-Banner-1024x352.jpg 1024w, https://ppbrva.com/wp-content/uploads/2023/09/Pickle-Ball-Banner-300x103.jpg 300w, https://ppbrva.com/wp-content/uploads/2023/09/Pickle-Ball-Banner-768x264.jpg 768w, https://ppbrva.com/wp-content/uploads/2023/09/Pickle-Ball-Banner-1536x528.jpg 1536w, https://ppbrva.com/wp-content/uploads/2023/09/Pickle-Ball-Banner-600x206.jpg 600w, https://ppbrva.com/wp-content/uploads/2023/09/Pickle-Ball-Banner.jpg 1800w" sizes="(max-width: 800px) 100vw, 800px" />															</div>
+				</div>
+					</div>
+				</div>
+		<div class="elementor-element elementor-element-71e8823 e-flex e-con-boxed e-con e-parent" data-id="71e8823" data-element_type="container" data-settings="{&quot;container_type&quot;:&quot;flex&quot;,&quot;content_width&quot;:&quot;boxed&quot;}" data-core-v316-plus="true">
+					<div class="e-con-inner">
+				<div class="elementor-element elementor-element-a0664e9 elementor-widget elementor-widget-text-editor" data-id="a0664e9" data-element_type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+							<p>Join us on Wednesday, December 20, 2023 for &#8220;The Pickle Ball&#8221; at Performance Pickleball Richmond.  </p>						</div>
+				</div>
+					</div>
+				</div>
+		<div class="elementor-element elementor-element-0ec67cd e-flex e-con-boxed e-con e-parent" data-id="0ec67cd" data-element_type="container" data-settings="{&quot;container_type&quot;:&quot;flex&quot;,&quot;content_width&quot;:&quot;boxed&quot;}" data-core-v316-plus="true">
+					<div class="e-con-inner">
+				<div class="elementor-element elementor-element-9c77b65 elementor-align-center elementor-widget elementor-widget-button" data-id="9c77b65" data-element_type="widget" data-widget_type="button.default">
+				<div class="elementor-widget-container">
+					<div class="elementor-button-wrapper">
+			<a class="elementor-button elementor-button-link elementor-size-sm" href="https://ppbrva.com/the-pickle-ball/">
+						<span class="elementor-button-content-wrapper">
+						<span class="elementor-button-text">Buy Tickets Online</span>
+		</span>
+					</a>
+		</div>
+				</div>
+				</div>
+					</div>
+				</div>
+							</div>
+		<p id="rss-image"><img decoding="async" src="https://ppbrva.com/wp-content/uploads/2023/09/App_Image_test.png</></p>]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>The Stars Come Out for PPBRVA&#8217;s &#8220;The Pickle Ball&#8221;</title>
+		<link>https://ppbrva.com/the-stars-come-out-for-ppbrvas-the-pickle-ball/</link>
+		
+		<dc:creator><![CDATA[ppbadmin]]></dc:creator>
+		<pubDate>Wed, 13 Sep 2023 13:00:00 +0000</pubDate>
+				<category><![CDATA[news]]></category>
+		<guid isPermaLink="false">https://ppbrva.com/?p=711</guid>
+
+					<description><![CDATA[The Newmans, Devilliers, Castillo to Headline Grand Opening Gala September 13, 2023 Richmond, VA &#8211; Performance Pickleball RVA is excited to announce the 1st Annual Pickle Ball, which will commemorate the grand opening of the dedicated pickleball facility at Regency. Riley and Lindsey Newman, Jay Devilliers and Judit Castillo will headline the event, which will [&#8230;]]]></description>
+										<content:encoded><![CDATA[		<div data-elementor-type="wp-post" data-elementor-id="711" class="elementor elementor-711" data-elementor-post-type="post">
+							<div class="elementor-element elementor-element-a1ee3e9 e-flex e-con-boxed e-con e-parent" data-id="a1ee3e9" data-element_type="container" data-settings="{&quot;container_type&quot;:&quot;flex&quot;,&quot;content_width&quot;:&quot;boxed&quot;}" data-core-v316-plus="true">
+					<div class="e-con-inner">
+				<div class="elementor-element elementor-element-69bef39 elementor-widget elementor-widget-text-editor" data-id="69bef39" data-element_type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+							<p style="text-align: center;"><em>The Newmans, Devilliers, Castillo to Headline Grand Opening Gala</em></p><p><em>September 13, 2023</em></p><p><strong><img decoding="async" class="alignright wp-image-718" src="https://ppbrva.com/wp-content/uploads/2023/09/Pickle-Ball-Social.jpg" alt="The &quot;Pickle Ball&quot; Social- December 20, 2023" width="600" height="600" srcset="https://ppbrva.com/wp-content/uploads/2023/09/Pickle-Ball-Social.jpg 1800w, https://ppbrva.com/wp-content/uploads/2023/09/Pickle-Ball-Social-300x300.jpg 300w, https://ppbrva.com/wp-content/uploads/2023/09/Pickle-Ball-Social-100x100.jpg 100w, https://ppbrva.com/wp-content/uploads/2023/09/Pickle-Ball-Social-600x600.jpg 600w, https://ppbrva.com/wp-content/uploads/2023/09/Pickle-Ball-Social-1024x1024.jpg 1024w, https://ppbrva.com/wp-content/uploads/2023/09/Pickle-Ball-Social-150x150.jpg 150w, https://ppbrva.com/wp-content/uploads/2023/09/Pickle-Ball-Social-768x768.jpg 768w, https://ppbrva.com/wp-content/uploads/2023/09/Pickle-Ball-Social-1536x1536.jpg 1536w" sizes="(max-width: 600px) 100vw, 600px" />Richmond, VA &#8211; </strong>Performance Pickleball RVA is excited to announce the 1st Annual Pickle Ball, which will commemorate the grand opening of the dedicated pickleball facility at Regency. Riley and Lindsey Newman, Jay Devilliers and Judit Castillo will headline the event, which will take place at PPBRVA on Wednesday, December 20th, and feature a professional exhibition, a VIP meet and greet experience, food and drink, live music and a celebration of pickleball in the RVA. The Pickle Ball will benefit Laaser’s Ladybug Society.</p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">Performance Team professionals Jhonnatan Medina Alvarez, Tim Cass, Derek Kraje and Christina Shifflett will also take part in the professional exhibition. Additionally, they will hold clinics and host opportunities to play with the pros throughout the day.</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">“We are creating what we feel is the finest pickleball facility in the country, and in order to properly celebrate its grand opening, we wanted to bring some of the finest players in the world to the RVA,” said PPBRVA COO Jon Laaser. “RVA and Henrico County are building into a pickleball powerhouse and we are beyond eager to celebrate that evolution in December.”</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">Riley Newman, a 17-time PPA Tour gold medalist and five-time major champion, is currently the #2 rated men’s mixed doubles player and #4 rated men’s doubles player on the PPA Tour. Riley and his sister Lindsey Newman form one of the most formidable mixed doubles teams in the world, and Lindsey is currently the #9 rated women’s player on the PPA Tour’s mixed doubles rankings.</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">Devilliers, known to fans as the Flying Frenchman, is a top-10 rated player in all three PPA Tour divisions. He is currently ranked 5th in men’s singles, 8th in men’s doubles and 9th in mixed doubles. He claimed his first PPA Tour gold medal in mixed doubles along with Jessie Irvine at the PPA Championship in Las Vegas in 2021.</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">Castillo, a former tennis professional, is one of the fastest rising stars in the sport, ascending to #4 on the APP Tour’s rankings for women’s singles. After advancing to the gold medal match at the U.S. Open, she claimed gold at the APP Tour’s Sunmed Sacramento Open in April of this year.</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">Medina Alvarez, who will train out of PPBRVA and serve as it’s resident professional, is the currently the #3 rated men’s singles player on the APP Tour. He recently earned a silver medal at the APP Sunmed Open in St. Louis, his first tournament representing Performance Pickleball.</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">The Pickle Ball will feature an exhibition, with the Newmans squaring off against Devilliers and Castillo and Medina Alvarez and Castillo. Performance Team professionals will also mix in for cross play and shotmaking demonstrations.</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">The Gala event will also feature live music from Mike Szvetitz, food and drink throughout the evening, a VIP meet and greet, a ribbon-cutting ceremony for PPBRVA and guided tours of the newly-minted facility.</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">Tickets for The Pickle Ball will be discounted for PPBRVA members and will go on sale at </span><a style="font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align); background-color: #ffffff;" href="http://PPBRVA.com" target="_blank" rel="noopener"><strong>PPBRVA.com</strong></a><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);"> on Monday, September 25th.</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">Memberships to Performance Pickleball RVA are currently available for reservation at PPBRVA.com.</span></p>						</div>
+				</div>
+					</div>
+				</div>
+							</div>
+		]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Omnitech Partnership Puts PPBRVA on the Cutting-Edge</title>
+		<link>https://ppbrva.com/omnitech-partnership-puts-ppbrva-on-the-cutting-edge/</link>
+		
+		<dc:creator><![CDATA[ppbadmin]]></dc:creator>
+		<pubDate>Thu, 31 Aug 2023 12:56:59 +0000</pubDate>
+				<category><![CDATA[news]]></category>
+		<guid isPermaLink="false">https://ppbrva.com/?p=655</guid>
+
+					<description><![CDATA[Facility to Feature State-of-the-Art Audio and Video Matrix August 31, 2023  Richmond, VA &#8211; Performance Pickleball RVA has partnered with industry leader Omnitech to build a cutting-edge audio and video matrix for the dedicated pickleball facility. The system will include 27 large-screen televisions, 42 dedicated speakers, zone-controlled audio capability and networked coordination of all elements [&#8230;]]]></description>
+										<content:encoded><![CDATA[		<div data-elementor-type="wp-post" data-elementor-id="655" class="elementor elementor-655" data-elementor-post-type="post">
+									<section class="elementor-section elementor-top-section elementor-element elementor-element-58af5a5e elementor-section-boxed elementor-section-height-default elementor-section-height-default" data-id="58af5a5e" data-element_type="section">
+						<div class="elementor-container elementor-column-gap-default">
+					<div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-4c96a2f2" data-id="4c96a2f2" data-element_type="column">
+			<div class="elementor-widget-wrap elementor-element-populated">
+								<div class="elementor-element elementor-element-32c8dbae elementor-widget elementor-widget-text-editor" data-id="32c8dbae" data-element_type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+							<p><em>Facility to Feature State-of-the-Art Audio and Video Matrix</em></p><p><em>August 31, 2023</em><em style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing );"> </em></p><p><strong><img loading="lazy" decoding="async" class="size-full wp-image-654 alignright" src="https://ppbrva.com/wp-content/uploads/2023/08/Omnitech-Graphic.jpg" alt="" width="288" height="288" srcset="https://ppbrva.com/wp-content/uploads/2023/08/Omnitech-Graphic.jpg 288w, https://ppbrva.com/wp-content/uploads/2023/08/Omnitech-Graphic-100x100.jpg 100w, https://ppbrva.com/wp-content/uploads/2023/08/Omnitech-Graphic-150x150.jpg 150w" sizes="(max-width: 288px) 100vw, 288px" />Richmond, VA &#8211; </strong>Performance Pickleball RVA has partnered with industry leader Omnitech to build a cutting-edge audio and video matrix for the dedicated pickleball facility. The system will include 27 large-screen televisions, 42 dedicated speakers, zone-controlled audio capability and networked coordination of all elements of the matrix.</p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing );">“Outfitting PPBRVA with the most state-of-the-art audio and video matrix in the industry was of the utmost importance in the creation of pickleball paradise,” said PPBRVA COO Jon Laaser. “I have worked closely with Omnitech on previous large-scale projects including the Diamond, and I know firsthand the level of quality that they deliver.</span></p><p>Each of the 12 indoor courts at PPBRVA will feature its own 65” video screen. The screens will be strategically positioned for maximum visibility, allowing PPBRVA to display court matchups, tournament brackets, LED presentation and video content.</p><p>Additionally, the bar/restaurant will include seven big screen televisions (three 85” and four 75”), while the event space and check-in area will each be outfitted with 85” screens. Members and guests will be greeted by two 85” screens upon their entry to the facility.</p><p>“Imagine having the ability to project tournament matchups, review videos of lessons and clinics, place sponsor graphics throughout the facility, watch the pro pickleball tour or NFL games,” added Laaser. “That is the futuristic vision we are creating at Performance.”</p><p>PPBRVA will feature zone-controlled audio throughout the entire facility. The 12 courts will feature four specific zones, while the event space and bar/cafe will each be on separate audio zones. The two championship courts will feature stereo surround sound and wireless microphone capability allowing for exhibitions, instruction and top-level corporate events, tournaments and clinics. The entire matrix will be centrally controlled.</p><p>“With this system, we can deliver exactly what our players want,” said Laaser. “If you like music while you play…done. If you don’t, done. Beyond that, the ability to fracture audio will allow us to control decibel levels throughout the facility that creates an optimum audio level in all areas of the facility. I can’t wait for our players to experience it!”</p><p>Omnitech is owned and operated by Loring Wiggins, who is credited with building the finest A/V systems in the region, as well as being the leading engineer for live concert events throughout the Mid-Atlantic.</p><p>“The audio and video matrix we will build for PPBRVA will be on the cutting edge of what is technologically possible,” said Wiggins. “I’m thrilled to partner with Jon (Laaser) and his team once again to build a system capable of virtually anything in the entertainment and competition realm.”</p><p>Memberships to Performance Pickleball RVA are currently available for reservation at <a href="https://www.ppbrva.com" target="_blank" rel="noopener">PPBRVA.com</a>.</p>						</div>
+				</div>
+					</div>
+		</div>
+							</div>
+		</section>
+							</div>
+		<p id="rss-image"><img decoding="async" src="https://ppbrva.com/wp-content/uploads/2023/08/Omnitech-Graphic.jpg</></p>]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>PPBRVA to Include Revolutionary Laykold Masters Gel Surface</title>
+		<link>https://ppbrva.com/ppbrva-to-include-revolutionary-laykold-masters-gel-surface/</link>
+		
+		<dc:creator><![CDATA[ppbadmin]]></dc:creator>
+		<pubDate>Wed, 02 Aug 2023 11:45:58 +0000</pubDate>
+				<category><![CDATA[news]]></category>
+		<guid isPermaLink="false">https://ppbrva.com/?p=627</guid>
+
+					<description><![CDATA[Richmond’s World Class Courts to Install Next Generation Technology August 2, 2023  Richmond, VA &#8211; Performance Pickleball RVA has entered a partnership with industry leader Laykold, and Richmond-based World Class Courts, to install the revolutionary Masters Gel playing surface at PPBRVA. PPBRVA will be the first pickleball facility globally to feature the revolutionary surface, which [&#8230;]]]></description>
+										<content:encoded><![CDATA[		<div data-elementor-type="wp-post" data-elementor-id="627" class="elementor elementor-627" data-elementor-post-type="post">
+									<section class="elementor-section elementor-top-section elementor-element elementor-element-65d5f8ba elementor-section-boxed elementor-section-height-default elementor-section-height-default" data-id="65d5f8ba" data-element_type="section">
+						<div class="elementor-container elementor-column-gap-default">
+					<div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-19037962" data-id="19037962" data-element_type="column">
+			<div class="elementor-widget-wrap elementor-element-populated">
+								<div class="elementor-element elementor-element-7a43f672 elementor-widget elementor-widget-text-editor" data-id="7a43f672" data-element_type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+							<p><i><span style="font-size: 12.0pt; font-family: 'Arial',sans-serif; mso-fareast-font-family: 'Arial Unicode MS'; mso-bidi-font-family: 'Times New Roman'; mso-ansi-language: EN-US; mso-fareast-language: EN-US; mso-bidi-language: AR-SA;">Richmond’s World Class Courts to Install Next Generation Technology</span></i></p>						</div>
+				</div>
+					</div>
+		</div>
+							</div>
+		</section>
+		<div class="elementor-element elementor-element-3cf1e9c e-flex e-con-boxed e-con e-parent" data-id="3cf1e9c" data-element_type="container" data-settings="{&quot;container_type&quot;:&quot;flex&quot;,&quot;content_width&quot;:&quot;boxed&quot;}" data-core-v316-plus="true">
+					<div class="e-con-inner">
+		<div class="elementor-element elementor-element-9f6c171 e-con-full e-flex e-con e-parent" data-id="9f6c171" data-element_type="container" data-settings="{&quot;content_width&quot;:&quot;full&quot;,&quot;container_type&quot;:&quot;flex&quot;}" data-core-v316-plus="true">
+				<div class="elementor-element elementor-element-d9a3fb8 elementor-widget elementor-widget-text-editor" data-id="d9a3fb8" data-element_type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+							<p><em>August 2, 2023</em><em style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);"> </em></p><p><strong>Richmond, VA &#8211; </strong>Performance Pickleball RVA has entered a partnership with industry leader Laykold, and Richmond-based World Class Courts, to install the revolutionary Masters Gel playing surface at PPBRVA. PPBRVA will be the first pickleball facility globally to feature the revolutionary surface, which provides a 17% force reduction on joints while also allowing for 70% energy restitution. Due to the application of a professional caliber top-coating system, it will provide those benefits while playing exactly like an outdoor court.</p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">“The overall experience for our players, including their physical well-being, is of the utmost importance to us,” said PPBRVA COO Jon Laaser. “By bringing the most advanced court surface in the world to Richmond, we are able to deliver on providing our players the absolute finest playing experience currently in existence. Beyond that, it immediately makes the RVA the envy of the entire pickleball landscape. Getting to partner on the installation with Richmond tennis legends Tom and Matt Magner, and their company World Class Courts, is a really sweet icing on the cake!”</span></p><p><img loading="lazy" decoding="async" class="aligncenter size-full wp-image-628" src="https://ppbrva.com/wp-content/uploads/2023/08/laykold.jpg" alt="" width="765" height="352" srcset="https://ppbrva.com/wp-content/uploads/2023/08/laykold.jpg 765w, https://ppbrva.com/wp-content/uploads/2023/08/laykold-600x276.jpg 600w, https://ppbrva.com/wp-content/uploads/2023/08/laykold-300x138.jpg 300w" sizes="(max-width: 765px) 100vw, 765px" /><br />The installation of this state-of-the-art surface is a major investment for PPBRVA into not only the facility, but the RVA pickleball community as a whole.</p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">“Laykold Masters Gel is a next generation paddle sports system, designed with </span><a style="font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align); background-color: #ffffff;" href="https://ppbrva.com/wp-content/uploads/2023/08/laykold_002.jpg" target="_blank" rel="noopener">both the player and the environment in mind</a><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">,” said Laykold Technical and Field Support Manager, Wesley Baum. “Masters Gel is comprised of over 75% renewable plant-based raw materials, making it one of the most environmentally friendly systems on the market. In addition to being green-conscious, Masters Gel provides nearly 19% force reduction to allow players to play longer and safer with less wear and tear on their bodies.”</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">The color matrix for the competition courts are designed to provide maximum visibility during competition. The out-of-play areas will be silver, while the service boxes will be Pro Blue and the non-volley zones will be Arctic Blue. Combined with intentional coloring of facility walls in a Navy Blue, and an exhaustive lighting survey, PPBRVA will provide the most comprehensive visibility plan in the world.</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">“I have constructed or consulted on racquet club projects in the United States and internationally for over 35 years, and this is an incredible project,” said World Class Courts Consultant Chris Rossi. “To work with a team that not only understands, but is committed to, creating the ultimate pickleball facility is an honor and pleasure. The commitment by this team to provide the best playing surface available combined with first class amenities is unrivaled, and is the key reason why this will be the gold standard pickleball facility, not only for Richmond, but around the United States and globally.”</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">PPBRVA made the impactful decision to surface 25,415 square feet of the facility with the Masters Gel surface. This will encompass the entirety of the competition area, including all 12 competition courts and walkways between them. Additionally, it allows for a full-sized warmup court, also surfaced with the Masters Gel surface.</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">“The goal is not to provide the best,” said Laaser. “The goal is to raise the bar so high in every area, that the only way we will be topped is by ourselves. This is the first of what will be many examples of that.”</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">Laykold, the leading manufacture of hardcourt playing surfaces in the world, is the official court of the U.S. Open, as well as eight of the top 15 professional tennis tournaments globally. World Class Courts was founded locally in Richmond by Tom Magner in 1972. Magner is a multiple-time Richmond city tennis champion, continues to teach the game locally and was inducted into the Richmond Sports Hall of Fame. His son Matt, also a decorated tennis player in the area, took over the business in 2010 and has continued to position World Class Courts as the premier surface application operation in the region. World Class has been the official applicator for UVA’s Boar’s Head Resort since 2017, recently applied courts at Duke University and installed the courts fir the ATP Citi Open in Washington, DC, in 2022.</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">Memberships to Performance Pickleball RVA are currently available for reservation at </span><a style="font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align); background-color: #ffffff;" href="https://ppbrva.com">PPBRVA.com</a></p>						</div>
+				</div>
+				</div>
+					</div>
+				</div>
+							</div>
+		]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Medina Alvarez to Headline Performance Pickleball Team</title>
+		<link>https://ppbrva.com/medina-alvarez-to-headline-performance-pickleball-team/</link>
+		
+		<dc:creator><![CDATA[ppbadmin]]></dc:creator>
+		<pubDate>Wed, 26 Jul 2023 12:25:55 +0000</pubDate>
+				<category><![CDATA[news]]></category>
+		<guid isPermaLink="false">https://ppbrva.com/?p=600</guid>
+
+					<description><![CDATA[PPBRVA to be Home to Virginia’s Top-Rated Player Richmond, VA &#8211; Performance Pickleball RVA is ecstatic to welcome Jhonnatan Medina Alvarez to the Performance Team. Medina Alvarez, the most accomplished and recognizable pickleball player in Virginia, will headline the Performance Team as he competes professionally on the PPA and APP tours. PPBRVA will also serve [&#8230;]]]></description>
+										<content:encoded><![CDATA[		<div data-elementor-type="wp-post" data-elementor-id="600" class="elementor elementor-600" data-elementor-post-type="post">
+							<div class="elementor-element elementor-element-5a2520f e-flex e-con-boxed e-con e-parent" data-id="5a2520f" data-element_type="container" data-settings="{&quot;container_type&quot;:&quot;flex&quot;,&quot;content_width&quot;:&quot;boxed&quot;}" data-core-v316-plus="true">
+					<div class="e-con-inner">
+				<div class="elementor-element elementor-element-36de97f elementor-widget elementor-widget-text-editor" data-id="36de97f" data-element_type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+							<p style="text-align: center;"><em>PPBRVA to be Home to Virginia’s Top-Rated Player</em></p>						</div>
+				</div>
+				<div class="elementor-element elementor-element-77caab4 elementor-widget elementor-widget-text-editor" data-id="77caab4" data-element_type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+							<p><strong>Richmond, VA &#8211; </strong>Performance Pickleball RVA is ecstatic to welcome Jhonnatan Medina Alvarez to the Performance Team. Medina Alvarez, the most accomplished and recognizable pickleball player in Virginia, will headline the Performance Team as he competes professionally on the PPA and APP tours. PPBRVA will also serve as Medina Alvarez’s official training home, where he will also provide clinical and individual instruction to the RVA pickleball community.</p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">“From the beginning, Lee (Warfield) and I recognized that for Performance to reach its full potential, Jhonnatan needed to be a part of it,” said PPBRVA COO Jon Laaser. “His unrivaled passion for the game is on full display whenever he competes, but witnessing that passion extend to growing the sport in the RVA and Virginia pickleball communities made him the only choice to headline our brand.”</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">Orginally from Caracas, VZ, Medina Alvarez was a decorated tennis player, competing for his home country in national and global competitions. He also thrived as a professional player and as a coach. After transitioning to pickleball, he rose to become the top-ranked player in the Commonwealth of Virginia, and is currently ranked #5 on the APP Tour men’s singles ladder. In 2023, he has already claimed three medals on the APP Tour.</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">“When Jon (Laaser) and Lee (Warfield) approached me with their vision for Performance Pickleball RVA, I was impressed immediately,” said Medina Alvarez. “As a former professional tennis player and Division-I collegiate coach, I understand the importance of doing everything at a high level, and PPBRVA will be exactly that! That is why I decided to become a part of this journey with a great group of people that share the same passion for the growth of pickleball in our city and our state.”</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">Medina Alvarez is a Pello sponsored player, and recently debuted his signature paddle, &#8220;Vamos,&#8221; which will be available for purchase in the PBBRVA pro shop. He is also a published author, having penned </span><em style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">Results Generate Results: Sports Data &amp; Agility, Tennis and Pickleball</em><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">. Additionally, he is a noted speaker throughout the community and frequently donates his time and talents to charitable causes throughout the region.</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">The newly-minted Performance Pickleball apparel brand will feature a signature “JMA” line, which Medina Alvarez will help design. He will wear this line while competing professionally. PPBRVA will also offer clinics headlined by Medina Alvarez designed to take players of all skill levels to their full potential.</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">”My biggest goal is to provide a connection from the professional pickleball perspective to all of our players at PPBRVA,” added Medina Alvarez. “It is my desire to share the knowledge and experience I have gained during my training and competing against the best players in the world.”</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">Medina Alvarez will make his Performance Team debut while seeking his fourth medal of the season on the APP Tour at the Sunmed St. Louis Open, August 9-13.</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">Membership packages for PPBRVA are <a href="https://ppbrva.com/memberships/">currently available for reservation</a> and can be viewed at PPBRVA.com.</span></p>						</div>
+				</div>
+					</div>
+				</div>
+							</div>
+		]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Performance Pickleball joins forces with the Roanoke Ruckus</title>
+		<link>https://ppbrva.com/performance-pickleball-joins-forces-with-the-roanoke-ruckus/</link>
+		
+		<dc:creator><![CDATA[ppbadmin]]></dc:creator>
+		<pubDate>Wed, 12 Jul 2023 12:46:14 +0000</pubDate>
+				<category><![CDATA[news]]></category>
+		<guid isPermaLink="false">https://ppbrva.com/?p=572</guid>
+
+					<description><![CDATA[Tim Cass and Derek Kraje to Represent Team Performance on Pro Tours Richmond, VA &#8211; Performance Pickleball RVA is extremely proud to partner with the Roanoke Ruckus and professional players Tim Cass and Derek Kraje as they pursue their careers on the PPA and APP tours. The dual partnerships with the Ruckus, and Cass and [&#8230;]]]></description>
+										<content:encoded><![CDATA[		<div data-elementor-type="wp-post" data-elementor-id="572" class="elementor elementor-572" data-elementor-post-type="post">
+							<div class="elementor-element elementor-element-7695953 e-flex e-con-boxed e-con e-parent" data-id="7695953" data-element_type="container" data-settings="{&quot;container_type&quot;:&quot;flex&quot;,&quot;content_width&quot;:&quot;boxed&quot;}" data-core-v316-plus="true">
+					<div class="e-con-inner">
+				<div class="elementor-element elementor-element-b6c3442 elementor-widget elementor-widget-text-editor" data-id="b6c3442" data-element_type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+							<p>Tim Cass and Derek Kraje to Represent Team Performance on Pro Tours</p>
+<p><b>Richmond, VA </b>&#8211; Performance Pickleball RVA is extremely proud to partner with the Roanoke Ruckus and professional players Tim Cass and Derek Kraje as they pursue their careers on the PPA and APP tours.</p>
+<p>The dual partnerships with the Ruckus, and Cass and Kraje, represent Team Performance’s desire to showcase pickleball talent throughout Virginia, while also expanding its brand footprint outside of its flagship facility (PPBRVA).</p>
+<p><img loading="lazy" decoding="async" src="https://ppbrva.com/wp-content/uploads/2023/07/Tim-and-Derick.jpg" alt="Roanoke Ruckus -Tim Cass and Derek Kraje" width="473" height="404">“We have always intended for Performance to be much more than just the Taj Mahal of pickleball, which it will be,” said PPBRVA COO Jon Laaser. “Being able to provide funding for aspiring and established players alike from Virginia allows us to give those players much-deserved opportunities, while also carrying our brand to a larger audience.”</p>
+<p>In tournament competition, Cass and Kraje will wear Performance Pickleball apparel, a newly-minted brand aimed to outfit pickleball players of all levels with optimum pickleball style and comfort at an affordable price. Upon its official launch on August 1st, 2023, the Performance Pickleball apparel line will be available at PPBRVA.com.</p>
+<p>The Roanoke Ruckus are a tournament team co-founded by Cass and Tyler Reburn. Based in Roanoke, VA, their members travel statewide to support tournaments within the state. The Ruckus compete at all skill levels and leave an indelible mark on each tournament where they compete.</p>
+<p>“When I first met members of the Ruckus, I was immediately struck by their infectious camaraderie and enthusiasm for the sport of pickleball,” added Laaser. “Upon watching them grow as a team and then witnessing Tim and Derek claim gold at The Body Armor 804 Open, I knew we needed to work together to grow the game.”</p>
+<p>Cass and Kraje will lead at least four clinics for players of all ages and skill levels at PPBRVA in 2024, and will also participate in special event exhibitions planned for the facility.</p>
+<p>Cass, currently completing a degree in Sports Management from the University of Florida, plans to pursue his playing career, but also to grow the game in Virginia through coaching and business endeavors within the sport.</p>
+<p>“I couldn’t have imagined a scenario where I’d be a sponsored athlete at this point in my career,” said Cass. “Having the resources and people around me to pursue professional pickleball&nbsp;<span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">is such an honor. I’m beyond excited to partner with PPB as I compete regionally and nationwide.”</span></p>
+<p>Kraje, a senior studying finance and accounting at Virginia Tech, recently started The Pickleball Club at Virginia Tech along with fellow player Zach Gladstone. As he finishes his degree, he has aspirations of spreading the sport to college-age athletes.</p>
+<p>&#8220;I am so excited for this incredible opportunity to represent the Performance Pickleball brand at various local and national tournaments,” said Kraje. “Two years ago, after picking up a pickleball paddle for the first time, I would’ve never imagined I’d have this opportunity. This sponsorship will help push my game to new levels and pursue a professional career in pickleball.”</p>
+<p>The duo of Cass and Kraje have been prolific in Open Division tournaments throughout the state in the last year. They have claimed four Open Division gold medals, including both The Virginia Pickleball Classic and The Body Armor 804 Open &#8211; each contested at Pouncey Tract Park in Glen Allen. They will make their PPA Tour debut this week at the Oh Snap! PPA Denver Open presented by Vizzy in Denver, CO.</p>
+<p>The Roanoke Ruckus signature line of apparel will be available in conjunction with the Performance Pickleball apparel launch on August 1st, 2023.</p>						</div>
+				</div>
+					</div>
+				</div>
+							</div>
+		]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Shifflett Joins PPBRVA as Director of Community Relations</title>
+		<link>https://ppbrva.com/shifflett-joins-ppbrva-as-director-of-community-relations/</link>
+		
+		<dc:creator><![CDATA[ppbadmin]]></dc:creator>
+		<pubDate>Wed, 05 Jul 2023 14:50:49 +0000</pubDate>
+				<category><![CDATA[news]]></category>
+		<guid isPermaLink="false">https://ppbrva.com/?p=557</guid>
+
+					<description><![CDATA[Richmond, VA &#8211; Performance Pickleball RVA is excited to announce the addition of Christina Shifflett to the PPBRVA Team in the role of Director of Community Relations. In that role, Shifflett will oversee member relations and the hospitality staff. Additionally, she will serve as one of PPBRVA’s top instructors and represent the Performance Team in [&#8230;]]]></description>
+										<content:encoded><![CDATA[		<div data-elementor-type="wp-post" data-elementor-id="557" class="elementor elementor-557" data-elementor-post-type="post">
+							<div class="elementor-element elementor-element-497395a e-flex e-con-boxed e-con e-parent" data-id="497395a" data-element_type="container" data-settings="{&quot;container_type&quot;:&quot;flex&quot;,&quot;content_width&quot;:&quot;boxed&quot;}" data-core-v316-plus="true">
+					<div class="e-con-inner">
+				<div class="elementor-element elementor-element-c465e59 elementor-widget elementor-widget-text-editor" data-id="c465e59" data-element_type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+							<p><strong><img loading="lazy" decoding="async" class="size-full wp-image-562 alignright" src="https://ppbrva.com/wp-content/uploads/2023/07/Christina_Shifflett.jpg" alt="" width="540" height="540" srcset="https://ppbrva.com/wp-content/uploads/2023/07/Christina_Shifflett.jpg 540w, https://ppbrva.com/wp-content/uploads/2023/07/Christina_Shifflett-300x300.jpg 300w, https://ppbrva.com/wp-content/uploads/2023/07/Christina_Shifflett-100x100.jpg 100w, https://ppbrva.com/wp-content/uploads/2023/07/Christina_Shifflett-150x150.jpg 150w" sizes="(max-width: 540px) 100vw, 540px" />Richmond, VA &#8211; </strong>Performance Pickleball RVA is excited to announce the addition of Christina Shifflett to the PPBRVA Team in the role of Director of Community Relations. In that role, Shifflett will oversee member relations and the hospitality staff. Additionally, she will serve as one of PPBRVA’s top instructors and represent the Performance Team in a professional capacity, sponsored by PPBRVA as she pursues her competitive goals.</p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">“Christina is what we refer to as a no-brainer hire,” said PPBRVA COO Jon Laaser. “She is one of the premier players in the region, is a better person, has a tremendous amount of experience managing a racquet sport community and is precisely what we strive for the PPBRVA brand to be.”</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">Shifflett, born and raised in Richmond, boasts 15 years of tennis and country club experience, working previously in membership and coordinator roles. A 5.0 professional tennis player prior to making the switch to pickleball three years ago, she is now a 5.0 professional pickleball player. In Shifflett’s free time she enjoys pushing the bar on her fitness journey as a power-lifter. She also dabbles as an artist.</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">“I am beyond excited to join the Performance Team,” said Shifflett. “And I am looking forward to welcoming familiar faces and meeting new ones in a place that brings us together around a sport we all love.”</span></p><p><span style="color: var( --e-global-color-text ); font-family: var( --e-global-typography-text-font-family ), Sans-serif; font-weight: var( --e-global-typography-text-font-weight ); letter-spacing: var( --e-global-typography-text-letter-spacing ); text-align: var(--text-align);">With the addition of Shifflett, Thaian Nguyen (Director of Pickleball) and Renée Laaser (Director of Special Events), PPBRVA now features the entire team that has executed the highest level tournaments in the area. The model for those events will be enhanced and heightened as the team joins PPBRVA.</span></p>						</div>
+				</div>
+					</div>
+				</div>
+							</div>
+		]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Thaian Nguyen Named PPBRVA Director of Pickleball.</title>
+		<link>https://ppbrva.com/thaian-nguyen-named-ppbrva-director-of-pickleball/</link>
+		
+		<dc:creator><![CDATA[ppbadmin]]></dc:creator>
+		<pubDate>Tue, 27 Jun 2023 22:26:57 +0000</pubDate>
+				<category><![CDATA[news]]></category>
+		<guid isPermaLink="false">https://ppbrva.com/?p=525</guid>
+
+					<description><![CDATA[Richmond, VA &#8211; Performance Pickleball RVA is thrilled to announce the addition of Thaian Nguyen (Win) to the Performance Team in the role of Director of Pickleball. Nguyen, one of the most respected figures in Virginia pickleball, will oversee all aspects of PPBRVA&#8217;s pickleball programming, including the instructional staff, leagues, clinics, tournaments and weekly court [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p><strong>Richmond, VA &#8211; </strong>Performance Pickleball RVA is thrilled to announce the addition of Thaian Nguyen (Win) to the Performance Team in the role of Director of Pickleball.</p>
+<p><img loading="lazy" decoding="async" class="size-medium wp-image-526 alignright" src="https://ppbrva.com/wp-content/uploads/2023/06/Thaian-Headshot-copy-300x300.jpg" alt="Thaian Nguyen" width="300" height="300" srcset="https://ppbrva.com/wp-content/uploads/2023/06/Thaian-Headshot-copy-300x300.jpg 300w, https://ppbrva.com/wp-content/uploads/2023/06/Thaian-Headshot-copy-100x100.jpg 100w, https://ppbrva.com/wp-content/uploads/2023/06/Thaian-Headshot-copy-600x600.jpg 600w, https://ppbrva.com/wp-content/uploads/2023/06/Thaian-Headshot-copy-150x150.jpg 150w, https://ppbrva.com/wp-content/uploads/2023/06/Thaian-Headshot-copy-768x768.jpg 768w, https://ppbrva.com/wp-content/uploads/2023/06/Thaian-Headshot-copy.jpg 960w" sizes="(max-width: 300px) 100vw, 300px" />Nguyen, one of the most respected figures in Virginia pickleball, will oversee all aspects of PPBRVA&#8217;s pickleball programming, including the instructional staff, leagues, clinics, tournaments and weekly court scheduling.</p>
+<p>“When we started discussing creating Performance Pickleball RVA, the very first person we knew we needed on our team was Thaian,” said PPBRVA COO Jon Laaser. “His character in leading our pickleball program will set the tone for the entire brand, and there is no one even remotely close to matching what he brings to the team.”</p>
+<p>Born in Vietnam and raised in Virginia, Nguyen grew up learning and playing table tennis and watching pro tennis with his father. Having a fondness for tennis, he would also later pick up playing the sport during his years as a student at the University of Virginia. It wasn&#8217;t until 2016, well after graduating from UVA, when he first discovered pickleball and made the transition from the tennis racket to the pickleball paddle.</p>
+<p>&#8220;While it is very easy and normal to be excited about something so big like Performance Pickleball coming to RVA, I also feel very grateful and blessed to be part of the team that will bring something truly special to the area,” Nguyen said. “Especially in a sport and community that I&#8217;ve come to love so much.”</p>
+<p>Despite having a limited background in ping pong and tennis, Nguyen has developed into a 5.0 pickleball player through both play and practice. In addition to teaching pickleball in the Richmond community over the last two years, Nguyen has also helped coordinate and run pickleball tournaments throughout Washington D.C., Maryland and Virginia since 2020. Nguyen enjoys the fun, social and competitive nature of pickleball and is excited to bring those same elements to PPBRVA.</p>
+<p>&nbsp;</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Performance Pickleball RVA Announces Development Plans</title>
+		<link>https://ppbrva.com/performance-pickleball-rva-announces-development-plans/</link>
+		
+		<dc:creator><![CDATA[ppbadmin]]></dc:creator>
+		<pubDate>Thu, 13 Apr 2023 21:08:00 +0000</pubDate>
+				<category><![CDATA[news]]></category>
+		<guid isPermaLink="false">https://ppbrva.cp.qwikhost.com/2023/04/13/blog-post-title-one-58swb-x2e99-bwwxj/</guid>
+
+					<description><![CDATA[<p class="" style="white-space:pre-wrap;">Performance Pickleball RVA today announced development plans for an 18-court indoor/outdoor pickleball facility as part of the revitalization of Regency in Henrico County. Phase one of the development will include 12 dedicated indoor courts, which will immediately make PPBRVA the largest indoor pickleball facility in Virginia. </p>]]></description>
+										<content:encoded><![CDATA[<p>Largest Indoor Pickleball Facility in Virginia Slated for Regency in Henrico County</p>
+<div>
+<p><strong>RICHMOND, VA</strong> &#8211; Performance Pickleball RVA today announced development plans for an 18-court indoor/outdoor pickleball facility as part of the revitalization of Regency in Henrico County. Phase one of the development will include 12 dedicated indoor courts, which will immediately make PPBRVA the largest indoor pickleball facility in Virginia. Phase two of the development will include six outdoor courts, as well as an outdoor area for spectators.</p>
+<p><img loading="lazy" decoding="async" class="wp-image-89 size-large alignright" src="https://ppbrva.cp.qwikhost.com/wp-content/uploads/2023/05/2023-03-09-10-59-36-1024x576.png" alt="" width="800" height="450" srcset="https://ppbrva.com/wp-content/uploads/2023/05/2023-03-09-10-59-36-1024x576.png 1024w, https://ppbrva.com/wp-content/uploads/2023/05/2023-03-09-10-59-36-600x338.png 600w, https://ppbrva.com/wp-content/uploads/2023/05/2023-03-09-10-59-36-300x169.png 300w, https://ppbrva.com/wp-content/uploads/2023/05/2023-03-09-10-59-36-768x432.png 768w, https://ppbrva.com/wp-content/uploads/2023/05/2023-03-09-10-59-36-1536x864.png 1536w, https://ppbrva.com/wp-content/uploads/2023/05/2023-03-09-10-59-36.png 1920w" sizes="(max-width: 800px) 100vw, 800px" />PPBRVA is the vision of investors and co-founders Lee Warfield, Jeff Newman, Jon Laaser and Leah Fremouw. The facility will boast an elite staff of pickleball instructors from the area and feature individual instruction, clinics for all skill levels, open drop-in play, and leagues.  It will be the host to large-scale tournaments and events that will attract people to the Richmond region. PPBRVA will also include a bar, restaurant and pro shop.</p>
+<p>&#8220;In the last year, Jon and I have become immersed in the sport of pickleball and the RVA community that surrounds it,&#8221; said Warfield. &#8220;Our founders and investors share a passion for growing the sport in a top-notch facility where that community can congregate year-round. We know the pickleball community will be proud of the team and facility we are creating.&#8221;</p>
+<p>Warfield is the President &amp; CEO of Thalhimer, and has deep roots in the RVA business community.  His firm is involved in many of the high-profile projects in the region including a partnership with Rebkee for the redevelopment of Regency, the home of PPBRVA.</p>
+<p>“My interest in pickleball collided with the opportunity at our Regency project,” Warfield added. “It makes a lot of sense for the project and for the pickleball community.  It’s a great location in Henrico County and we couldn’t be more excited about it.”</p>
+<p>Laaser was integral in the founding of the Richmond Flying Squirrels in 2009, and gained repute throughout the state while serving as the &#8220;Voice of the Virginia Tech Hokies&#8221; for seven years. He is the President &amp; Co-Founder of Laaser&#8217;s Ladybug Society, a 501(c)3 non-profit organization that fundraises for mental health initiatives in local public schools.</p>
+<p>Laaser will act as the COO of PBRVA and will run the day-to-day operations.  &#8220;I discovered pickleball in April of 2022, and ever since then it has consumed my life,&#8221; said Laaser. &#8220;The RVA pickleball community, which is one of the most robust in the country, has welcomed me with open arms and I am beyond excited to create a place that they can call home year-round. A pickle paradise is the goal.&#8221;</p>
+<p>With its location at Regency in Henrico County, PPBRVA has collaborated closely with the Henrico County Sports and Entertainment Authority as both grow the sport in the area.</p>
+<p>“It’s amazing to think that a common vision can be achieved so quickly when the right partners are connected,” said Dennis Bickmeier, Executive Director of the Henrico Sports &amp; Entertainment Authority. “That we went from walking this property and talking about ‘what ifs’ a few months ago to now announcing the development of this project is just incredible.  It is another step in the transformation happening at Regency.  With the planned Pouncey Tract pickleball additions and this facility, Henrico and the region will be a pickleball powerhouse.”</p>
+<p>Phase one of the development is slated to open in December of 2023, and will feature membership options at various levels, as well as non-member drop-in play. PPBRVA is designed with spacious viewing areas, two stadium courts, and a state-of-the-art scheduling system to maximize time on the court.</p>
+<p>Interactive Design Group (IDG) is the architect for the facility. Their extensive experience with athletic and hospitality projects was instrumental in designing a facility that helps connect people in the Richmond community through play and sport. IDG has offices in Midlothian and Roanoke. Celebrating its 25th anniversary, the firm has designed hundreds of buildings in various market sectors throughout the state.</p>
+</div>
+]]></content:encoded>
+					
+		
+		
+			</item>
+	</channel>
+</rss>

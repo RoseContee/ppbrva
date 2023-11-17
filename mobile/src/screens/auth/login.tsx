@@ -11,7 +11,7 @@ import { saveAccessToken, saveMe } from '../../store/user';
 import { saveStorage } from '../../utils/storage';
 import axios, { getErrorMessage } from '../../utils/axios';
 import Image from 'react-native-scalable-image';
-import Layouts from '../../components/layouts/auth';
+import Layouts from '../../components/layouts';
 import Message from '../../components/basic/message';
 import Button from '../../components/basic/button';
 import Link from '../../components/basic/link';
@@ -78,7 +78,7 @@ const Login: FC = (): JSX.Element => {
   };
 
   return (
-    <Layouts loading={loading}>
+    <Layouts auth={true} loading={loading}>
       <View style={[t.itemsCenter, t.mT5, t.mB3]}>
         <Image source={imgLogo} width={theme.size.logo} />
       </View>
@@ -87,12 +87,12 @@ const Login: FC = (): JSX.Element => {
         <TextInput inputMode="email" style={[s.input, t.mT6]}
           keyboardType="email-address"
           placeholder="Email address..." placeholderTextColor={theme.color.placeholder}
-          value={email} onChange={e => setEmail(e.nativeEvent.text)}
+          value={email} onChangeText={setEmail}
         />
         <TextInput inputMode="text" style={[s.input, s.mT7]}
           secureTextEntry={true}
           placeholder="Password..." placeholderTextColor={theme.color.placeholder}
-          value={password} onChange={e => setPassword(e.nativeEvent.text)}
+          value={password} onChangeText={setPassword}
         />
         <Button style={[s.bgPrimary, s.mT7]}
           onPress={login}

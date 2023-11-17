@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('member_profiles', function (Blueprint $table) {
             $table->id('member_id');
             $table->boolean('share_age_gender')->default(true);
-            $table->tinyInteger('age')->nullable();
+            $table->string('dupr_id')->nullable();
             $table->string('gender', 10)->nullable();
+            $table->tinyInteger('age')->nullable();
             $table->string('rating', 5)->nullable();
-            $table->string('city', 100)->nullable();
-            $table->string('state', 100)->nullable();
+            $table->integer('matches')->nullable();
+            $table->integer('wins')->nullable();
+            $table->integer('losses')->nullable();
             $table->timestamps();
         });
     }

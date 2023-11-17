@@ -39,9 +39,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'last_login' => 'date:n/j/y @ g:ia',
     ];
 
     public function role() {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(Role::class)->withDefault();
+    }
+
+    public function canAccess($permission) {
+        return $this['role']->hasPermission($permission);
     }
 }

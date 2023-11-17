@@ -2,36 +2,45 @@ import React, { FC, useCallback, useState } from 'react';
 import {
   FlatList,
   Linking,
-  SafeAreaView,
   TouchableOpacity,
   View,
   useWindowDimensions
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import axios from 'axios';
+import { parse as HtmlParse} from 'fast-html-parser';
 import rssParser from 'react-native-rss-parser';
+import _ from 'lodash';
 import Image from 'react-native-scalable-image';
-import { useAppDispatch, useAppSelector } from '../store';
+import axios from 'axios';
+import { useAppSelector } from '../store';
 import { getMe } from '../store/user';
-import { getEvents, saveEvents, IEventProps } from '../store/events';
 import { dateFormat } from '../utils/lib';
-import Loading from '../components/basic/loading';
+import Layouts from '../components/layouts';
+import Message from '../components/basic/message';
 import PageTitle from '../components/basic/page-title';
 import Card from '../components/basic/card';
 import Text from '../components/basic/text';
 import Title from '../components/basic/title';
 
-import imgEvent from '../assets/img/tmp/event.png';
+import imgEvent from '../assets/img/event.jpg';
 
 import { t } from 'react-native-tailwindcss';
 import s from '../utils/styles';
 
-interface ItemProps {
-  width: number,
-  event: IEventProps,
+interface EventItem {
+  id: string
+  image: string | null
+  date: string
+  title: string
+  link: string
 }
 
-const ItemComponent: FC<ItemProps> = ({width, event}): JSX.Element => {
+interface IHeaderProps {
+  width: number,
+  event: EventItem,
+}
+
+const ItemComponent: FC<IHeaderProps> = ({width, event}): JSX.Element => {
   return (
     <View style={[s.pX7, t.mB4]}>
       <TouchableOpacity onPress={() => Linking.openURL(event.link)}>
@@ -54,52 +63,43 @@ const ItemComponent: FC<ItemProps> = ({width, event}): JSX.Element => {
 };
 
 const Events: FC = (): JSX.Element => {
-  const dispatch = useAppDispatch();
   const me = useAppSelector(getMe);
-  const events = useAppSelector(getEvents);
   const { width } = useWindowDimensions();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [events, setEvents] = useState<EventItem[]>([]);
 
   useFocusEffect(
     useCallback(() => {
-      setLoading(true);
+      if (!events.length) setLoading(true);
       axios.get(`https://ppbrva.com/feed/`)
       .then(({ data }) => {
         rssParser.parse(data)
         .then(rss => {
-          dispatch(saveEvents(
-            rss.items.map(item => ({
+          setEvents(rss.items.map(item => {
+            const img = HtmlParse(item.content).querySelector('#rss-image img');
+            return {
               id: item.id,
-              image: (item.enclosures[0] || {}).url,
+              image: img ? (_.trim(img.rawAttributes.src, '"<')) : null,
               date: item.published,
               title: item.title,
               link: item.links[0].url
-            }))
-          ));
+            };
+          }));
         }).finally(() => setLoading(false));
       }).finally(() => setLoading(false));
     }, [])
   );
 
   return (
-    <>
-      <Loading show={loading} />
-      <SafeAreaView style={[t.bgWhite]}>
-        <FlatList style={[t.hFull]}
-          data={events}
-          keyExtractor={item => item.id}
-          ListHeaderComponent={() => <PageTitle title={me.name} style={[t.mB3]} />}
-          ListEmptyComponent={() => {
-            return (
-              <Text style={[s.textGray, t.textXl, t.textCenter, s.pX7, t.pY10]}>
-                Events not found.
-              </Text>
-            );
-          }}
-          renderItem={({ item }) => <ItemComponent width={width} event={item} />}
-        />
-      </SafeAreaView>
-    </>
+    <Layouts flatlist={true} loading={loading}>
+      <FlatList style={[t.hFull]}
+        data={events}
+        keyExtractor={(item, index) => index + '-' + item.id}
+        ListHeaderComponent={() => <PageTitle title={me.name} style={[t.mB3]} />}
+        ListEmptyComponent={() => <Message style={[t.mT10]} text={'Events not found.'} />}
+        renderItem={({ item }) => <ItemComponent width={width} event={item} />}
+      />
+    </Layouts>
   );
 };
 

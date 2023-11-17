@@ -14,40 +14,48 @@ class AuthController extends Controller
 {
     protected int $code_expiration = 60;
 
+    /**
+     * @throws ValidationException
+     */
     public function login(Request $request) {
         $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
             'device' => ['required'],
         ]);
-        $member = Member::with(['profile', 'location', 'plan'])
+        $user = Member::query()
+            ->with(['profile', 'location', 'plan'])
             ->where('email', $request['email'])
             ->first();
-        if (!$member || !Hash::check($request['password'], $member['password'])) {
+        if (!$user || !Hash::check($request['password'], $user['password'])) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
-        if (!$member['active']) {
+        if (!$user['active']) {
             throw ValidationException::withMessages([
                 'email' => ['Your account has been deactivated.'],
             ]);
         }
         return response()->json([
-            'access_token' => $member->createToken($request['device'])->plainTextToken,
-            'user' => $member->getInfo(),
+            'access_token' => $user->createToken($request['device'])->plainTextToken,
+            'user' => $user->getInfo(),
         ]);
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function forgotPassword(Request $request) {
         $request->validate([
             'email' => ['required', 'email'],
         ]);
         $email = $request['email'];
-        $member = Member::where('email', $email)
+        $user = Member::query()
+            ->where('email', $email)
             ->active()
             ->first();
-        if (!$member) {
+        if (!$user) {
             throw ValidationException::withMessages([
                 'email' => ['The email does not exist.'],
             ]);
@@ -56,9 +64,8 @@ class AuthController extends Controller
             $reset = DB::table('member_password_reset_codes')
                 ->where('email', $email)
                 ->first();
-            if (!$reset
-                || $reset->created_at < date('Y-m-d H:i:s', strtotime("-{$this->code_expiration} minutes"))
-            ) {
+            $expiration = date('Y-m-d H:i:s', strtotime("-{$this->code_expiration} minutes"));
+            if (!$reset || $reset->created_at < $expiration) {
                 $code = random_int(100000, 999999);
                 DB::table('member_password_reset_codes')->updateOrInsert([
                     'email' => $email,
@@ -67,13 +74,15 @@ class AuthController extends Controller
                     'created_at' => now(),
                 ]);
             }
-            $member->notify(new MemberResetCode($code ?? $reset->code, $this->code_expiration));
+            $user->notify(new MemberResetCode($code ?? $reset->code, $this->code_expiration));
         } catch (\Exception $exception) {
             throw ValidationException::withMessages([
                 'email' => [$exception->getMessage()],
             ]);
         }
-        return response()->json(null);
+        return response()->json([
+            'status' => 'OK',
+        ]);
     }
 
     public function validateCode(Request $request) {
@@ -81,19 +90,25 @@ class AuthController extends Controller
             'email' => ['required', 'email'],
             'code' => ['required', 'digits:6']
         ]);
+        $expiration = date('Y-m-d H:i:s', strtotime("-{$this->code_expiration} minutes"));
         $reset = DB::table('member_password_reset_codes')
             ->where('email', $request['email'])
             ->where('code', $request['code'])
-            ->where('created_at', '>=', date('Y-m-d H:i:s', strtotime("-{$this->code_expiration} minutes")))
+            ->where('created_at', '>=', $expiration)
             ->first();
         if (!$reset) {
             throw ValidationException::withMessages([
                 'code' => 'Reset code is incorrect.',
             ]);
         }
-        return response()->json(null);
+        return response()->json([
+            'status' => 'OK',
+        ]);
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function resetPassword(Request $request) {
         $request->validate([
             'email' => ['required', 'email'],
@@ -102,31 +117,35 @@ class AuthController extends Controller
         ]);
         $email = $request['email'];
         $code = $request['code'];
+        $expiration = date('Y-m-d H:i:s', strtotime("-{$this->code_expiration} minutes"));
         $reset = DB::table('member_password_reset_codes')
             ->where('email', $email)
             ->where('code', $code)
-            ->where('created_at', '>=', date('Y-m-d H:i:s', strtotime("-{$this->code_expiration} minutes")))
+            ->where('created_at', '>=', $expiration)
             ->first();
         if (!$reset) {
             throw ValidationException::withMessages([
                 'code' => 'Reset code is expired.',
             ]);
         }
-        $member = Member::where('email', $email)
+        $user = Member::query()
+            ->where('email', $email)
             ->active()
             ->first();
-        if (!$member) {
+        if (!$user) {
             throw ValidationException::withMessages([
                 'email' => ['The email does not exist.'],
             ]);
         }
-        $member['password'] = bcrypt($request['password']);
-        $member['original_pass'] = null;
-        $member->save();
+        $user['password'] = bcrypt($request['password']);
+        $user['original_pass'] = null;
+        $user->save();
         DB::table('member_password_reset_codes')
             ->where('email', $email)
             ->where('code', $code)
             ->delete();
-        return response()->json(null);
+        return response()->json([
+            'status' => 'OK',
+        ]);
     }
 }

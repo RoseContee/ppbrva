@@ -2,8 +2,9 @@
 
 namespace App\Helpers;
 
+use Exception;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
 
 class Clover
 {
@@ -11,7 +12,7 @@ class Clover
     protected Client $platform_client;
     protected Client $tokenization_client;
     protected Client $ecommerce_client;
-    protected string $errorMessage = 'Clover API error.';
+    protected string $ecomind = 'moto';
 
     public function __construct() {
         $mode = strtoupper(env('CLOVER_MODE', 'LIVE')) === 'SANDBOX' ? 'SANDBOX' : 'LIVE';
@@ -60,6 +61,11 @@ class Clover
         ]);
     }
 
+    protected function getErrorMessage(array | string $result) {
+        return $result['message'] ?? $result['error']['message'] ?? 'Clover API error.';
+        return $result['message'] ?? $result['error']['message'] ?? $result ?? 'Clover API error.';
+    }
+
     public function getCustomer(string $customerId) {
         try {
             $mId = $this->mId;
@@ -69,11 +75,12 @@ class Clover
                 ],
             ]);
             return json_decode($response->getBody(), true);
-        } catch (ClientException $exception) {
+        } catch (RequestException $exception) {
             $result = json_decode($exception->getResponse()->getBody(), true);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
+            $result = $exception->getMessage();
         }
-        return $result['error']['message'] ?? $this->errorMessage;
+        return $this->getErrorMessage($result);
     }
 
     public function createCustomer(array $data) {
@@ -85,10 +92,12 @@ class Clover
                     'emailAddress' => $data['email'],
                     'primaryEmail' => true,
                 ]],
-                'phoneNumbers' => [[
-                    'phoneNumber' => $data['phone'],
-                ]],
             ];
+            if ($data['phone']) {
+                $body['phoneNumbers'] = [[
+                    'phoneNumber' => $data['phone'],
+                ]];
+            }
             $response = $this->platform_client->post("/v3/merchants/{$mId}/customers", [
                 'query' => [
                     'expand' => 'emailAddresses,phoneNumbers,cards',
@@ -96,11 +105,12 @@ class Clover
                 'body' => json_encode($body),
             ]);
             return json_decode($response->getBody(), true);
-        } catch (ClientException $exception) {
+        } catch (RequestException $exception) {
             $result = json_decode($exception->getResponse()->getBody(), true);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
+            $result = $exception->getMessage();
         }
-        return $result['error']['message'] ?? $this->errorMessage;
+        return $this->getErrorMessage($result);
     }
 
     public function updateCustomer(string $customerId, array $data) {
@@ -112,23 +122,33 @@ class Clover
                     'id' => $data['email']['id'],
                     'emailAddress' => $data['email']['value'],
                 ]],
-                'phoneNumbers' => [[
-                    'id' => $data['phone']['id'],
-                    'phoneNumber' => $data['phone']['value'],
-                ]],
             ];
+            $phoneId = $data['phone']['id'];
+            $phone = $data['phone']['value'];
+            if ($phone) {
+                $body['phoneNumbers'] = [[
+                    'id' => $phoneId,
+                    'phoneNumber' => $phone,
+                ]];
+            }
             $response = $this->platform_client->post("/v3/merchants/{$mId}/customers/{$customerId}", [
                 'query' => [
                     'expand' => 'emailAddresses,phoneNumbers,cards',
                 ],
                 'body' => json_encode($body),
             ]);
+            if ($phoneId && !$phone) {
+                try {
+                    $this->platform_client->delete("/v3/merchants/{$mId}/customers/{$customerId}/phone_numbers/{$phoneId}");
+                } catch (Exception $exception) {}
+            }
             return json_decode($response->getBody(), true);
-        } catch (ClientException $exception) {
+        } catch (RequestException $exception) {
             $result = json_decode($exception->getResponse()->getBody(), true);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
+            $result = $exception->getMessage();
         }
-        return $result['error']['message'] ?? $this->errorMessage;
+        return $this->getErrorMessage($result);
     }
 
     public function cardType(string $cardnumber) {
@@ -161,7 +181,6 @@ class Clover
                     'last4' => substr($data['number'], -4),
                     'first6' => substr($data['number'], -6),
                     'brand' => $data['brand'],
-                    'name' => $data['name'],
                     'address_line1' => $data['address'],
                     'address_zip' => $data['zipcode'],
                 ],
@@ -170,17 +189,18 @@ class Clover
                 'body' => json_encode($body),
             ]);
             return json_decode($response->getBody(), true);
-        } catch (ClientException $exception) {
+        } catch (RequestException $exception) {
             $result = json_decode($exception->getResponse()->getBody(), true);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
+            $result = $exception->getMessage();
         }
-        return $result['error']['message'] ?? $this->errorMessage;
+        return $this->getErrorMessage($result);
     }
 
     public function createCustomerCard(array $data) {
         try {
             $body = [
-                'ecomind' => 'moto',
+                'ecomind' => $this->ecomind,
                 'email' => $data['email'],
                 'name' => $data['name'],
                 'source' => $data['card'],
@@ -189,17 +209,18 @@ class Clover
                 'body' => json_encode($body),
             ]);
             return json_decode($response->getBody(), true);
-        } catch (ClientException $exception) {
+        } catch (RequestException $exception) {
             $result = json_decode($exception->getResponse()->getBody(), true);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
+            $result = $exception->getMessage();
         }
-        return $result['error']['message'] ?? $this->errorMessage;
+        return $this->getErrorMessage($result);
     }
 
     public function updateCustomerCard(string $customerId, array $data) {
         try {
             $body = [
-                'ecomind' => 'moto',
+                'ecomind' => $this->ecomind,
                 'email' => $data['email'],
                 'source' => $data['card'],
             ];
@@ -207,37 +228,107 @@ class Clover
                 'body' => json_encode($body),
             ]);
             return json_decode($response->getBody(), true);
-        } catch (ClientException $exception) {
+        } catch (RequestException $exception) {
             $result = json_decode($exception->getResponse()->getBody(), true);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
+            $result = $exception->getMessage();
         }
-        return $result['error']['message'] ?? $this->errorMessage;
+        return $this->getErrorMessage($result);
     }
 
     public function revokeCustomerCard(string $customerId, string $cardId) {
         try {
             $response = $this->ecommerce_client->delete("/v1/customers/{$customerId}/sources/{$cardId}");
             return json_decode($response->getBody(), true);
-        } catch (ClientException $exception) {
+        } catch (RequestException $exception) {
             $result = json_decode($exception->getResponse()->getBody(), true);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
+            $result = $exception->getMessage();
         }
-        return $result['error']['message'] ?? $this->errorMessage;
+        return $this->getErrorMessage($result);
     }
 
     public function getOrders() {
         try {
             $mId = $this->mId;
-            $response = $this->platform_client->get("https://sandbox.dev.clover.com/v3/merchants/{$mId}/orders", [
+            $response = $this->platform_client->get("/v3/merchants/{$mId}/orders", [
                 'query' => [
                     'expand' => 'lineItems,payment.tender'
                 ],
             ]);
             return json_decode($response->getBody(), true);
-        } catch (ClientException $exception) {
+        } catch (RequestException $exception) {
             $result = json_decode($exception->getResponse()->getBody(), true);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
+            $result = $exception->getMessage();
         }
-        return $result['error']['message'] ?? $this->errorMessage;
+        return $this->getErrorMessage($result);
+    }
+
+    public function updateOrderStatus(string $orderID) {
+        return null;
+    }
+
+    public function getCharge(string $chargeId) {
+        try {
+            $response = $this->ecommerce_client->get("/v1/charges/{$chargeId}");
+            return json_decode($response->getBody(), true);
+        } catch (RequestException $exception) {
+            $result = json_decode($exception->getResponse()->getBody(), true);
+        } catch (Exception $exception) {
+            $result = $exception->getMessage();
+        }
+        return $this->getErrorMessage($result);
+    }
+
+    public function createCharge(array $data) {
+        try {
+            $body = [
+                'ecomind' => $this->ecomind,
+                'amount' => $data['amount'] * 100,
+                'currency' => 'USD',
+                'source' => $data['source'],
+                'capture' => true,
+                'description' => $data['description'],
+            ];
+            $response = $this->ecommerce_client->post("/v1/charges", [
+                'body' => json_encode($body),
+            ]);
+            return json_decode($response->getBody(), true);
+        } catch (RequestException $exception) {
+            $result = json_decode($exception->getResponse()->getBody(), true);
+        } catch (Exception $exception) {
+            $result = $exception->getMessage();
+        }
+        return $this->getErrorMessage($result);
+    }
+
+    public function getInventoryItems() {
+        $mId = $this->mId;
+        $offset = 0; $limit = 1000;
+        $inventoryItems = [];
+        do {
+            try {
+                $response = $this->platform_client->get("/v3/merchants/{$mId}/items", [
+                    'query' => [
+                        'expand' => 'categories,tags',
+                        'offset' => $offset,
+                        'limit' => $limit,
+                    ],
+                ]);
+                $items = json_decode($response->getBody(), true);
+                foreach (($items['elements'] ?? []) as $item) {
+                    $inventoryItems[$item['id']] = [
+                        'itemID' => $item['id'],
+                        'item' => $item['name'],
+                        'price' => $item['price'],
+                        'category' => $item['categories']['elements'][0]['name'] ?? '',
+                        'sortOrder' => $item['categories']['elements'][0]['sortOrder'] ?? 0,
+                    ];
+                }
+            } catch (Exception $exception) {}
+            $offset += $limit;
+        } while (!empty($elements));
+        return $inventoryItems;
     }
 }

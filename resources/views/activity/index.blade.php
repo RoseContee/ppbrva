@@ -11,29 +11,6 @@
 
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg py-4">
                         <div class="flex items-center justify-between p-4 bg-white dark:bg-gray-900">
-                            <div>
-                                <button class="inline-flex items-center text-gray-500 bg-white border border-slate-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-                                        v-on:click="toggleMenu">
-                                    <span class="sr-only">Action button</span>
-                                    Action
-                                    <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                                    </svg>
-                                </button>
-                                <div class="absolute hidden z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
-                                     :style="{display: showMenu ? 'block' : 'none'}">
-                                    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
-                                        <li>
-                                            <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                               href="javascript:void(0);"
-                                               v-on:click="deleteItems">
-                                                Delete
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-
                             <label for="table-search" class="sr-only">Search</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -55,43 +32,22 @@
                         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-2">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr class="bg-zinc-100 text-navy">
-                                    <th scope="col" class="p-4">
-                                        <div class="flex items-center">
-                                            <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                                   type="checkbox"
-                                                   id="select-all"
-                                                   v-model="selectedAll"
-                                                   v-on:change="e => selectAll(e.target.checked)">
-                                            <label for="select-all" class="sr-only">Select All</label>
-                                        </div>
-                                    </th>
                                     <th scope="col" class="px-6 py-3">Member</th>
                                     <th scope="col" class="px-6 py-3">Category</th>
                                     <th scope="col" class="px-6 py-3">Detail</th>
                                     <th scope="col" class="px-6 py-3">Amount</th>
+                                    <th scope="col" class="px-6 py-3">Date</th>
                                     <th scope="col" class="px-6 py-3 items-center"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                                     v-for="(activity, index) in filteredActivities" key="index">
-                                    <td class="w-4 p-4">
-                                        <div class="flex items-center"
-                                             v-if="activity.from === 'admin' && !activity.invoice_id">
-                                            <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                                   type="checkbox"
-                                                   :id="'activity-' + activity.id"
-                                                   :checked="selectedItems.includes(activity.id)"
-                                                   v-on:change="e => selectItem(activity, e.target.checked)">
-                                            <label :for="'activity-' + activity.id" class="sr-only">Select</label>
-                                        </div>
-                                    </td>
                                     <td scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                                        <img class="w-10 h-10 rounded-full"
+                                        <img class="w-10 h-10 rounded-full" v-if="activity.member.avatar"
                                              :src="activity.member.avatar"
-                                             :alt="activity.member.name"
-                                             v-if="activity.member">
-                                        <div class="pl-3" v-if="activity.member">
+                                             :alt="activity.member.name">
+                                        <div class="pl-3" v-if="activity.member.name">
                                             <div class="text-base font-semibold">
                                                 <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
                                                    :href="'{{ route('members.index') }}/' + activity.member.id + '/edit'"
@@ -102,19 +58,20 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4" v-text="activity.category"></td>
-                                    <td class="px-6 py-4" v-text="activity.detail"></td>
+                                    <td class="px-6 py-4" v-text="(activity.from === 'clover' ? '#' : '') + activity.detail"></td>
                                     <td class="px-6 py-4" v-text="currencyFormat(activity.price)"></td>
+                                    <td class="px-6 py-4" v-text="activity.date"></td>
                                     <td class="px-6 py-4 text-center">
                                         <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
                                            :href="'{{ route('activity.index') }}/' + activity.id + '/edit'"
-                                           v-if="activity.from === 'admin' && !activity.invoice_id">
+                                           v-if="activity.from === 'admin' && !activity.invoiceID">
                                             Edit
                                         </a>
                                     </td>
                                 </tr>
                                 <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                                     v-if="!filteredActivities.length">
-                                    <td class="px-6 py-4 italic" colspan="6">
+                                    <td class="px-6 py-4 italic" colspan="5">
                                         No activities found.
                                     </td>
                                 </tr>
@@ -152,11 +109,6 @@
             </div>
         </div>
     </div>
-    <form name="deleteForm" action="{{ route('activity.destroy') }}" method="POST">
-        @csrf
-        @method('DELETE')
-        <input type="hidden" name="activities" v-model="selectedItems">
-    </form>
 
     @push('scripts')
         <script type="module">
@@ -185,48 +137,16 @@
                     const filteredActivities = computed(() => {
                         return activities.value.filter((activity, index) => {
                             const q = keyword.value.toLowerCase();
-                            return ((activity.member
-                                        && (activity.member.name.toLowerCase().indexOf(q) !== -1
-                                            || activity.member.memberID.toLowerCase().indexOf(q) !== -1
-                                        )
-                                    ) || activity.category.toLowerCase().indexOf(q) !== -1
-                                    || activity.detail.toLowerCase().indexOf(q) !== -1
+                            return (activity.member.name.toLowerCase().includes(q)
+                                    || activity.member.memberID.toLowerCase().includes(q)
+                                    || activity.category.toLowerCase().includes(q)
+                                    || activity.detail.toLowerCase().includes(q)
+                                    || ('$' + activity.price).toLowerCase().includes(q)
+                                    || activity.date.toLowerCase().includes(q)
                                 ) && (page.value - 1) * per_page <= index
                                 && index < Math.min(page.value * per_page, activities.value.length);
                         });
                     });
-                    const selectedAll = ref(false);
-                    const selectedItems = ref([]);
-                    const selectAll = (checked) => {
-                        if (checked) {
-                            selectedItems.value = activities.value
-                                .filter(activity => activity.from === 'admin' && !activity.invoice_id)
-                                .map(item => item.id);
-                        } else {
-                            selectedItems.value = [];
-                        }
-                    }
-                    const selectItem = (item, checked) => {
-                        if (checked) selectedItems.value.push(item.id);
-                        else selectedItems.value = selectedItems.value.filter(el => el !== item.id);
-                        let all = true;
-                        activities.value
-                            .filter(activity => activity.from === 'admin' && !activity.invoice_id)
-                            .forEach(item => {
-                                if (!selectedItems.value.includes(item.id)) all = false;
-                            });
-                        selectedAll.value = all;
-                    };
-                    const showMenu = ref(false);
-                    const toggleMenu = () => {
-                        showMenu.value = !showMenu.value;
-                    }
-                    const deleteItems = () => {
-                        toggleMenu();
-                        if (selectedItems.value.length && confirm('Are you sure to delete?')) {
-                            document.deleteForm.submit();
-                        }
-                    }
                     const currencyFormat = value => {
                         return new Intl.NumberFormat('en-US', {
                             style: 'currency',
@@ -237,8 +157,6 @@
                     return {
                         activities, keyword,
                         pagination_info, firstPage, prevPage, lastPage, nextPage, filteredActivities,
-                        selectedAll, selectAll, selectedItems, selectItem,
-                        showMenu, toggleMenu, deleteItems,
                         currencyFormat,
                     }
                 }

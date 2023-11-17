@@ -1,4 +1,4 @@
-@import 'select2/dist/css/select2.min.css';
+@import 'choices.js/public/assets/styles/choices.min.css';
 @import './datepicker.css';
 
 @tailwind base;

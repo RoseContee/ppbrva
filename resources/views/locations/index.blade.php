@@ -70,7 +70,9 @@
                     const keyword = ref('');
                     const filteredLocations = computed(() => {
                         return locations.filter(item => {
-                            return item.name.toLowerCase().indexOf(keyword.value.toLowerCase()) !== -1;
+                            const q = keyword.value.toLowerCase();
+                            return item.name.toLowerCase().includes(q)
+                                || item.address.toLowerCase().includes(q);
                         });
                     });
                     return {

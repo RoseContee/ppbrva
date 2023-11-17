@@ -102,10 +102,10 @@
                                     </td>
                                     <td class="px-6 py-4" v-text="member.email"></td>
                                     <td class="px-6 py-4" v-text="member.phone"></td>
-                                    <td class="px-6 py-4" v-text="member.plan_name"></td>
+                                    <td class="px-6 py-4" v-text="member.plan.name"></td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center">
-                                            <div class="h-2.5 w-2.5 rounded-full bg-green-500 mr-2"
+                                            <div class="h-2.5 w-2.5 rounded-full mr-2"
                                                  :class="{'bg-green-500': member.active, 'bg-red-500': !member.active}"></div>
                                             <span v-text="member.active ? 'Active' : 'Inactive'"></span>
                                         </div>
@@ -203,8 +203,9 @@
                     }
                     const filteredMembers = computed(() => {
                         return members.value.filter((member, index) => {
-                            return (member.name.toLowerCase().indexOf(keyword.value.toLowerCase()) !== -1
-                                    || member.memberID.toLowerCase().indexOf(keyword.value.toLowerCase()) !== -1
+                            const q = keyword.value.toLowerCase();
+                            return (member.name.toLowerCase().includes(q)
+                                    || member.memberID.toLowerCase().includes(q)
                                 ) && (page.value - 1) * per_page <= index
                                 && index < Math.min(page.value * per_page, members.value.length);
                         });

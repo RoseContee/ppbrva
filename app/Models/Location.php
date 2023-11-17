@@ -15,7 +15,7 @@ class Location extends Model
     ];
 
     public function getImageAttribute() {
-        if (is_file(public_path($this->attributes['image']))) {
+        if (is_file(public_path($this->attributes['image'] ?? ''))) {
             return asset($this->attributes['image']);
         }
         return null;

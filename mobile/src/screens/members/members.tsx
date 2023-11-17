@@ -2,12 +2,15 @@ import React, { FC, useCallback, useState } from 'react';
 import {
   BackHandler,
   FlatList,
-  SafeAreaView,
   View
 } from 'react-native';
-import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import {
+  NavigationProp, useFocusEffect, useNavigation, useRoute
+} from '@react-navigation/native';
 import { useAppSelector } from '../../store';
 import { getMe } from '../../store/user';
+import axios from '../../utils/axios';
+import Layouts from '../../components/layouts';
 import PageTitle from '../../components/basic/page-title';
 import Message from '../../components/basic/message';
 import Text from '../../components/basic/text';
@@ -18,10 +21,46 @@ import MemberCard from '../../components/basic/member-card';
 import { t } from 'react-native-tailwindcss';
 import s from '../../utils/styles';
 
-interface IHeaderProps {
+export interface MemberProps {
+  memberID: string,
+  name: string,
+  email: string,
+  phone: string,
+  avatar: string,
+  profile: {
+    share_age_gender: boolean,
+    age: string,
+    gender: string,
+    rating: string,
+    matches: number,
+    wins: number,
+    losses: number,
+  },
+
+  email_share: boolean,
+  phone_share: boolean,
+  my_email_share: boolean,
+  my_phone_share: boolean,
+  friend_status: '' | 'pending' | 'waiting' | 'accepted',
 }
 
-const HeaderComponent: FC<IHeaderProps> = ({}): JSX.Element => {
+type FilterType = 'all' | 'males' | 'females' | '2.0' | '3.0' | '4.0' | '5.0';
+
+interface IHeaderProps {
+  keyword: string,
+  onSearch: (keyword: string) => void,
+  filter: FilterType,
+  onFilter: (type: FilterType) => void,
+  pending?: number,
+}
+
+const HeaderComponent: FC<IHeaderProps> = ({
+  keyword,
+  onSearch,
+  filter,
+  onFilter,
+  pending,
+}): JSX.Element => {
   const navigation = useNavigation();
   const route = useRoute();
   const me = useAppSelector(getMe);
@@ -30,60 +69,76 @@ const HeaderComponent: FC<IHeaderProps> = ({}): JSX.Element => {
     <>
       <PageTitle title={ me.name } />
       {
-        route.name === 'Friends' &&
-        <Message style={[t.mT4]}>
-          <Text style={[t.flexShrink, t.textBase, s.textGray, t.pR4]}>
-            You have 3 pending requests!
-          </Text>
-          <Button style={[s.bgPrimary, s.messageBtn, t.pX5]} titleStyle={[t.textSm]}
-            onPress={() => navigation.navigate('PendingRequests' as never)}
-          >
-            View
-          </Button>
-        </Message>
+        route.name === 'Friends' && pending ? (
+          <Message style={[t.mT4]}>
+            <Text style={[t.flexShrink, t.textBase, s.textGray, t.pR4]}>
+              You have { pending } pending requests!
+            </Text>
+            <Button style={[s.bgPrimary, s.messageBtn, t.pX5]} titleStyle={[t.textSm]}
+              onPress={() => navigation.navigate('PendingRequests' as never)}
+            >
+              View
+            </Button>
+          </Message>
+        ) : (<></>)
       }
-      <SearchBar style={[t.mT8, t.mB4]} />
+      <SearchBar style={[t.mT8, t.mB4]}
+        keyword={keyword}
+        onSearch={onSearch}
+        buttonText="Filter"
+        items={[
+          {value: 'all', text: 'All'},
+          {value: 'males', text: 'Only Males'},
+          {value: 'females', text: 'Only Females'},
+          {value: '2.0', text: 'DUPR 2.0-2.9'},
+          {value: '3.0', text: 'DUPR 3.0-3.9'},
+          {value: '4.0', text: 'DUPR 4.0-4.9'},
+          {value: '5.0', text: 'DUPR 5.0+'},
+        ]}
+        activeMenu={filter}
+        onMenuSelect={menu => onFilter(menu as FilterType)}
+      />
     </>
   );
 };
 
-export interface MemberProps {
-  id: string,
-  name: string,
-  email?: string,
-  phone?: string,
-  gender: string,
-  age: number,
-  dupr: number,
-  avatar: string,
-  matches: number,
-  wins: number,
-  losses: number,
+interface IItemProps {
+  navigation: NavigationProp<ReactNavigation.RootParamList>,
+  route: string,
+  member: MemberProps,
 }
 
-const ItemComponent: FC<MemberProps> = (member): JSX.Element => {
-  const navigation = useNavigation();
-  const route = useRoute();
-
+const ItemComponent: FC<IItemProps> = ({
+  navigation,
+  route,
+  member,
+}): JSX.Element => {
   return (
     <View style={[s.pX7, t.mT6]}>
-      <MemberCard name={member.name} gender={member.gender} age={member.age}
-        dupr={member.dupr} image={member.avatar}
+      <MemberCard member={member}
         onPress={() => {
-          if (route.name === 'Friends') {
+          if (route === 'Friends') {
             navigation.navigate({
               name: 'AcceptedFriend',
-              params: {member},
+              params: {
+                title: member.name,
+                memberID: member.memberID,
+              },
             } as never);
-          } else if (route.name === 'PendingRequests') {
+          } else if (route === 'PendingRequests') {
             navigation.navigate({
               name: 'FriendRequest',
-              params: { member },
+              params: {
+                memberID: member.memberID,
+              },
             } as never);
-          } else if (route.name === 'Members') {
+          } else if (route === 'Members') {
             navigation.navigate({
               name: 'MemberInvite',
-              params: {member},
+              params: {
+                title: member.name,
+                memberID: member.memberID,
+              },
             } as never);
           }
         }}
@@ -95,44 +150,42 @@ const ItemComponent: FC<MemberProps> = (member): JSX.Element => {
 const Members: FC = (): JSX.Element => {
   const navigation = useNavigation();
   const route = useRoute();
-  const [members, setMembers] = useState<MemberProps[]>([{
-    id: 'bd7acbea',
-    name: 'Jorge Warsh',
-    email: 'jorge@warsh.com',
-    phone: '(805) 555-1234',
-    gender: 'Male',
-    age: 64,
-    dupr: 3.9,
-    avatar: '',
-    matches: 24,
-    wins: 14,
-    losses: 10,
-  }, {
-    id: '3ac68afc',
-    name: 'Tatiana Leland',
-    email: 'tatiana@leland.com',
-    gender: 'Female',
-    age: 55,
-    dupr: 3.8,
-    avatar: '',
-    matches: 15,
-    wins: 14,
-    losses: 1,
-  }, {
-    id: '58694a0f',
-    name: 'Ken Derson',
-    phone: '(956) 874-1234',
-    gender: 'Male',
-    age: 32,
-    dupr: 4.0,
-    avatar: '',
-    matches: 8,
-    wins: 0,
-    losses: 8,
-  }]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [members, setMembers] = useState<MemberProps[]>([]);
+  const [pending, setPending] = useState<number>();
+  const [keyword, setKeyword] = useState<string>('');
+  const [filter, setFilter] = useState<FilterType>('all');
+
+  const filteredMembers = members.filter(member => {
+    const q = keyword.toLowerCase();
+    const profile = member.profile || {
+      share_age_gender: false,
+      gender: '',
+      rating: 0,
+    };
+    const rating = Number(profile.rating);
+    return member.name.toLowerCase().includes(q)
+      && (filter === 'all'
+        || (filter === 'males' && profile.share_age_gender && profile.gender.toLocaleLowerCase() === 'male')
+        || (filter === 'females' && profile.share_age_gender && profile.gender.toLocaleLowerCase() === 'female')
+        || (filter === '2.0' && 2.0 <= rating && rating < 3)
+        || (filter === '3.0' && 3.0 <= rating && rating < 4)
+        || (filter === '4.0' && 4.0 <= rating && rating < 5)
+        || (filter === '5.0' && 5.0 <= rating)
+      );
+  });
 
   useFocusEffect(
     useCallback(() => {
+      if (!members.length) setLoading(true);
+      const url = route.name === 'Members' ? '/members'
+        : route.name === 'Friends' ? '/friends'
+        : '/pending-friends';
+      axios.get(url)
+      .then(({ data }) => {
+        setMembers(data.members);
+        setPending(data.pending_requests);
+      }).finally(() => setLoading(false));
       const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
         if (route.name === 'PendingRequests') {
           navigation.navigate('Friends' as never);
@@ -144,16 +197,35 @@ const Members: FC = (): JSX.Element => {
     }, [])
   );
 
+  const renderListHeader = () => {
+    return (
+      <HeaderComponent
+        keyword={keyword} onSearch={setKeyword}
+        filter={filter} onFilter={setFilter}
+        pending={pending}
+      />
+    );
+  };
+
   return (
-    <SafeAreaView style={[t.bgWhite]}>
+    <Layouts flatlist={true} loading={loading}>
       <FlatList style={[t.hFull]} contentContainerStyle={[t.pB6]}
-        data={members}
-        keyExtractor={item => item.id}
-        ListHeaderComponent={() => <HeaderComponent />}
-        renderItem={({item}) => <ItemComponent {...item} />}
-      >
-      </FlatList>
-    </SafeAreaView>
+        data={filteredMembers}
+        keyExtractor={item => item.memberID}
+        ListHeaderComponent={renderListHeader()}
+        ListEmptyComponent={() => (
+          <Message style={[t.mT10]}
+            text={`${ route.name === 'Friends' ? 'Friends' : 'Members' } not found.`}
+          />
+        )}
+        renderItem={({item}) => (
+          <ItemComponent navigation={navigation}
+            route={route.name}
+            member={item}
+          />
+        )}
+      />
+    </Layouts>
   );
 };
 

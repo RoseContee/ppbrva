@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios, { getErrorMessage } from '../../utils/axios';
-import Layouts from '../../components/layouts/auth';
+import Layouts from '../../components/layouts';
 import Message from '../../components/basic/message';
 import Button from '../../components/basic/button';
 
@@ -39,13 +39,13 @@ const ForgotPassword: FC = (): JSX.Element => {
   }
 
   return (
-    <Layouts loading={loading}>
+    <Layouts auth={true} loading={loading}>
       <Message style={[t.pX8]} text={message} />
       <View style={[t.pX8]}>
         <TextInput inputMode="email" style={[s.input, t.mT6]}
           keyboardType="email-address"
           placeholder="Email address..." placeholderTextColor={theme.color.placeholder}
-          value={email} onChange={e => setEmail(e.nativeEvent.text)}
+          value={email} onChangeText={setEmail}
         />
         <Button style={[s.bgPrimary, s.mT7]}
           onPress={sendResetCode}

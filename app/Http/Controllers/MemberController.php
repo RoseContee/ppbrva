@@ -14,19 +14,15 @@ use Illuminate\Validation\Rule;
 class MemberController extends Controller
 {
     public function index() {
-        $members = Member::with(['plan'])->get();
-        foreach ($members as $member) {
-            $member['plan_name'] = $member['plan']['name'] ?? '';
-            $member['original_pass'] = !empty($member['original_pass']);
-        }
+        $members = Member::query()->with(['plan'])->get();
         return view('members.index', [
             'members' => $members,
         ]);
     }
 
     public function create() {
-        $locations = Location::get();
-        $plans = Plan::get();
+        $locations = Location::query()->get();
+        $plans = Plan::query()->get();
         return view('members.add', [
             'locations' => $locations,
             'plans' => $plans,
@@ -48,10 +44,10 @@ class MemberController extends Controller
             'phone' => $request['phone'],
         ]);
         if (empty($customer['id'])) {
-            return back()->with('error_message', $customer);
+            return back()->withInput()->with('error_message', $customer);
         }
         $password = Str::random(8);
-        $member = Member::create([
+        $member = Member::query()->create([
             'memberID' => Str::random(),
             'name' => $request['name'],
             'email' => $request['email'],
@@ -60,7 +56,7 @@ class MemberController extends Controller
             'phone' => $request['phone'],
             'location_id' => $request['location'],
             'plan_id' => $request['plan'],
-            'customer_id' => $customer['id'],
+            'customerID' => $customer['id'],
             'active' => !empty($request['status']),
         ]);
         if ($request->hasFile('avatar')) {
@@ -84,7 +80,7 @@ class MemberController extends Controller
     }
 
     public function edit($id) {
-        $member = Member::find($id);
+        $member = Member::query()->find($id);
         if (!$member) return back();
         $locations = Location::get();
         $plans = Plan::get();
@@ -96,7 +92,7 @@ class MemberController extends Controller
     }
 
     public function update(Request $request, $id) {
-        $member = Member::find($id);
+        $member = Member::query()->find($id);
         if (!$member) return back();
         $request->validate([
             'name' => ['required'],
@@ -110,23 +106,28 @@ class MemberController extends Controller
             || $member['phone'] != $request['phone']
         ) {
             $clover = new Clover();
-            $customer = $clover->getCustomer($member['customer_id']);
-            if (empty($customer['id'])) {
-                return back()->with('error_message', $customer);
+            $customer = $clover->getCustomer($member['customerID']);
+            if (!empty($customer['id'])) {
+                $customer = $clover->updateCustomer($member['customerID'], [
+                    'name' => $request['name'],
+                    'email' => [
+                        'id' => $customer['emailAddresses']['elements'][0]['id'] ?? '',
+                        'value' => $request['email'],
+                    ],
+                    'phone' => [
+                        'id' => $customer['phoneNumbers']['elements'][0]['id'] ?? '',
+                        'value' => $request['phone'],
+                    ],
+                ]);
+            /*} else {
+                $customer = $clover->createCustomer([
+                    'name' => $request['name'],
+                    'email' => $request['email'],
+                    'phone' => $request['phone'],
+                ]);*/
             }
-            $customer = $clover->updateCustomer($member['customer_id'], [
-                'name' => $request['name'],
-                'email' => [
-                    'id' => $customer['emailAddresses']['elements'][0]['id'] ?? '',
-                    'value' => $request['email'],
-                ],
-                'phone' => [
-                    'id' => $customer['phoneNumbers']['elements'][0]['id'] ?? '',
-                    'value' => $request['phone'],
-                ],
-            ]);
             if (empty($customer['id'])) {
-                return back()->with('error_message', $customer);
+                return back()->withInput()->with('error_message', $customer);
             }
             $member['name'] = $request['name'];
             $member['email'] = $request['email'];
@@ -148,12 +149,12 @@ class MemberController extends Controller
 
     public function destroy(Request $request) {
         $members = explode(',', $request['members']);
-        Member::whereIn('id', $members)->delete();
+        Member::query()->whereIn('id', $members)->delete();
         return back()->with('error_message', 'Members have been removed.');
     }
 
     public function sendInvite(Request $request) {
-        if (!($member = Member::find($request['member']))) {
+        if (!($member = Member::query()->find($request['member']))) {
             return back()->with('error_message', 'Member does not exist.');
         }
         if ($this->notifyInvite($member)) {
@@ -169,7 +170,7 @@ class MemberController extends Controller
             $member->notify(new MemberInvite([
                 'name' => $member['name'],
                 'email' => $member['email'],
-                'password' => $member['original_pass'],
+                'password' => $member->getRawOriginal('original_pass'),
             ]));
         } catch (\Exception $exception) {
             return false;

@@ -5,19 +5,19 @@ import {
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useAppSelector } from '../../store';
-import { getMe, getPlan } from '../../store/user';
+import { getMe } from '../../store/user';
 import axios, { getErrorMessage } from '../../utils/axios';
 import { getStorage, saveStorage } from '../../utils/storage';
-import Layouts from '../../components/layouts/home';
+import Layouts from '../../components/layouts';
 import Card from '../../components/basic/card';
 import Text from '../../components/basic/text';
 import Message from '../../components/basic/message';
 import Title from '../../components/basic/title';
-import Link from '../../components/basic/link';
 import Button from '../../components/basic/button';
 import Select from '../../components/basic/select';
 import ProfileImage from '../../components/basic/profile-image';
-import IconPDF from '../../assets/img/icons/pdf.svg';
+// import Link from '../../components/basic/link';
+// import IconPDF from '../../assets/img/icons/pdf.svg';
 
 import { t } from 'react-native-tailwindcss';
 import s from '../../utils/styles';
@@ -31,7 +31,6 @@ interface IPlanProps {
 const ProfileMembershipPlan: FC = (): JSX.Element => {
   const navigation = useNavigation();
   const me = useAppSelector(getMe);
-  const plan = useAppSelector(getPlan);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string>('');
   const [plans, setPlans] = useState<IPlanProps[]>([]);
@@ -94,7 +93,7 @@ const ProfileMembershipPlan: FC = (): JSX.Element => {
           <View style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.mB2]}>
             <View style={[t.flexShrink, t.pR3]}>
               <Title style={[t.textXl, s.textPrimary]}>
-                { plan.name }
+                { me.plan?.name }
               </Title>
               <Text style={[s.fontBodyLight, t.textBase, s.textGray, t.mT1]}>
                 Member #{ me.memberID }
@@ -102,7 +101,7 @@ const ProfileMembershipPlan: FC = (): JSX.Element => {
             </View>
             <ProfileImage image={me.avatar} style={[s.membershipCardImage]} />
           </View>
-          <View style={[t.flexRow, t.itemsCenter, t.pX2, t.mT5]}>
+          {/* <View style={[t.flexRow, t.itemsCenter, t.pX2, t.mT5]}>
             <IconPDF width={35} height={35} />
             <Link style={[t.textBase, t.pL4]}>
               Member Agreement
@@ -113,7 +112,7 @@ const ProfileMembershipPlan: FC = (): JSX.Element => {
             <Link style={[t.textBase, t.pL4]}>
               Another Doc
             </Link>
-          </View>
+          </View> */}
         </Card>
       </View>
       <Message style={[t.mT6, t._mB6]} text={message} />
@@ -123,7 +122,7 @@ const ProfileMembershipPlan: FC = (): JSX.Element => {
         </Title>
         <Select style={[t.mT5]}
           placeholder="Change plan..."
-          data={plans.filter(el => el.id != plan.id).map(plan => ({ label: plan.name, value: plan.id }))}
+          data={plans.filter(el => el.id != me.plan?.id).map(plan => ({ label: plan.name, value: plan.id }))}
           value={selectedPlan && {label: selectedPlan.name, value: selectedPlan.id}}
           onChange={value => setSelectedPlan(plans.find(el => el.id === value.value))}
         />

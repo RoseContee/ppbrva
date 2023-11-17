@@ -36,7 +36,7 @@ class Appicon extends Model
     }
 
     public function removeIcon() {
-        $icon = public_path($this->attributes['icon']);
+        $icon = public_path($this->attributes['icon'] ?? '');
         if (is_file($icon)) unlink($icon);
     }
 }

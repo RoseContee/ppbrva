@@ -78,7 +78,7 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4" v-text="role.permission"></td>
-                                    <td class="px-6 py-4" v-text="role.usersNumber"></td>
+                                    <td class="px-6 py-4" v-text="role.users_count"></td>
                                     <td class="px-6 py-4">
                                         <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
                                            :href="'{{ route('settings.roles.index') }}/' + role.id + '/edit'">

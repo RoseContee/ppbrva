@@ -15,19 +15,39 @@ class Activity extends Model
         'detail', // order ID from clover / Detail from admin
         'price',
         'date',
-        'from', // clover, admin
-        'invoice_id',
+        'from', // clover/admin
+        'invoiceID',
     ];
 
-    public function member() {
-        return $this->belongsTo(Member::class);
+    protected $casts = [
+        'date' => 'date:n/j/y',
+    ];
+
+    protected $appends = [
+        'timestamp',
+    ];
+
+    public function getTimestampAttribute() {
+        return strtotime($this->attributes['date'] ?? 0);
     }
 
-    public function items() {
-        return $this->hasMany(ActivityItem::class, 'order_id', 'detail');
+    public function scopeEditable($query) {
+        $query->where('from', 'admin')
+            ->whereNull('invoiceID');
+    }
+
+    public function member() {
+        return $this->belongsTo(Member::class)->withDefault([
+            'memberID' => '',
+            'name' => '',
+        ]);
     }
 
     public function invoice() {
-        return $this->belongsTo(Invoice::class);
+        return $this->belongsTo(Invoice::class, 'invoiceID', 'invoiceID');
+    }
+
+    public function items() {
+        return $this->hasMany(ActivityItem::class, 'orderID', 'detail');
     }
 }

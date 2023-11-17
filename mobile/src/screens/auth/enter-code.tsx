@@ -1,13 +1,11 @@
 import React, { FC, RefObject, createRef, useRef, useState } from 'react';
 import {
-  NativeSyntheticEvent,
   TextInput,
-  TextInputChangeEventData,
   View
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios, { getErrorMessage } from '../../utils/axios';
-import Layouts from '../../components/layouts/auth';
+import Layouts from '../../components/layouts';
 import Message from '../../components/basic/message';
 import Button from '../../components/basic/button';
 
@@ -24,8 +22,7 @@ const EnterCode: FC = (): JSX.Element => {
   const [nums, setNums] = useState<string[]>(Array(6).fill(''));
   const email = (route.params as any)?.email;
 
-  const onChange = (i: number) => (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
-    const num = e.nativeEvent.text;
+  const onChangeText = (i: number) => (num: string) => {
     setNums(nums => {
       nums[i] = num;
       return nums;
@@ -54,7 +51,7 @@ const EnterCode: FC = (): JSX.Element => {
   };
 
   return (
-    <Layouts loading={loading}>
+    <Layouts auth={true} loading={loading}>
       <Message style={[t.pX8]} text={message} />
       <View style={[t.pX8]}>
         <View style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.mT6]}>
@@ -65,7 +62,7 @@ const EnterCode: FC = (): JSX.Element => {
               placeholder={(i + 1).toString()} placeholderTextColor={theme.color.placeholder}
               selectTextOnFocus={true}
               ref={codeRefs.current[i]}
-              onChange={onChange(i)}
+              onChangeText={onChangeText(i)}
             />
           ))}
         </View>

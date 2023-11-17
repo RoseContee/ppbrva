@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class LocationController extends Controller
 {
     public function index() {
-        $locations = Location::orderBy('created_at', 'desc')->get();
+        $locations = Location::query()->latest()->get();
         return view('locations.index', [
             'locations' => $locations,
         ]);
@@ -30,7 +30,7 @@ class LocationController extends Controller
             'image' => ['required', 'image'],
         ]);
         if ($request->hasFile('image')) {
-            Location::create([
+            Location::query()->create([
                 'name' => $request['name'],
                 'address' => $request['address'],
                 'lat' => $request['lat'],
@@ -47,7 +47,7 @@ class LocationController extends Controller
     }
 
     public function edit($id) {
-        $location = Location::find($id);
+        $location = Location::query()->find($id);
         if (!$location) return back();
         return view('locations.add', [
             'location' => $location,
@@ -55,7 +55,7 @@ class LocationController extends Controller
     }
 
     public function update(Request $request, $id) {
-        $location = Location::find($id);
+        $location = Location::query()->find($id);
         if (!$location) return back();
         $request->validate([
             'name' => ['required'],

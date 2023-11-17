@@ -63,6 +63,18 @@ const AuthScreen: FC = (): JSX.Element => {
   );
 };
 
+
+const InvoiceScreen: FC = (): JSX.Element => {
+  return (
+    <Stack.Navigator initialRouteName="Invoices"
+      screenOptions={HeaderOptions as StackNavigationOptions}
+    >
+      <Stack.Screen name="Invoices" component={Invoices} options={{title: 'Invoices'}} />
+      <Stack.Screen name="InvoiceDetail" component={InvoiceDetail} options={{title: 'Invoice Detail'}} />
+    </Stack.Navigator>
+  );
+};
+
 const MainScreen: FC = (): JSX.Element => {
   return (
     <Tab.Navigator initialRouteName="Dashboard"
@@ -98,8 +110,7 @@ const MainScreen: FC = (): JSX.Element => {
       />
       <Tab.Screen name="MemberProfile" component={MemberProfile} options={{title: 'Member Profile'}} />
       <Tab.Screen name="BillingProfile" component={BillingProfile} options={{title: 'Billing Profile'}} />
-      <Tab.Screen name="Invoices" component={Invoices} options={{title: 'Invoices'}} />
-      <Tab.Screen name="InvoiceDetail" component={InvoiceDetail} options={{title: 'Invoice Detail'}} />
+      <Tab.Screen name="InvoiceScreen" component={InvoiceScreen} options={{headerShown: false}} />
       <Tab.Screen name="MembershipPlan" component={MembershipPlan} options={{title: 'Membership Plan'}} />
 
       <Tab.Screen name="ClubInfo" component={ClubInfo}

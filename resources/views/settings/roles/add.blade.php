@@ -132,6 +132,9 @@ $route = $add ? route('settings.roles.store') : route('settings.roles.update', $
                                                Settings
                                             </label>
                                         </div>
+                                        @error('permissions')
+                                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                 </div>
 

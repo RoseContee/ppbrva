@@ -6,20 +6,34 @@
 <x-app-layout>
     @push('styles')
         <style>
-            .select2-container .select2-selection--single {
-                height: 46px;
-                @if ($errors->first('member'))
-                    border-color: rgb(239 68 68 / var(--tw-border-opacity));
-                @else
-                    border-color: rgb(203 213 225 / var(--tw-border-opacity));
-                @endif
+            .choices.is-focused .choices--inner {
+                outline: 2px solid transparent;
+                outline-offset: 2px;
+                --tw-bg-opacity: 1;
+                background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+                outline: 2px solid transparent;
+                outline-offset: 2px;
+                --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);
+                --tw-ring-offset-width: 0px;
+                --tw-ring-offset-color: #fff;
+                --tw-ring-color: #2563eb;
+                --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+                --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+                box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+                border-color: #2563eb;
             }
-            .select2-container--default .select2-selection--single .select2-selection__rendered {
-                padding-left: 1rem;
-                line-height: 46px;
+            .choices .choices__list[aria-expanded] {
+                top: calc(100% + 2px);
             }
-            .select2-container--default .select2-selection--single .select2-selection__arrow {
-                height: 44px;
+            .choices .choices__input {
+                border: none;
+                box-shadow: none;
+            }
+            .choices .is-highlighted {
+                background-color: #f9f9f9 !important;
+            }
+            .choices .is-selected {
+                background-color: #ebebeb !important;
             }
         </style>
     @endpush
@@ -51,7 +65,7 @@
                                                    "border-slate-300" => !$errors->first('member'),
                                                    "border-red-500" => $errors->first('member'),
                                                ])
-                                                id="member" name="member" required>
+                                                id="member" name="member">
                                             @foreach ($members as $member)
                                                 <option value="{{ $member['id'] }}"
                                                     @selected(old('member', $activity['member_id'] ?? '') == $member['id'])>
@@ -146,9 +160,18 @@
                                     </div>
                                 </div>
 
-                                <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                                    {{ $add ? '+ Add' : 'Update' }} Activity
-                                </button>
+                                <div class="inline-flex items-center">
+                                    <button type="submit" class="px-4 py-2 bg-blue border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                        {{ $add ? '+ Add' : 'Update' }} Activity
+                                    </button>
+                                    @if (!$add)
+                                        <a class="ml-3 px-4 py-2 bg-red-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                           href="javascript:void(0);"
+                                           onclick="confirm('Are you sure to delete this activity?') && document.deleteForm.submit();">
+                                            Delete Activity
+                                        </a>
+                                    @endif
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -156,17 +179,31 @@
             </div>
         </div>
     </div>
+    @if (!$add)
+        <form name="deleteForm" action="{{ route('activity.destroy', $activity['id']) }}" method="POST">
+            @csrf
+            @method('DELETE')
+        </form>
+    @endif
 
     @push('scripts')
         <script type="module">
-            $(function() {
-                $('#member').select2({
-                    selectionCssClass: '{{ !$errors->first('member') ? 'border-red-500' : 'border-slate-300' }}'
-                });
+            new Choices(document.querySelector('#member'), {
+                allowHTML: true,
+                itemSelectText: '',
+                searchPlaceholderValue: 'Find member',
+                noResultsText: 'No members found',
+                classNames: {
+                    containerOuter: 'choices m-0',
+                    containerInner: 'choices--inner '
+                        + 'appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white'
+                        + '@if(!$errors->first('member')) border-slate-300 @else border-red-500 @endif',
+                    listSingle: '',
+                }
+            });
 
-                new Datepicker(document.getElementById('date'), {
-                    autohide: true,
-                });
+            new Datepicker(document.getElementById('date'), {
+                autohide: true,
             });
         </script>
     @endpush

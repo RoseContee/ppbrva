@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class PlanController extends Controller
 {
     public function index() {
-        $plans = Plan::with(['members'])->get();
+        $plans = Plan::query()->with(['members'])->get();
         return view('settings.plans.index', [
             'plans' => $plans,
         ]);
@@ -25,7 +25,7 @@ class PlanController extends Controller
             'price' => ['required', 'numeric'],
             'frequency' => ['required', 'in:monthly'],
         ]);
-        Plan::create([
+        Plan::query()->create([
             'name' => $request['name'],
             'price' => $request['price'],
             'period' => $request['frequency'],
@@ -35,7 +35,7 @@ class PlanController extends Controller
     }
 
     public function edit($id) {
-        $plan = Plan::find($id);
+        $plan = Plan::query()->find($id);
         if (!$plan) return back();
         return view('settings.plans.add', [
             'plan' => $plan,
@@ -43,7 +43,7 @@ class PlanController extends Controller
     }
 
     public function update(Request $request, $id) {
-        $plan = Plan::find($id);
+        $plan = Plan::query()->find($id);
         if (!$plan) return back();
         $request->validate([
             'name' => ['required'],
@@ -59,7 +59,7 @@ class PlanController extends Controller
 
     public function destroy(Request $request) {
         $plans = explode(',', $request['plans']);
-        Plan::whereIn('id', $plans)->delete();
+        Plan::query()->doesntHave('members')->whereIn('id', $plans)->delete();
         return back()->with('error_message', 'Plans have been removed.');
     }
 }

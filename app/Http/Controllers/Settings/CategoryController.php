@@ -10,7 +10,7 @@ use Illuminate\Validation\Rule;
 class CategoryController extends Controller
 {
     public function index() {
-        $categories = Category::orderBy('name')->get();
+        $categories = Category::query()->orderBy('name')->get();
         return view('settings.categories.index', [
             'categories' => $categories,
         ]);
@@ -24,7 +24,7 @@ class CategoryController extends Controller
         $request->validate([
             'name' => ['required', 'unique:categories'],
         ]);
-        Category::create([
+        Category::query()->create([
             'name' => $request['name'],
         ]);
         return redirect()->route('settings.categories.index')
@@ -32,7 +32,7 @@ class CategoryController extends Controller
     }
 
     public function edit($id) {
-        $category = Category::find($id);
+        $category = Category::query()->find($id);
         if (!$category) return back();
         return view('settings.categories.add', [
             'category' => $category,
@@ -40,7 +40,7 @@ class CategoryController extends Controller
     }
 
     public function update(Request $request, $id) {
-        $category = Category::find($id);
+        $category = Category::query()->find($id);
         if (!$category) return back();
         $request->validate([
             'name' => ['required', Rule::unique('categories')->ignore($category['id'])],
@@ -52,7 +52,7 @@ class CategoryController extends Controller
 
     public function destroy(Request $request) {
         $categories = explode(',', $request['categories']);
-        Category::whereIn('id', $categories)->delete();
+        Category::query()->whereIn('id', $categories)->delete();
         return back()->with('error_message', 'Categories have been removed.');
     }
 }

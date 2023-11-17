@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import axios, { getErrorMessage } from '../../utils/axios';
-import Layouts from '../../components/layouts/auth';
+import Layouts from '../../components/layouts';
 import Message from '../../components/basic/message';
 import Button from '../../components/basic/button';
 
@@ -73,19 +73,18 @@ const ResetPassword: FC = (): JSX.Element => {
   };
 
   return (
-    <Layouts loading={loading}>
+    <Layouts auth={true} loading={loading}>
       <Message style={[t.pX8]} text={message} />
       <View style={[t.pX8]}>
         <TextInput inputMode="text" style={[s.input, t.mT6]}
           secureTextEntry={true}
           placeholder="New Password..." placeholderTextColor={theme.color.placeholder}
-          value={password} onChange={e => setPassword(e.nativeEvent.text)}
+          value={password} onChangeText={setPassword}
         />
         <TextInput inputMode="text" style={[s.input, s.mT7]}
           secureTextEntry={true}
           placeholder="Confirm Password..." placeholderTextColor={theme.color.placeholder}
-          value={password_confirmation}
-          onChange={e => setPasswordConfirmation(e.nativeEvent.text)}
+          value={password_confirmation} onChangeText={setPasswordConfirmation}
         />
         <Button style={[s.bgPrimary, s.mT7]}
           onPress={savePassword}

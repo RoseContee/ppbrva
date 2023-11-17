@@ -1,9 +1,7 @@
 import React, { FC } from 'react';
 import {
-  NativeSyntheticEvent,
   StyleProp,
   TextInput,
-  TextInputChangeEventData,
   View,
   ViewStyle
 } from 'react-native';
@@ -14,7 +12,7 @@ import theme from '../../utils/theme';
 
 interface IProps {
   value?: string,
-  onChange?: (e: NativeSyntheticEvent<TextInputChangeEventData>) => void,
+  onChange?: (text: string) => void,
   style?: StyleProp<ViewStyle>,
   inputStyle?: StyleProp<ViewStyle>,
 }
@@ -29,13 +27,13 @@ const SearchInput: FC<IProps> = ({
     <View style={[s.searchInputContainer, style]}>
       <TextInput inputMode="text" style={[s.searchInput, inputStyle]}
         placeholder="Search..." placeholderTextColor={theme.color.placeholder}
-        value={value} onChange={onChange}
+        value={value} onChangeText={onChange}
       />
       <IconSearch fill={theme.color.inputIcon}
         width={theme.size.inputIcon} height={theme.size.inputIcon}
       />
     </View>
-  )
-}
+  );
+};
 
 export default SearchInput;
