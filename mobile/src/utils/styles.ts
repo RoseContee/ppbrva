@@ -240,9 +240,6 @@ const styles = StyleSheet.create({
 
   card: {
     backgroundColor: theme.color.bodyBg,
-    borderColor: theme.color.shadow,
-    borderTopWidth: 0.3,
-    borderLeftWidth: 0.3,
     ...theme.cardShadow,
   },
 
