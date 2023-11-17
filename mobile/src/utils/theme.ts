@@ -66,7 +66,7 @@ const Theme = {
     shadowOffset: {width: 1, height: 1},
     shadowOpacity: 0.5,
     shadowRadius: 0,
-    elevation: 2,
+    elevation: 3,
     zIndex: 100,
   },
 };
