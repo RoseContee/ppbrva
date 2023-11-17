@@ -56,18 +56,18 @@ const Theme = {
   borderRadius: BorderRadius,
   inputShadow: {
     shadowColor: Color.shadow,
-    shadowOffset: {width: 0, height: 0.5},
+    shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0,
     shadowRadius: BorderRadius.input,
     elevation: 1,
   },
   cardShadow: {
     shadowColor: Color.shadow,
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 1,
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.5,
     shadowRadius: 0,
     elevation: 1.5,
-    zIndex: 1,
+    zIndex: 100,
   },
 };
 
