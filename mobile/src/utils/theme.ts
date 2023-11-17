@@ -67,6 +67,7 @@ const Theme = {
     shadowOpacity: 0.5,
     shadowRadius: 0,
     elevation: 1.5,
+    zIndex: 1,
   },
 };
 
