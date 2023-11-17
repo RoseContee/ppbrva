@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
   /* Button End */
 
   card: {
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.color.bodyBg,
     ...theme.cardShadow,
   },
 
