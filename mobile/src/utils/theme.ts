@@ -57,6 +57,7 @@ const Theme = {
   inputShadow: {
     shadowColor: Color.shadow,
     shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.5,
     shadowRadius: BorderRadius.input,
     elevation: 2,
   },
