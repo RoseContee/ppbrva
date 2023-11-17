@@ -61,6 +61,7 @@ const Theme = {
     elevation: 2,
   },
   cardShadow: {
+    overflow: 'hidden',
     backgroundColor: Color.bodyBg,
     shadowColor: Color.shadow,
     shadowOffset: {width: 0, height: 1},
