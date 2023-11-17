@@ -50,7 +50,7 @@ const CardWidget: FC<CardProps> = ({
   onPress,
 }): JSX.Element => {
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={onPress} style={[t.p2]}>
       <Card style={[t.itemsCenter, t.p4, {width: cardWidth}]}>
         <Image source={image ? {uri: image} : defaultImage}
           resizeMode="contain"
