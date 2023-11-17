@@ -64,9 +64,9 @@ const Theme = {
     overflow: 'hidden',
     backgroundColor: Color.bodyBg,
     shadowColor: Color.shadow,
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: {width: 10, height: 10},
     shadowRadius: 0,
-    elevation: 1.5,
+    elevation: 15,
   },
 };
 
