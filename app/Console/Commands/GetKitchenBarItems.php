@@ -34,7 +34,7 @@ class GetKitchenBarItems extends Command
                 'itemID' => $item['itemID'],
             ], [
                 'item' => $item['item'],
-                'price' => $item['price'],
+                'price' => $item['price'] / 100,
                 'category' => $item['category'],
                 'sortOrder' => $item['sortOrder'],
             ]);

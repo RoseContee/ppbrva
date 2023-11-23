@@ -81,6 +81,7 @@ class Member extends Authenticatable
         $profile = $this['profile'];
         $location = $this['location'];
         $plan = $this['plan'];
+        $dupr_link = Setting::getSetting('dupr_link');
         return [
             'id' => $this['id'],
             'memberID' => $this['memberID'],
@@ -94,6 +95,7 @@ class Member extends Authenticatable
             'profile' => [
                 'share_age_gender' => $profile['share_age_gender'],
                 'dupr_id' => $profile['dupr_id'],
+                'dupr_link' => $dupr_link,
                 'gender' => $profile['gender'],
                 'age' => $profile['age'],
                 'rating' => $profile['rating'],

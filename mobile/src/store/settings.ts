@@ -2,29 +2,41 @@ import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '.';
 
 interface StateProps {
-  appicons: {
-    play?: string,
-    improve?: string,
-    rent?: string,
-    shop?: string,
+  dashboard: {
+    icons: {
+      play?: string,
+      improve?: string,
+      rent?: string,
+      shop?: string,
+    },
+    links: {
+      play_link?: string,
+      improve_link?: string,
+      rent_link?: string,
+      shop_link?: string,
+    }
   }
 }
 
 const initialState: StateProps = {
-  appicons: {},
+  dashboard: {
+    icons: {},
+    links: {},
+  },
 };
 
 const settingsSlice = createSlice({
   name: 'settings',
   initialState: initialState,
   reducers: {
-    saveAppicons(state, action) {
-      state.appicons = action.payload;
+    saveDashboard(state, action) {
+      state.dashboard = action.payload;
     },
   },
 });
 
-export const { saveAppicons } = settingsSlice.actions || {};
-export const getAppicons = (state: RootState) => state.settings.appicons;
+export const { saveDashboard } = settingsSlice.actions;
+export const getDashboardIcons = (state: RootState) => (state.settings.dashboard || {}).icons;
+export const getDashboardLinks = (state: RootState) => (state.settings.dashboard || {}).links;
 
 export default settingsSlice.reducer;

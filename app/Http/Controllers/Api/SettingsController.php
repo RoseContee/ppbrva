@@ -6,13 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Models\Appicon;
 use App\Models\KitchenBar;
 use App\Models\Plan;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 
 class SettingsController extends Controller
 {
-    public function appicons() {
+    public function dashboard() {
         return response()->json([
-            'appicons' => Appicon::getIcons(),
+            'icons' => Appicon::getIcons(),
+            'links' => Setting::getSetting([
+                'play_link', 'improve_link', 'rent_link', 'shop_link'
+            ]),
         ]);
     }
 

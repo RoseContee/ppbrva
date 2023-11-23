@@ -41,7 +41,7 @@ const ProfileCard: FC<IProps> = ({
           </Title>
           {
             isMe && needInputId ? (
-              <Button style={[s.bgPrimary, t.mT1]}
+              <Button style={[s.bgPrimary, s.btnXs, t.mT1]}
                 onPress={() => navigation.navigate('MemberProfile' as never)}
               >
                 Add Dupr ID

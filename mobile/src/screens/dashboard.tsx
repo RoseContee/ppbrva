@@ -4,7 +4,6 @@ import {
   Image,
   ImageSourcePropType,
   Linking,
-  Platform,
   TouchableOpacity,
   View,
   useWindowDimensions
@@ -12,7 +11,9 @@ import {
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../store';
 import { getMe } from '../store/user';
-import { getAppicons, saveAppicons } from '../store/settings';
+import {
+  getDashboardIcons, getDashboardLinks, saveDashboard
+} from '../store/settings';
 import axios from '../utils/axios';
 import Layouts from '../components/layouts';
 import PageTitle from '../components/basic/page-title';
@@ -68,19 +69,22 @@ const Dashboard: FC = (): JSX.Element => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const me = useAppSelector(getMe);
-  const appicons = useAppSelector(getAppicons);
+  const icons = useAppSelector(getDashboardIcons);
+  const links = useAppSelector(getDashboardLinks);
   const { width } = useWindowDimensions();
   const padding = 28; //t.p7
   const cardWidth = (width - (padding * 2) - padding) / 2;
   const cardImgSize = cardWidth - (16 * 2); //t.pX4
-  const link = Platform.OS == 'android' ? 'https://play.google.com/store/apps/details?id=com.courtreserve'
-          : 'https://apps.apple.com/us/app/courtreserve/id1392556575';
+  const play_link = 'https://app.pingpod.com/';
+  const improve_link = 'https://app.pingpod.com/';
+  const rent_link = 'https://app.pingpod.com/';
+  const shop_link = 'https://ppbrva.com/shop/';
 
   useFocusEffect(
     useCallback(() => {
-      axios.get(`settings/appicons`)
-      .then(({ data: { appicons } }) => {
-        dispatch(saveAppicons(appicons));
+      axios.get(`settings/dashboard`)
+      .then(({ data }) => {
+        dispatch(saveDashboard(data));
       });
       const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
         BackHandler.exitApp();
@@ -109,20 +113,20 @@ const Dashboard: FC = (): JSX.Element => {
       <View style={[s.pX7]}>
         <View style={[t.flexRow, t.flexWrap, {gap: padding}, t.mT8]}>
           <CardWidget cardWidth={cardWidth} defaultImage={imgPlay}
-            image={appicons.play} imgSize={cardImgSize} text="Play"
-            onPress={() => Linking.openURL(link)}
+            image={icons.play} imgSize={cardImgSize} text="Play"
+            onPress={() => Linking.openURL(links.play_link ?? play_link)}
           />
           <CardWidget cardWidth={cardWidth} defaultImage={imgImprove}
-            image={appicons.improve} imgSize={cardImgSize} text="Improve"
-            onPress={() => Linking.openURL(link)}
+            image={icons.improve} imgSize={cardImgSize} text="Improve"
+            onPress={() => Linking.openURL(links.improve_link ?? improve_link)}
           />
           <CardWidget cardWidth={cardWidth} defaultImage={imgRent}
-            image={appicons.rent} imgSize={cardImgSize} text="Rent"
-            onPress={() => Linking.openURL(link)}
+            image={icons.rent} imgSize={cardImgSize} text="Rent"
+            onPress={() => Linking.openURL(links.rent_link ?? rent_link)}
           />
           <CardWidget cardWidth={cardWidth} defaultImage={imgShop}
-            image={appicons.shop} imgSize={cardImgSize} text="Shop"
-            onPress={() => Linking.openURL(link)}
+            image={icons.shop} imgSize={cardImgSize} text="Shop"
+            onPress={() => Linking.openURL(links.shop_link ?? shop_link)}
           />
         </View>
         <View style={[t.mT8]}>

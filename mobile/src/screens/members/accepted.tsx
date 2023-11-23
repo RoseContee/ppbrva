@@ -10,6 +10,7 @@ import axios from '../../utils/axios';
 import Layouts from '../../components/layouts';
 import Message from '../../components/basic/message';
 import ProfileCard from '../../components/basic/profile-card';
+import Title from '../../components/basic/title';
 import Switch from '../../components/basic/switch';
 import Button from '../../components/basic/button';
 import { MemberProps } from './members';
@@ -90,51 +91,61 @@ const AcceptedFriend: FC = (): JSX.Element => {
 
   return (
     <Layouts loading={loading}>
-      <Message style={[t.mT8]} text={message} />
       {
-        member ? (
-          <View style={[s.pX7]}>
-            <ProfileCard style={[t.mT8]} member={member} />
-            <Switch style={[t.pX1, s.mT7]}
-              labelStyle={[s.textTitle]}
-              Icon={() => (
-                <IconMail fill={theme.color.primary}
-                  width={theme.size.headerIcon} height={theme.size.headerIcon}
-                />
-              )}
-              label={ member.email_share ? member.email : 'Not Shared' }
-              value={email_share}
-              onChange={() => {
-                onSettingChange({
-                  email_share: !email_share,
-                  phone_share,
-                });
-              }}
-            />
-            <Switch style={[t.pX1, s.mT7]}
-              labelStyle={[s.textTitle]}
-              Icon={() => (
-                <IconPhoneCall fill={theme.color.primary}
-                  width={theme.size.headerIcon} height={theme.size.headerIcon}
-                />
-              )}
-              label={ member.phone_share ? member.phone : 'Not Shared' }
-              value={phone_share}
-              onChange={() => {
-                onSettingChange({
-                  email_share,
-                  phone_share: !phone_share,
-                });
-              }}
-            />
-            <Button style={[s.border, s.borderPrimary, s.mT7]} titleStyle={[s.textPrimary]}
-              disabled={member.friend_status !== 'accepted' || disabled}
-              onPress={onRemoveFriend}
-            >
-              Remove Friend
-            </Button>
-          </View>
-        ) : (<></>)
+        !member ? (
+          <Message style={[s.mT7]} text={message} />
+        ) : (
+          <>
+            <View style={[s.pX7]}>
+              <ProfileCard style={[t.mT8]} member={member} />
+              <Title style={[t.textXl, s.mT7]}>Sharing Info:</Title>
+            </View>
+            <Message style={[t.mT7]} text={message} />
+            <View style={[s.pX7]}>
+              <Switch style={[t.pX1, s.mT7]}
+                labelStyle={[s.textTitle]}
+                Icon={() => (
+                  <IconMail fill={theme.color.primary}
+                    width={theme.size.headerIcon} height={theme.size.headerIcon}
+                  />
+                )}
+                label={ member.email_share ? member.email : 'Not Shared' }
+                value={email_share}
+                onChange={() => {
+                  onSettingChange({
+                    email_share: !email_share,
+                    phone_share,
+                  });
+                }}
+              />
+              <Switch style={[t.pX1, s.mT7]}
+                labelStyle={[s.textTitle]}
+                Icon={() => (
+                  <IconPhoneCall fill={theme.color.primary}
+                    width={theme.size.headerIcon} height={theme.size.headerIcon}
+                  />
+                )}
+                label={ member.phone_share ? member.phone : 'Not Shared' }
+                value={phone_share}
+                onChange={() => {
+                  onSettingChange({
+                    email_share,
+                    phone_share: !phone_share,
+                  });
+                }}
+              />
+              {
+                !disabled &&
+                <Button style={[s.border, s.borderPrimary, s.mT7]} titleStyle={[s.textPrimary]}
+                  disabled={member.friend_status !== 'accepted'}
+                  onPress={onRemoveFriend}
+                >
+                  Remove Friend
+                </Button>
+              }
+            </View>
+          </>
+        )
       }
     </Layouts>
   );

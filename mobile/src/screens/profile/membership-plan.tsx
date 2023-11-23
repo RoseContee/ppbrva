@@ -39,26 +39,23 @@ const ProfileMembershipPlan: FC = (): JSX.Element => {
 
   useFocusEffect(
     useCallback(() => {
-      setLoading(true);
-
       getStorage('plan_requested_at').then(plan_requested_at => {
         const requested_at = Number(plan_requested_at);
         if (!requested_at
           || new Date().getTime() - requested_at > 24 * 60 * 60 * 1000
         ) {
+          setLoading(true);
           setCanRequest(true);
+          axios.get(`settings/plans`)
+          .then(({ data: { plans } }) => {
+            setPlans(plans);
+          }).catch(error => {
+            setMessage(getErrorMessage(error));
+          }).finally(() => setLoading(false));
         } else {
           setMessage('You already requested to change your membership plan.');
         }
       });
-
-      axios.get(`settings/plans`)
-      .then(({ data: { plans } }) => {
-        setPlans(plans);
-      }).catch(error => {
-        setMessage(getErrorMessage(error));
-      }).finally(() => setLoading(false));
-
       const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
         navigation.navigate('Profile' as never);
         return true;
@@ -114,24 +111,25 @@ const ProfileMembershipPlan: FC = (): JSX.Element => {
             </Link>
           </View> */}
         </Card>
+        <Title style={[t.textXl, t.mT12]}>Update Plan</Title>
       </View>
-      <Message style={[t.mT6, t._mB6]} text={message} />
-      <View style={[s.pX7]}>
-        <Title style={[t.textXl, t.mT12]}>
-          Update Plan
-        </Title>
-        <Select style={[t.mT5]}
-          placeholder="Change plan..."
-          data={plans.filter(el => el.id != me.plan?.id).map(plan => ({ label: plan.name, value: plan.id }))}
-          value={selectedPlan && {label: selectedPlan.name, value: selectedPlan.id}}
-          onChange={value => setSelectedPlan(plans.find(el => el.id === value.value))}
-        />
-        <Button style={[s.bgPrimary, s.mT7]} disabled={!selectedPlan || !canRequest}
-          onPress={onRequest}
-        >
-          Request
-        </Button>
-      </View>
+      <Message style={[t.mT6]} text={message} />
+      {
+        !message && canRequest &&
+        <View style={[s.pX7]}>
+          <Select style={[t.mT5]}
+            placeholder="Change plan..."
+            data={plans.filter(el => el.id != me.plan?.id).map(plan => ({ label: plan.name, value: plan.id }))}
+            value={selectedPlan && {label: selectedPlan.name, value: selectedPlan.id}}
+            onChange={value => setSelectedPlan(plans.find(el => el.id === value.value))}
+          />
+          <Button style={[s.bgPrimary, s.mT7]} disabled={!selectedPlan}
+            onPress={onRequest}
+          >
+            Request
+          </Button>
+        </View>
+      }
     </Layouts>
   );
 };

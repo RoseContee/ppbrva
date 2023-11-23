@@ -33,6 +33,12 @@
                                     Dashboard Icons
                                 </a>
                             </li>
+                            <li class="pt-2">
+                                <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
+                                   href="{{ route('settings.general') }}">
+                                    General Settings
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>

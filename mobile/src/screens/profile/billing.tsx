@@ -90,7 +90,7 @@ const BillingProfile: FC = (): JSX.Element => {
         </View>
         <MaskInput inputMode="numeric" style={[s.input, s.mT7]}
           keyboardType="number-pad"
-          placeholder="Enter card number" placeholderTextColor={theme.color.placeholder}
+          placeholder="Enter card number..." placeholderTextColor={theme.color.placeholder}
           mask={[/\d/, /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/]}
           value={number} onChangeText={masked => setNumber(masked)}
         />

@@ -33,8 +33,8 @@ const MemberProfile: FC = (): JSX.Element => {
   const [avatar, setAvatar] = useState<Asset | string | undefined>(me.avatar);
   const [name, setName] = useState<string>(me.name);
   const [email, setEmail] = useState<string>(me.email);
-  const [phone, setPhone] = useState<string>(me.phone);
-  const [duprId, setDuprId] = useState<string>(me.profile?.dupr_id);
+  const [phone, setPhone] = useState<string>(me.phone ?? '');
+  const [duprId, setDuprId] = useState<string>(me.profile?.dupr_id ?? '');
   const [share, setShare] = useState<boolean>(!!me.profile?.share_age_gender);
 
   useFocusEffect(
@@ -49,9 +49,9 @@ const MemberProfile: FC = (): JSX.Element => {
         setAvatar(me.avatar);
         setName(me.name);
         setEmail(me.email);
-        setPhone(me.phone);
+        setPhone(me.phone ?? '');
         const profile = (me || {}).profile || {};
-        setDuprId(profile.dupr_id);
+        setDuprId(profile.dupr_id ?? '');
         setShare(!!profile.share_age_gender);
         subscribe.remove();
       }
@@ -140,7 +140,7 @@ const MemberProfile: FC = (): JSX.Element => {
           <View style={[t.w1_5, t.pL3]}>
             <IconQuestion fill={theme.color.primary}
               width={theme.size.settingIcon} height={theme.size.settingIcon}
-              onPress={() => Linking.openURL('https://ppbrva.com/dupr')}
+              onPress={() => Linking.openURL(me.profile?.dupr_link ?? 'https://ppbrva.com/dupr')}
             />
           </View>
         </View>

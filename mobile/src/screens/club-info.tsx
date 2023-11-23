@@ -4,7 +4,6 @@ import {
   View,
   useWindowDimensions
 } from 'react-native';
-import openMap from 'react-native-open-maps';
 import Image from 'react-native-scalable-image';
 import { useAppSelector } from '../store';
 import { getMe } from '../store/user';
@@ -17,9 +16,12 @@ import Button from '../components/basic/button';
 import { t } from 'react-native-tailwindcss';
 import s from '../utils/styles';
 
-const Dashboard: FC = (): JSX.Element => {
+const ClubInfo: FC = (): JSX.Element => {
   const me = useAppSelector(getMe);
   const { width } = useWindowDimensions();
+  const lat = Number(me.location?.lat);
+  const lng = Number(me.location?.lng);
+  const map_link = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&dir_action=navigate`;
 
   return (
     <Layouts>
@@ -39,12 +41,7 @@ const Dashboard: FC = (): JSX.Element => {
         </Link>
         <View style={[t.mY3]} />
         <Button style={[s.bgPrimary, t.mT10]}
-          onPress={() => {
-            openMap({
-              latitude: Number(me.location?.lat),
-              longitude: Number(me.location?.lng)
-            })
-          }}
+          onPress={() => Linking.openURL(map_link)}
         >
           Directions
         </Button>
@@ -58,4 +55,4 @@ const Dashboard: FC = (): JSX.Element => {
   );
 };
 
-export default Dashboard;
+export default ClubInfo;

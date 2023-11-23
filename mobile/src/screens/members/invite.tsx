@@ -12,6 +12,7 @@ import axios from '../../utils/axios';
 import Layouts from '../../components/layouts';
 import Message from '../../components/basic/message';
 import ProfileCard from '../../components/basic/profile-card';
+import Title from '../../components/basic/title';
 import Switch from '../../components/basic/switch';
 import Button from '../../components/basic/button';
 import { MemberProps } from './members';
@@ -61,8 +62,7 @@ const MemberInvite: FC = (): JSX.Element => {
         } else if (member.friend_status === 'waiting') {
           setMessage('You have already sent a friend invitation.');
         } else {
-          const isMale = member.profile.gender.toLowerCase() === 'male';
-          setMessage(`If ${ member.name } accepts, ${isMale ? 'he' : 'she'} will appear as a Friend!`);
+          setMessage(`If ${ member.name } accepts, they will appear as a Friend!`);
         }
         setMember(member);
       }).catch(() => {
@@ -89,41 +89,51 @@ const MemberInvite: FC = (): JSX.Element => {
 
   return (
     <Layouts loading={loading}>
-      <Message style={[s.mT7]} text={message} />
       {
-        member ? (
-          <View style={[s.pX7]}>
-            <ProfileCard style={[t.mT8]} member={member} />
-            <Switch style={[t.pX1, s.mT7]}
-              labelStyle={[s.textGray]}
-              Icon={() => (
-                <IconMail fill={theme.color.primary}
-                  width={theme.size.headerIcon} height={theme.size.headerIcon}
-                />
-              )}
-              label={ email_share ? me.email : 'Not Shared' }
-              value={email_share}
-              onChange={setEmailShare}
-            />
-            <Switch style={[t.pX1, s.mT7]}
-              labelStyle={[s.textGray]}
-              Icon={() => (
-                <IconPhoneCall fill={theme.color.primary}
-                  width={theme.size.headerIcon} height={theme.size.headerIcon}
-                />
-              )}
-              label={ phone_share ? me.phone : 'Not Shared' }
-              value={phone_share}
-              onChange={setPhoneShare}
-            />
-            <Button style={[s.bgPrimary, s.mT7]}
-              disabled={!!member.friend_status || disabled}
-              onPress={onAddFriend}
-            >
-              Add Friend
-            </Button>
-          </View>
-        ) : (<></>)
+        !member ? (
+          <Message style={[s.mT7]} text={message} />
+        ) : (
+          <>
+            <View style={[s.pX7]}>
+              <ProfileCard style={[t.mT8]} member={member} />
+              <Title style={[t.textXl, s.mT7]}>Sharing Info:</Title>
+            </View>
+            <Message style={[s.mT7]} text={message} />
+            <View style={[s.pX7]}>
+              <Switch style={[t.pX1, s.mT7]}
+                labelStyle={[s.textGray]}
+                Icon={() => (
+                  <IconMail fill={theme.color.primary}
+                    width={theme.size.headerIcon} height={theme.size.headerIcon}
+                  />
+                )}
+                label={ email_share ? me.email : 'Not Shared' }
+                value={email_share}
+                onChange={setEmailShare}
+              />
+              <Switch style={[t.pX1, s.mT7]}
+                labelStyle={[s.textGray]}
+                Icon={() => (
+                  <IconPhoneCall fill={theme.color.primary}
+                    width={theme.size.headerIcon} height={theme.size.headerIcon}
+                  />
+                )}
+                label={ phone_share ? me.phone : 'Not Shared' }
+                value={phone_share}
+                onChange={setPhoneShare}
+              />
+              <Button style={[s.bgPrimary, s.mT7]}
+                disabled={!!member.friend_status || disabled}
+                onPress={onAddFriend}
+              >
+                {
+                  !!member.friend_status || disabled ? 'Friend invite pending...'
+                    : 'Add Friend'
+                }
+              </Button>
+            </View>
+          </>
+        )
       }
     </Layouts>
   );

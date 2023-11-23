@@ -50,7 +50,7 @@ Route::prefix('app')->group(function() {
         Route::post('members/{memberID}/remove', [MembersController::class, 'remove']);
 
         Route::prefix('settings')->group(function() {
-            Route::get('appicons', [SettingsController::class, 'appicons']);
+            Route::get('dashboard', [SettingsController::class, 'dashboard']);
             Route::get('plans', [SettingsController::class, 'plans']);
             Route::get('kitchen-bars', [SettingsController::class, 'kitchenBars']);
         });
