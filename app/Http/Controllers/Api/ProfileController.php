@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\Clover;
 use App\Helpers\Dupr;
+use App\Helpers\General;
 use App\Http\Controllers\Controller;
 use App\Mail\PlanChangeRequest;
 use App\Models\Member;
 use App\Models\Plan;
+use App\Models\Setting;
+use App\Rules\State as StateRule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
@@ -24,49 +27,24 @@ class ProfileController extends Controller
     }
 
     public function updateProfile(Request $request) {
-        $request->validate([
-            'avatar' => ['nullable', 'image'],
-            'name' => ['required'],
-            'email' => ['required'],
-        ]);
         $user = Member::query()
             ->with(['profile', 'location', 'plan'])
             ->find(auth()->id());
-        if ($user['name'] != $request['name']
-            || $user['email'] != $request['email']
-            || $user['phone'] != $request['phone']
-        ) {
-            $clover = new Clover();
-            $customer = $clover->getCustomer($user['customerID']);
-            if (!empty($customer['id'])) {
-                $customer = $clover->updateCustomer($user['customerID'], [
-                    'name' => $request['name'],
-                    'email' => [
-                        'id' => $customer['emailAddresses']['elements'][0]['id'] ?? '',
-                        'value' => $request['email'],
-                    ],
-                    'phone' => [
-                        'id' => $customer['phoneNumbers']['elements'][0]['id'] ?? '',
-                        'value' => $request['phone'],
-                    ],
-                ]);
-            /*} else {
-                $customer = $clover->createCustomer([
-                    'name' => $request['name'],
-                    'email' => $request['email'],
-                    'phone' => $request['phone'],
-                ]);*/
-            }
-            if (empty($customer['id'])) {
-                return response()->json(['message' => $customer], 400);
-            }
-            $user['name'] = $request['name'];
-            $user['email'] = $request['email'];
-            $user['phone'] = $request['phone'];
-        }
-        if ($request->hasFile('avatar')) {
-            $user->removeAvatar();
-            $user['avatar'] = 'uploads/'.$request->file('avatar')->store('avatars');
+        $request->validate([
+            'avatar' => ['nullable', 'image'],
+            'firstname' => ['required'],
+            'lastname' => ['required'],
+            'gender' => ['required', 'in:male,female,prefer_not_to_say'],
+            'email' => ['required', 'email', Rule::unique('members')->ignore($user['id'])],
+            'dob' => ['required', 'dateFormat:m/d/Y'],
+            'address' => ['required'],
+            'city' => ['required'],
+            'state' => ['required', new StateRule],
+            'zipcode' => ['required'],
+        ]);
+        $user = General::updateMember($user, $request);
+        if (empty($user['id'])) {
+            return response()->json(['message' => $user], 400);
         }
         $user->save();
         $profile = $user['profile'];
@@ -117,7 +95,7 @@ class ProfileController extends Controller
             'zipcode' => $request['zipcode'],
         ]);
         if (empty($card['id'])) {
-            return response()->json(['message' => $card], 400);
+            return response()->json(['message' => 'There was an error, please try again.'], 400);
         }
         $customer = $clover->getCustomer($user['customerID']);
         if (empty($customer['id'])) {
@@ -157,17 +135,14 @@ class ProfileController extends Controller
     public function planChangeRequest(Request $request) {
         $user = $request->user();
         $request->validate([
-            'plan' => [
-                'required',
-                'exists:plans,id',
-                Rule::notIn([$user['plan_id']]),
-            ],
+            'plan' => ['required', 'exists:plans,id', Rule::notIn([$user['plan_id']])],
         ], [
             'plan.notIn' => 'Please select another plan.',
         ]);
         try {
+            $contact_email = Setting::getSetting('contact_email', 'info@divstrong.com');
             $plan = Plan::query()->find($request['plan']);
-            Mail::to('info@divstrong.com')->send(new PlanChangeRequest([
+            Mail::to($contact_email)->send(new PlanChangeRequest([
                 'member' => $user,
                 'plan' => $plan['name'],
             ]));

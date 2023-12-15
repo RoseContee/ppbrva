@@ -25,7 +25,7 @@ const ClubInfo: FC = (): JSX.Element => {
 
   return (
     <Layouts>
-      <PageTitle title={me.name} />
+      <PageTitle title={me.location?.name} />
       <Image source={{uri: me.location?.image}} width={width} style={[t.mT5]} />
       <View style={[s.pX7, t.mT3, t.mB2]}>
         <Text style={[t.textXl, t.textCenter, t.mT10]}>

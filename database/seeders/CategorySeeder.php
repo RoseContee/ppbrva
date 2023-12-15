@@ -13,23 +13,19 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
-        Category::create([
+        Category::query()->create([
             'name' => 'Food & Beverage',
         ]);
-
-        Category::create([
+        Category::query()->create([
             'name' => 'Lessons',
         ]);
-
-        Category::create([
+        Category::query()->create([
             'name' => 'Court Usage',
         ]);
-
-        Category::create([
+        Category::query()->create([
             'name' => 'Rentals',
         ]);
-
-        Category::create([
+        Category::query()->create([
             'name' => 'Merchandise',
         ]);
     }

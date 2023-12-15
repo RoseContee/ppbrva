@@ -60,8 +60,6 @@ const MemberInvite: FC = (): JSX.Element => {
             },
           } as never);
         } else if (member.friend_status === 'waiting') {
-          setMessage('You have already sent a friend invitation.');
-        } else {
           setMessage(`If ${ member.name } accepts, they will appear as a Friend!`);
         }
         setMember(member);
@@ -108,6 +106,7 @@ const MemberInvite: FC = (): JSX.Element => {
                   />
                 )}
                 label={ email_share ? me.email : 'Not Shared' }
+                disabled={!!member.friend_status || disabled}
                 value={email_share}
                 onChange={setEmailShare}
               />
@@ -119,6 +118,7 @@ const MemberInvite: FC = (): JSX.Element => {
                   />
                 )}
                 label={ phone_share ? me.phone : 'Not Shared' }
+                disabled={!!member.friend_status || disabled}
                 value={phone_share}
                 onChange={setPhoneShare}
               />

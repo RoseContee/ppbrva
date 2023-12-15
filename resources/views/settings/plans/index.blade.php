@@ -56,6 +56,7 @@
                                     <th scope="col" class="px-6 py-3">Price</th>
                                     <th scope="col" class="px-6 py-3">Members</th>
                                     <th scope="col" class="px-6 py-3">Monthly</th>
+                                    <th scope="col" class="px-6 py-3">Status</th>
                                     <th scope="col" class="px-6 py-3 items-center"></th>
                                 </tr>
                             </thead>
@@ -82,6 +83,13 @@
                                     <td class="px-6 py-4" v-text="'$' + plan.price"></td>
                                     <td class="px-6 py-4" v-text="plan.members.length"></td>
                                     <td class="px-6 py-4">$0</td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            <div class="h-2.5 w-2.5 rounded-full mr-2"
+                                                 :class="{'bg-green-500': plan.status === 'public', 'bg-red-500': plan.status !== 'public'}"></div>
+                                            <span class="capitalize" v-text="plan.status"></span>
+                                        </div>
+                                    </td>
                                     <td class="px-6 py-4">
                                         <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
                                            :href="'{{ route('settings.plans.index') }}/' + plan.id + '/edit'">

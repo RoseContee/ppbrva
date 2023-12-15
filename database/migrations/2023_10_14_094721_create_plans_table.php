@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->decimal('price');
             $table->string('period')->default('monthly');
+            $table->enum('status', ['public', 'private'])->default('public');
             $table->timestamps();
         });
     }

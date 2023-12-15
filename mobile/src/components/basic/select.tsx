@@ -52,6 +52,7 @@ const Select: FC<IProps> = ({
         buttonTextAfterSelection={(item: IItemProps) => item.label}
         rowTextForSelection={(item: IItemProps) => item.label}
         defaultButtonText={placeholder}
+        defaultValue={value}
         data={data}
         onSelect={onChange}
       />

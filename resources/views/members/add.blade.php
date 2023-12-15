@@ -24,18 +24,66 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
                             <div class="w-full max-w-lg">
                                 <div class="flex flex-wrap -mx-3 mb-6">
                                     <div class="w-full px-3">
-                                        <label for="name" class="block uppercase tracking-wide text-gray-900 text-xs font-bold mb-2">
-                                            Member Name
+                                        <label for="firstname" class="block uppercase tracking-wide text-gray-900 text-xs font-bold mb-2">
+                                            First Name
                                         </label>
                                         <input @class([
                                                    "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
-                                                   "border-slate-300" => !$errors->first('name'),
-                                                   "border-red-500" => $errors->first('name'),
+                                                   "border-slate-300" => !$errors->first('firstname'),
+                                                   "border-red-500" => $errors->first('firstname'),
                                                ])
-                                               type="text" id="name" name="name" required
-                                               value="{{ old('name', $member['name'] ?? '') }}"
-                                               placeholder="Name...">
-                                        @error('name')
+                                               type="text" id="firstname" name="firstname" required
+                                               value="{{ old('firstname', $member['firstname'] ?? '') }}"
+                                               placeholder="First Name...">
+                                        @error('firstname')
+                                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap -mx-3 mb-6">
+                                    <div class="w-full px-3">
+                                        <label for="lastname" class="block uppercase tracking-wide text-gray-900 text-xs font-bold mb-2">
+                                            Last Name
+                                        </label>
+                                        <input @class([
+                                                   "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
+                                                   "border-slate-300" => !$errors->first('lastname'),
+                                                   "border-red-500" => $errors->first('lastname'),
+                                               ])
+                                               type="text" id="lastname" name="lastname" required
+                                               value="{{ old('lastname', $member['lastname'] ?? '') }}"
+                                               placeholder="Last Name...">
+                                        @error('lastname')
+                                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap -mx-3 mb-6">
+                                    <div class="w-full px-3">
+                                        <label for="gender" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                            Gender
+                                        </label>
+                                        <select @class([
+                                                   "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
+                                                   "border-slate-300" => !$errors->first('gender'),
+                                                   "border-red-500" => $errors->first('gender'),
+                                                ])
+                                                id="gender" name="gender" required>
+                                            @php $old = old('gender', $member['gender'] ?? ''); @endphp
+                                            <option value="">Choose...</option>
+                                            <option value="male" @selected($old == 'male')>
+                                                Male
+                                            </option>
+                                            <option value="female" @selected($old == 'female')>
+                                                Female
+                                            </option>
+                                            <option value="prefer_not_to_say" @selected($old === 'prefer_not_to_say')>
+                                                Prefer not to say
+                                            </option>
+                                        </select>
+                                        @error('gender')
                                         <p class="text-red-500 text-xs italic">{{ $message }}</p>
                                         @enderror
                                     </div>
@@ -74,6 +122,107 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
                                                value="{{ old('phone', $member['phone'] ?? '') }}"
                                                placeholder="Phone...">
                                         @error('phone')
+                                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap -mx-3 mb-6">
+                                    <div class="w-full px-3">
+                                        <label for="dob" class="block uppercase tracking-wide text-gray-900 text-xs font-bold mb-2">
+                                            Date of Birth
+                                        </label>
+                                        <input @class([
+                                                   "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
+                                                   "border-slate-300" => !$errors->first('dob'),
+                                                   "border-red-500" => $errors->first('dob'),
+                                               ])
+                                               type="text" id="dob" name="dob" required
+                                               value="{{ old('dob', !empty($member['dob']) ? date('m/d/Y', strtotime($member['dob'])) : '') }}"
+                                               autocomplete="off"
+                                               placeholder="MM/DD/YYYY">
+                                        @error('dob')
+                                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap -mx-3 mb-6">
+                                    <div class="w-full px-3">
+                                        <label for="address" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                            Address
+                                        </label>
+                                        <input @class([
+                                                   "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
+                                                   "border-slate-300" => !$errors->first('address'),
+                                                   "border-red-500" => $errors->first('address'),
+                                               ])
+                                               type="text" id="address" name="address" required
+                                               value="{{ old('address', $member['address'] ?? '') }}"
+                                               placeholder="Address...">
+                                        @error('address')
+                                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap -mx-3 mb-6">
+                                    <div class="w-full px-3">
+                                        <label for="city" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                            City
+                                        </label>
+                                        <input @class([
+                                                   "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
+                                                   "border-slate-300" => !$errors->first('city'),
+                                                   "border-red-500" => $errors->first('city'),
+                                               ])
+                                               type="text" id="city" name="city" required
+                                               value="{{ old('city', $member['city'] ?? '') }}"
+                                               placeholder="City...">
+                                        @error('city')
+                                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap -mx-3 mb-6">
+                                    <div class="w-full px-3">
+                                        <label for="state" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                            State
+                                        </label>
+                                        <select @class([
+                                                   "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
+                                                   "border-slate-300" => !$errors->first('state'),
+                                                   "border-red-500" => $errors->first('state'),
+                                                ])
+                                                id="state" name="state" required>
+                                            <option value="">Choose...</option>
+                                            @foreach ($states as $key => $state)
+                                                <option value="{{ $key }}" @selected(old('state', $member['state'] ?? '') == $key)>
+                                                    {{ $state }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('state')
+                                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap -mx-3 mb-6">
+                                    <div class="w-full px-3">
+                                        <label for="zipcode" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                            Zip Code
+                                        </label>
+                                        <input @class([
+                                                   "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
+                                                   "border-slate-300" => !$errors->first('zipcode'),
+                                                   "border-red-500" => $errors->first('zipcode'),
+                                               ])
+                                               type="text" id="zipcode" name="zipcode" required
+                                               value="{{ old('zipcode', $member['zipcode'] ?? '') }}"
+                                               placeholder="Zip Code...">
+                                        @error('zipcode')
                                         <p class="text-red-500 text-xs italic">{{ $message }}</p>
                                         @enderror
                                     </div>
@@ -125,24 +274,45 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
 
                                 <div class="flex flex-wrap -mx-3 mb-6">
                                     <div class="w-full px-3">
-                                        <label for="status" class="block uppercase tracking-wide text-gray-900 text-xs font-bold mb-2">
-                                            Status
+                                        <label for="membership_card_id" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                            Membership Card ID
                                         </label>
-                                        @php $old = old('status', $member['active'] ?? 1); @endphp
-                                        <select @class([
-                                                       "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
-                                                       "border-slate-300" => !$errors->first('status'),
-                                                       "border-red-500" => $errors->first('status'),
-                                                   ])
-                                                id="status" name="status">
-                                            <option value="1" @selected($old)>Active</option>
-                                            <option value="" @selected(!$old)>Inactive</option>
-                                        </select>
-                                        @error('status')
+                                        <input @class([
+                                                   "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
+                                                   "border-slate-300" => !$errors->first('membership_card_id'),
+                                                   "border-red-500" => $errors->first('membership_card_id'),
+                                               ])
+                                               type="text" id="membership_card_id" name="membership_card_id"
+                                               value="{{ old('membership_card_id', $member['membership_card_id'] ?? '') }}"
+                                               placeholder="Membership Card ID...">
+                                        @error('membership_card_id')
                                         <p class="text-red-500 text-xs italic">{{ $message }}</p>
                                         @enderror
                                     </div>
                                 </div>
+
+                                @if (!$add && $member['status'] != 'pending')
+                                    <div class="flex flex-wrap -mx-3 mb-6">
+                                        <div class="w-full px-3">
+                                            <label for="status" class="block uppercase tracking-wide text-gray-900 text-xs font-bold mb-2">
+                                                Status
+                                            </label>
+                                            @php $old = old('status', $member['status']); @endphp
+                                            <select @class([
+                                                           "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
+                                                           "border-slate-300" => !$errors->first('status'),
+                                                           "border-red-500" => $errors->first('status'),
+                                                       ])
+                                                    id="status" name="status" required>
+                                                <option value="active" @selected($old == 'active')>Active</option>
+                                                <option value="inactive" @selected($old == 'inactive')>Inactive</option>
+                                            </select>
+                                            @error('status')
+                                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                @endif
 
                                 <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
                                     {{ $add ? '+ Add' : 'Update' }} Member
@@ -206,6 +376,11 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
                         avatar,
                         selectAvatar
                     }
+                },
+                mounted() {
+                    new Datepicker(document.getElementById('dob'), {
+                        autohide: true,
+                    });
                 }
             }).mount('#app');
         </script>

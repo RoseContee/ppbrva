@@ -17,6 +17,26 @@
                                 <div class="flex flex-wrap -mx-3 mb-6">
                                     <div class="w-full px-3">
                                         <label class="block uppercase tracking-wide text-gray-900 text-xs font-bold mb-2"
+                                               for="contact_email">
+                                            Contact Email
+                                        </label>
+                                        <input @class([
+                                                    "appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-2 leading-tight focus:outline-none focus:bg-white",
+                                                    "border-slate-300" => !$errors->first('contact_email'),
+                                                    "border-red-500" => $errors->first('contact_email'),
+                                                ])
+                                               type="email" id="contact_email" name="contact_email" required
+                                               value="{{ old('contact_email', $settings['contact_email'] ?? '') }}"
+                                               placeholder="Contact Email...">
+                                        @error('contact_email')
+                                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap -mx-3 mb-6">
+                                    <div class="w-full px-3">
+                                        <label class="block uppercase tracking-wide text-gray-900 text-xs font-bold mb-2"
                                                for="play_link">
                                             Play Link
                                         </label>

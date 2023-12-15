@@ -64,15 +64,30 @@ $route = $add ? route('settings.plans.store') : route('settings.plans.update', $
 
                                 <div class="flex flex-wrap -mx-3 mb-6">
                                     <div class="w-full px-3">
-                                    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                           for="frequency">
-                                        Frequency
-                                    </label>
-                                    @php $old = old('frequency', $plan['period'] ?? 'monthly'); @endphp
-                                    <select class="appearance-none block w-full bg-gray-200 text-gray-700 border border-slate-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                            id="frequency" name="frequency" required>
-                                        <option value="monthly" @selected($old === 'monthly')>Monthly</option>
-                                    </select>
+                                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                                               for="frequency">
+                                            Frequency
+                                        </label>
+                                        @php $old = old('frequency', $plan['period'] ?? 'monthly'); @endphp
+                                        <select class="appearance-none block w-full bg-gray-200 text-gray-700 border border-slate-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                id="frequency" name="frequency" required>
+                                            <option value="monthly" @selected($old === 'monthly')>Monthly</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap -mx-3 mb-6">
+                                    <div class="w-full px-3">
+                                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                                               for="status">
+                                            Status
+                                        </label>
+                                        @php $old = old('status', $plan['status'] ?? 'public'); @endphp
+                                        <select class="appearance-none block w-full bg-gray-200 text-gray-700 border border-slate-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                id="status" name="status" required>
+                                            <option value="public" @selected($old === 'public')>Public</option>
+                                            <option value="private" @selected($old !== 'public')>Private</option>
+                                        </select>
                                     </div>
                                 </div>
 

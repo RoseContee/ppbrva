@@ -95,8 +95,12 @@ const Events: FC = (): JSX.Element => {
       <FlatList style={[t.hFull]}
         data={events}
         keyExtractor={(item, index) => index + '-' + item.id}
-        ListHeaderComponent={() => <PageTitle title={me.name} style={[t.mB3]} />}
-        ListEmptyComponent={() => <Message style={[t.mT10]} text={'Events not found.'} />}
+        ListHeaderComponent={() => <PageTitle title={me.location?.name} style={[t.mB3]} />}
+        ListEmptyComponent={() => (
+          <Message style={[t.mT10]}
+            text={events.length ? 'Events not found.' : 'No events yet...'}
+          />
+        )}
         renderItem={({ item }) => <ItemComponent width={width} event={item} />}
       />
     </Layouts>

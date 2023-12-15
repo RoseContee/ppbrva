@@ -10,7 +10,7 @@ class Plan extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'price', 'period',
+        'name', 'price', 'period', 'status',
     ];
 
     public function members() {

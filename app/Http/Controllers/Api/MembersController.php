@@ -13,7 +13,7 @@ class MembersController extends Controller
         $members = Member::query()
             ->with(['profile:member_id,share_age_gender,age,gender,rating'])
             ->where('id', '<>', auth()->id())
-            ->get(['id', 'memberID', 'name', 'avatar']);
+            ->get(['id', 'memberID', 'firstname', 'lastname', 'avatar']);
         return response()->json([
             'members' => $members,
         ]);
@@ -27,13 +27,13 @@ class MembersController extends Controller
                     $query->with(['profile:member_id,share_age_gender,age,gender,rating'])
                         ->wherePivotIn('status', ['pending', 'accepted'])
                         ->withPivot('status')
-                        ->select(['members.id', 'memberID', 'name', 'avatar']);
+                        ->select(['members.id', 'memberID', 'firstname', 'lastname', 'avatar']);
                 },
                 'friends2' => function ($query) {
                     $query->with(['profile:member_id,share_age_gender,age,gender,rating'])
                         ->wherePivot('status', 'accepted')
                         ->withPivot('status')
-                        ->select(['members.id', 'memberID', 'name', 'avatar']);
+                        ->select(['members.id', 'memberID', 'firstname', 'lastname', 'avatar']);
                 },
             ])
             ->find(auth()->id(), ['id'])
@@ -56,7 +56,7 @@ class MembersController extends Controller
                     $query->with(['profile:member_id,share_age_gender,age,gender,rating'])
                         ->wherePivot('status', 'pending')
                         ->withPivot('status')
-                        ->select(['members.id', 'memberID', 'name', 'avatar']);
+                        ->select(['members.id', 'memberID', 'firstname', 'lastname', 'avatar']);
                 },
             ])
             ->find(auth()->id(), ['id'])
@@ -84,7 +84,7 @@ class MembersController extends Controller
             ])
             ->where('memberID', $memberID)
             ->where('id', '<>', $user_id)
-            ->first(['id', 'memberID', 'name', 'email', 'phone', 'avatar']);
+            ->first(['id', 'memberID', 'firstname', 'lastname', 'email', 'phone', 'avatar']);
         if (!$member) {
             return response()->json([
                 'message' => 'Not found member.',

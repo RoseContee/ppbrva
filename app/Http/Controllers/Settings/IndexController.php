@@ -21,6 +21,7 @@ class IndexController extends Controller
 
     public function update(Request $request) {
         $request->validate([
+            'contact_email' => ['required', 'email'],
             'play_link' => ['required', 'url'],
             'improve_link' => ['required', 'url'],
             'rent_link' => ['required', 'url'],
@@ -28,6 +29,7 @@ class IndexController extends Controller
             'dupr_link' => ['required', 'url'],
         ]);
         Setting::saveSetting($request->only([
+            'contact_email',
             'play_link', 'improve_link', 'rent_link', 'shop_link',
             'dupr_link',
         ]));

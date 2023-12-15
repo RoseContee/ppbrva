@@ -16,13 +16,13 @@ class Clover
 
     public function __construct() {
         $mode = strtoupper(env('CLOVER_MODE', 'LIVE')) === 'SANDBOX' ? 'SANDBOX' : 'LIVE';
-        $this->mId = env("CLOVER_PLATFORM_{$mode}_MID");
+        $this->mId = env("CLOVER_{$mode}_MID");
 
         $platform_base_url = [
             'LIVE' => 'https://api.clover.com',
             'SANDBOX' => 'https://sandbox.dev.clover.com',
         ];
-        $access_token = env("CLOVER_PLATFORM_{$mode}_TOKEN");
+        $access_token = env("CLOVER_{$mode}_PRIVATE_TOKEN");
         $this->platform_client = new Client([
             'base_uri' => $platform_base_url[$mode],
             'headers' => [
@@ -36,7 +36,7 @@ class Clover
             'LIVE' => 'https://token.clover.com',
             'SANDBOX' => 'https://token-sandbox.dev.clover.com',
         ];
-        $apikey = env("CLOVER_TOKENIZATION_{$mode}_APIKEY");
+        $apikey = env("CLOVER_{$mode}_PUBLIC_TOKEN");
         $this->tokenization_client = new Client([
             'base_uri' => $tokenization_base_url[$mode],
             'headers' => [
@@ -50,7 +50,7 @@ class Clover
             'LIVE' => 'https://scl.clover.com',
             'SANDBOX' => 'https://scl-sandbox.dev.clover.com',
         ];
-        $access_token = env("CLOVER_ECOMMERCE_{$mode}_TOKEN");
+        $access_token = env("CLOVER_{$mode}_PRIVATE_TOKEN");
         $this->ecommerce_client = new Client([
             'base_uri' => $ecommerce_base_url[$mode],
             'headers' => [
@@ -87,13 +87,14 @@ class Clover
         try {
             $mId = $this->mId;
             $body = [
-                'firstName' => substr($data['name'], 0, 64),
+                'firstName' => substr($data['firstname'], 0, 64),
+                'lastName' => substr($data['lastname'], 0, 64),
                 'emailAddresses' => [[
                     'emailAddress' => $data['email'],
                     'primaryEmail' => true,
                 ]],
             ];
-            if ($data['phone']) {
+            if (!empty($data['phone'])) {
                 $body['phoneNumbers'] = [[
                     'phoneNumber' => $data['phone'],
                 ]];
@@ -117,7 +118,8 @@ class Clover
         try {
             $mId = $this->mId;
             $body = [
-                'firstName' => substr($data['name'], 0, 64),
+                'firstName' => substr($data['firstname'], 0, 64),
+                'lastName' => substr($data['lastname'], 0, 64),
                 'emailAddresses' => [[
                     'id' => $data['email']['id'],
                     'emailAddress' => $data['email']['value'],

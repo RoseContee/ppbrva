@@ -24,11 +24,13 @@ class PlanController extends Controller
             'name' => ['required'],
             'price' => ['required', 'numeric'],
             'frequency' => ['required', 'in:monthly'],
+            'status' => ['required', 'in:public,private'],
         ]);
         Plan::query()->create([
             'name' => $request['name'],
             'price' => $request['price'],
             'period' => $request['frequency'],
+            'status' => $request['status'],
         ]);
         return redirect()->route('settings.plans.index')
             ->with('success_message', 'New membership plan has been added.');
@@ -49,10 +51,12 @@ class PlanController extends Controller
             'name' => ['required'],
             'price' => ['required', 'numeric'],
             'frequency' => ['required', 'in:monthly'],
+            'status' => ['required', 'in:public,private'],
         ]);
         $plan['name'] = $request['name'];
         $plan['price'] = $request['price'];
         $plan['period'] = $request['frequency'];
+        $plan['status'] = $request['status'];
         $plan->save();
         return back()->with('info_message', 'Membership plan has been updated.');
     }

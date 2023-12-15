@@ -201,7 +201,6 @@ const styles = StyleSheet.create({
 
   /* Select Start */
   selectContainer: {
-    backgroundColor: theme.color.inputBg,
     borderRadius: theme.borderRadius.input,
     ...theme.inputShadow,
   },
@@ -210,6 +209,7 @@ const styles = StyleSheet.create({
     height: 'auto',
     paddingVertical: 16,
     borderRadius: theme.borderRadius.input,
+    backgroundColor: theme.color.inputBg,
   },
   selectButtonText: {
     fontFamily: theme.font.body,

@@ -13,7 +13,7 @@ class RolesSeeder extends Seeder
      */
     public function run(): void
     {
-        Role::create([
+        Role::query()->create([
             'name' => 'Admin',
             'permissions' => implode(',', Role::getPermissions()),
         ]);

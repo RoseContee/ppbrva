@@ -183,7 +183,11 @@ const Activity: FC = (): JSX.Element => {
         data={filteredActivities}
         keyExtractor={(item, index) => index + '-' + item.category}
         ListHeaderComponent={renderListHeader()}
-        ListEmptyComponent={() => <Message style={[t.mT10]} text={'Activities not found.'} />}
+        ListEmptyComponent={() => (
+          <Message style={[t.mT10]}
+            text={activities.length ? 'Activities not found.' : 'No activity yet...'}
+          />
+        )}
         renderItem={({item}) => <ItemComponent {...item} />}
       />
     </Layouts>

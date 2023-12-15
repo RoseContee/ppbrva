@@ -22,6 +22,7 @@ class SettingsController extends Controller
 
     public function plans() {
         $plans = Plan::query()
+            ->where('status', 'public')
             ->get(['id', 'name', 'price']);
         return response()->json([
             'plans' => $plans,

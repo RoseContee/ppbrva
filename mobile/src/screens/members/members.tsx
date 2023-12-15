@@ -67,7 +67,7 @@ const HeaderComponent: FC<IHeaderProps> = ({
 
   return (
     <>
-      <PageTitle title={ me.name } />
+      <PageTitle title={ me.location?.name } />
       {
         route.name === 'Friends' && pending ? (
           <Message style={[t.mT4]}>
@@ -215,7 +215,10 @@ const Members: FC = (): JSX.Element => {
         ListHeaderComponent={renderListHeader()}
         ListEmptyComponent={() => (
           <Message style={[t.mT10]}
-            text={`${ route.name === 'Friends' ? 'Friends' : 'Members' } not found.`}
+            text={members.length
+              ? `${ route.name === 'Friends' ? 'Friends' : 'Members' } not found.`
+              : `No ${ route.name === 'Friends' ? 'friends' : 'members' } yet...`
+            }
           />
         )}
         renderItem={({item}) => (

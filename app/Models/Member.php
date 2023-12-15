@@ -13,10 +13,15 @@ class Member extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     protected $fillable = [
-        'memberID', 'name', 'email', 'password', 'original_pass',
-        'phone', 'location_id', 'plan_id', 'avatar',
+        'memberID', 'firstname', 'lastname', 'email', 'password', 'original_pass',
+        'gender', 'phone', 'dob', 'address', 'city', 'state', 'zipcode',
+        'location_id', 'plan_id', 'membership_card_id', 'avatar',
         'customerID', 'card_last4', 'card_type',
-        'active',
+        'status', 'pause_from', 'pause_to',
+    ];
+
+    protected $appends = [
+        'name',
     ];
 
     protected $hidden = [
@@ -27,6 +32,10 @@ class Member extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function getNameAttribute() {
+        return ($this->attributes['firstname'] ?? '').' '.($this->attributes['lastname'] ?? '');
+    }
+
     public function getOriginalPassAttribute() {
         return !!$this->attributes['original_pass'];
     }
@@ -36,10 +45,6 @@ class Member extends Authenticatable
             return asset($this->attributes['avatar']);
         }
         return asset('img/user-profile.png');
-    }
-
-    public function scopeActive($query) {
-        $query->where('active', true);
     }
 
     public function location() {
@@ -81,21 +86,29 @@ class Member extends Authenticatable
         $profile = $this['profile'];
         $location = $this['location'];
         $plan = $this['plan'];
-        $dupr_link = Setting::getSetting('dupr_link');
         return [
             'id' => $this['id'],
             'memberID' => $this['memberID'],
+            'firstname' => $this['firstname'],
+            'lastname' => $this['lastname'],
             'name' => $this['name'],
             'email' => $this['email'],
-            'phone' => $this['phone'],
             'original_pass' => $this['original_pass'],
+            'gender' => $this['gender'],
+            'phone' => $this['phone'],
+            'dob' => $this['dob'] ? date('m/d/Y', strtotime($this['dob'])) : null,
+            'address' => $this['address'],
+            'city' => $this['city'],
+            'state' => $this['state'],
+            'zipcode' => $this['zipcode'],
             'avatar' => $this['avatar'],
             'card_type' => $this['card_type'],
             'card_last4' => $this['card_last4'],
+            'status' => $this['status'],
             'profile' => [
-                'share_age_gender' => $profile['share_age_gender'],
+                'share_age_gender' => !empty($profile['share_age_gender']),
                 'dupr_id' => $profile['dupr_id'],
-                'dupr_link' => $dupr_link,
+                'dupr_link' => Setting::getSetting('dupr_link'),
                 'gender' => $profile['gender'],
                 'age' => $profile['age'],
                 'rating' => $profile['rating'],
@@ -116,7 +129,7 @@ class Member extends Authenticatable
             'plan' => [
                 'id' => $plan['id'],
                 'name' => $plan['name'],
-            ]
+            ],
         ];
     }
 }

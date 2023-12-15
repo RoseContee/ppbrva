@@ -13,7 +13,7 @@ class UsersSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
+        User::query()->create([
             'name' => 'Jim Doyle',
             'email' => 'jim@divstrong.com',
             'email_verified_at' => now(),

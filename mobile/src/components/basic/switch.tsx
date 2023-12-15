@@ -46,6 +46,7 @@ const Label: FC<ILabelProps> = ({
 interface IProps {
   value?: boolean,
   onChange?: (value: boolean) => void,
+  disabled?: boolean,
   style?: StyleProp<ViewStyle>,
   Icon?: () => JSX.Element,
   iconRight?: true,
@@ -57,6 +58,7 @@ interface IProps {
 const Switch: FC<IProps> = ({
   value,
   onChange,
+  disabled,
   style,
   Icon,
   iconRight,
@@ -87,6 +89,7 @@ const Switch: FC<IProps> = ({
         circleBorderWidth={0}
         changeValueImmediately={true}
         switchWidthMultiplier={3}
+        disabled={disabled}
         value={value}
         onValueChange={onChange}
       />

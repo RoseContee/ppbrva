@@ -10,13 +10,13 @@ class Role extends Model
     use HasFactory;
 
     public const PERMISSION_DASHBOARD  = 1;
-    const PERMISSION_LOCATIONS  = 2;
-    const PERMISSION_MEMBERS    = 3;
-    const PERMISSION_ACTIVITY   = 4;
-    const PERMISSION_INVOICES   = 5;
-    const PERMISSION_USERS      = 6;
-    const PERMISSION_SETTINGS   = 7;
-    const PERMISSIONS = [
+    public const PERMISSION_LOCATIONS  = 2;
+    public const PERMISSION_MEMBERS    = 3;
+    public const PERMISSION_ACTIVITY   = 4;
+    public const PERMISSION_INVOICES   = 5;
+    public const PERMISSION_USERS      = 6;
+    public const PERMISSION_SETTINGS   = 7;
+    public const PERMISSIONS = [
         self::PERMISSION_DASHBOARD => 'Dashboard',
         self::PERMISSION_LOCATIONS => 'Locations',
         self::PERMISSION_MEMBERS => 'Members',

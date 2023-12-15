@@ -75,7 +75,7 @@ const MainMenu: FC<DrawerContentComponentProps> = (props): JSX.Element => {
           </TouchableOpacity>
         </View>
         <PageTitle style={[t.pX0, t.mT2]}
-          title={me.name}
+          title={me.location?.name}
         />
         <View style={[t.mY8]} />
         <MenuItem text="Club Info" image={imgClubInfo}

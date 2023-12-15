@@ -32,7 +32,7 @@ class AuthController extends Controller
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
-        if (!$user['active']) {
+        if ($user['status'] != 'active') {
             throw ValidationException::withMessages([
                 'email' => ['Your account has been deactivated.'],
             ]);
@@ -50,10 +50,9 @@ class AuthController extends Controller
         $request->validate([
             'email' => ['required', 'email'],
         ]);
-        $email = $request['email'];
         $user = Member::query()
-            ->where('email', $email)
-            ->active()
+            ->where('email', $request['email'])
+            ->where('status', 'active')
             ->first();
         if (!$user) {
             throw ValidationException::withMessages([
@@ -62,13 +61,13 @@ class AuthController extends Controller
         }
         try {
             $reset = DB::table('member_password_reset_codes')
-                ->where('email', $email)
+                ->where('email', $request['email'])
                 ->first();
             $expiration = date('Y-m-d H:i:s', strtotime("-{$this->code_expiration} minutes"));
             if (!$reset || $reset->created_at < $expiration) {
                 $code = random_int(100000, 999999);
                 DB::table('member_password_reset_codes')->updateOrInsert([
-                    'email' => $email,
+                    'email' => $request['email'],
                 ], [
                     'code' => $code,
                     'created_at' => now(),
@@ -115,12 +114,10 @@ class AuthController extends Controller
             'code' => ['required', 'digits:6'],
             'password' => ['required', 'min:8', 'confirmed'],
         ]);
-        $email = $request['email'];
-        $code = $request['code'];
         $expiration = date('Y-m-d H:i:s', strtotime("-{$this->code_expiration} minutes"));
         $reset = DB::table('member_password_reset_codes')
-            ->where('email', $email)
-            ->where('code', $code)
+            ->where('email', $request['email'])
+            ->where('code', $request['code'])
             ->where('created_at', '>=', $expiration)
             ->first();
         if (!$reset) {
@@ -129,8 +126,8 @@ class AuthController extends Controller
             ]);
         }
         $user = Member::query()
-            ->where('email', $email)
-            ->active()
+            ->where('email', $request['email'])
+            ->where('status', 'active')
             ->first();
         if (!$user) {
             throw ValidationException::withMessages([
@@ -141,8 +138,8 @@ class AuthController extends Controller
         $user['original_pass'] = null;
         $user->save();
         DB::table('member_password_reset_codes')
-            ->where('email', $email)
-            ->where('code', $code)
+            ->where('email', $request['email'])
+            ->where('code', $request['code'])
             ->delete();
         return response()->json([
             'status' => 'OK',

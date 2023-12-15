@@ -128,7 +128,11 @@ const KitchenBar: FC = (): JSX.Element => {
         sections={filteredItems}
         keyExtractor={(item, index) => index + '-' + item.itemID}
         ListHeaderComponent={renderListHeader()}
-        ListEmptyComponent={() => <Message style={[t.mT10]} text={'Items not found.'} />}
+        ListEmptyComponent={() => (
+          <Message style={[t.mT10]}
+            text={items.length ? 'Items not found.' : 'No items yet.'}
+          />
+        )}
         renderSectionHeader={({ section: { category } }) => {
           return (
             <Title style={[t.uppercase, t.textXl, s.pX7, t.mY3]}>

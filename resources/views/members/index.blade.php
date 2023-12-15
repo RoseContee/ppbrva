@@ -106,25 +106,35 @@
                                     <td class="px-6 py-4">
                                         <div class="flex items-center">
                                             <div class="h-2.5 w-2.5 rounded-full mr-2"
-                                                 :class="{'bg-green-500': member.active, 'bg-red-500': !member.active}"></div>
-                                            <span v-text="member.active ? 'Active' : 'Inactive'"></span>
+                                                 :class="{'bg-green-500': member.status === 'active', 'bg-red-500': member.status !== 'active'}"></div>
+                                            <span class="capitalize" v-text="member.status"></span>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <p class="text-center">
-                                            <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
-                                               :href="'{{ route('members.index') }}/' + member.id + '/edit'">
-                                                Edit
-                                            </a>
-                                        </p>
-                                        <p class="text-center mt-1"
-                                           v-if="member.original_pass">
-                                            <a class="font-medium text-red-500 underline dark:text-red-500 hover:no-underline hover:text-gray"
-                                               href="javascript:void(0);"
-                                               v-on:click="sendInvite(member.id)">
-                                                Send Invite
-                                            </a>
-                                        </p>
+                                        <div v-if="member.status !== 'pending'">
+                                            <p class="text-center">
+                                                <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
+                                                   :href="'{{ route('members.index') }}/' + member.id + '/edit'">
+                                                    Edit
+                                                </a>
+                                            </p>
+                                            <p class="text-center mt-1"
+                                               v-if="member.original_pass">
+                                                <a class="font-medium text-red-500 underline dark:text-red-500 hover:no-underline hover:text-gray"
+                                                   href="javascript:void(0);"
+                                                   v-on:click="sendInvite(member.id)">
+                                                    Send Invite
+                                                </a>
+                                            </p>
+                                        </div>
+                                        <div v-else>
+                                            <p class="text-center">
+                                                <button class="px-2 py-1 bg-blue border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                                        v-on:click="approveMember(member.id)">
+                                                    Approve
+                                                </button>
+                                            </p>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
@@ -171,6 +181,10 @@
         @csrf
         <input type="hidden" id="inviteMemberId" name="member">
     </form>
+    <form name="approvalForm" action="{{ route('members.approve') }}" method="POST">
+        @csrf
+        <input type="hidden" id="approvalMemberId" name="member">
+    </form>
     <form name="deleteForm" action="{{ route('members.destroy') }}" method="POST">
         @csrf
         @method('DELETE')
@@ -206,6 +220,7 @@
                             const q = keyword.value.toLowerCase();
                             return (member.name.toLowerCase().includes(q)
                                     || member.memberID.toLowerCase().includes(q)
+                                    || member.status.toLowerCase().includes(q)
                                 ) && (page.value - 1) * per_page <= index
                                 && index < Math.min(page.value * per_page, members.value.length);
                         });
@@ -241,13 +256,19 @@
                             document.inviteForm.submit();
                         }
                     }
+                    const approveMember = (memberId) => {
+                        if (confirm('This will send an email invite to member. Are you sure?')) {
+                            document.getElementById('approvalMemberId').value = memberId;
+                            document.approvalForm.submit();
+                        }
+                    }
 
                     return {
                         members, keyword,
                         pagination_info, firstPage, prevPage, lastPage, nextPage, filteredMembers,
                         selectedAll, selectAll, selectedItems, selectItem,
                         showMenu, toggleMenu, deleteItems,
-                        sendInvite,
+                        sendInvite, approveMember,
                     }
                 }
             }).mount('#app');

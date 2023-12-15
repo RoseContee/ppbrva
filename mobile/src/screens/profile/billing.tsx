@@ -35,21 +35,23 @@ const BillingProfile: FC = (): JSX.Element => {
 
   useFocusEffect(
     useCallback(() => {
+      initStates();
       const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
         navigation.navigate('Profile' as never);
         return true;
       });
-      return () => {
-        setMessage('');
-        setNumber('');
-        setExpires('');
-        setCvv('');
-        setAddress('');
-        setZipcode('');
-        subscribe.remove();
-      }
+      return () => subscribe.remove();
     }, [])
   );
+
+  const initStates = () => {
+    setMessage('');
+    setNumber('');
+    setExpires('');
+    setCvv('');
+    setAddress('');
+    setZipcode('');
+  }
 
   const addCard = () => {
     setLoading(true);

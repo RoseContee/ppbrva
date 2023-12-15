@@ -13,34 +13,47 @@ class PlansSeeder extends Seeder
      */
     public function run(): void
     {
-        Plan::create([
+        Plan::query()->create([
             'name' => 'Elite Team Membership',
             'price' => 119,
             'period' => 'monthly',
+            'status' => 'public',
         ]);
-
-        Plan::create([
+        Plan::query()->create([
             'name' => 'Performance Team Membership',
             'price' => 49,
             'period' => 'monthly',
+            'status' => 'public',
         ]);
-
         Plan::create([
             'name' => 'Corporate Membership',
             'price' => 99,
             'period' => 'monthly',
+            'status' => 'public',
         ]);
-
         Plan::create([
             'name' => 'Morning Crew PBJ Membership',
             'price' => 49,
             'period' => 'monthly',
+            'status' => 'private',
         ]);
-
         Plan::create([
-            'name' => 'Student Membership Membership',
+            'name' => 'Student Membership',
             'price' => 39,
             'period' => 'monthly',
+            'status' => 'public',
+        ]);
+        Plan::create([
+            'name' => 'Elite Team Membership (DISCOUNTED)',
+            'price' => 99,
+            'period' => 'monthly',
+            'status' => 'private',
+        ]);
+        Plan::create([
+            'name' => 'Performance Team Membership (DISCOUNTED)',
+            'price' => 39,
+            'period' => 'monthly',
+            'status' => 'private',
         ]);
     }
 }

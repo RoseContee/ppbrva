@@ -39,6 +39,7 @@ const ProfileMembershipPlan: FC = (): JSX.Element => {
 
   useFocusEffect(
     useCallback(() => {
+      initStates();
       getStorage('plan_requested_at').then(plan_requested_at => {
         const requested_at = Number(plan_requested_at);
         if (!requested_at
@@ -60,14 +61,15 @@ const ProfileMembershipPlan: FC = (): JSX.Element => {
         navigation.navigate('Profile' as never);
         return true;
       });
-      return () => {
-        setMessage('');
-        setSelectedPlan(null);
-        setCanRequest(false);
-        subscribe.remove();
-      }
+      return () => subscribe.remove();
     }, [])
   );
+
+  const initStates = () => {
+    setMessage('');
+    setSelectedPlan(null);
+    setCanRequest(false);
+  }
 
   const onRequest = () => {
     setLoading(true);

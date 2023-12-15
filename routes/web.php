@@ -25,6 +25,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('join', [MemberController::class, 'joinForm'])->name('members.join');
+Route::post('join', [MemberController::class, 'join']);
+Route::get('thanks', [MemberController::class, 'thanks'])->name('members.thanks');
+
 Route::middleware(['auth', 'role'])->group(function () {
     Route::get('/', function() {
         return redirect()->route('dashboard');
@@ -39,6 +43,7 @@ Route::middleware(['auth', 'role'])->group(function () {
         'users'     => UsersController::class,
     ]);
     Route::post('members/send-invite', [MemberController::class, 'sendInvite'])->name('members.send-invite');
+    Route::post('members/approve', [MemberController::class, 'approve'])->name('members.approve');
     Route::delete('members', [MemberController::class, 'destroy'])->name('members.destroy');
     Route::get('invoices/{id}/download', [InvoicesController::class, 'download'])->name('invoices.download');
     Route::post('invoices/{id}/pay', [InvoicesController::class, 'pay'])->name('invoices.pay');
