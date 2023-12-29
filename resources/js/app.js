@@ -12,3 +12,10 @@ window.Chart = Chart;
 window.DateRangePicker = DateRangePicker;
 window.Datepicker = Datepicker;
 window.Choices = Choices;
+
+window.currencyFormat = value => {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+    }).format(value);
+}

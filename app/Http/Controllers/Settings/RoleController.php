@@ -9,14 +9,17 @@ use Illuminate\Http\Request;
 class RoleController extends Controller
 {
     public function index() {
+        $allPermissions = Role::getAllPermissions();
         $roles = Role::query()->withCount(['users'])->get();
-        $all_permissions = Role::getPermissions();
         foreach ($roles as $role) {
             $all = true; $permissions = [];
-            $role_permissions = explode(',', $role['permissions']);
-            foreach ($all_permissions as $permission) {
-                if (!in_array($permission, $role_permissions)) $all = false;
-                else $permissions[] = Role::PERMISSIONS[$permission];
+            $rolePermissions = explode(',', $role['permissions']);
+            foreach ($allPermissions as $permission => $p) {
+                if (in_array($permission, $rolePermissions)) {
+                    $permissions[] = $p['label'];
+                } else {
+                    $all = false;
+                }
             }
             if ($all) $role['permission'] = 'Access to all views';
             else if (empty($permissions)) $role['permission'] = 'No access to any views';
@@ -28,7 +31,10 @@ class RoleController extends Controller
     }
 
     public function create() {
-        return view('settings.roles.add');
+        $permissions = Role::getAllPermissions();
+        return view('settings.roles.add', [
+            'permissions' => $permissions,
+        ]);
     }
 
     public function store(Request $request) {
@@ -48,8 +54,10 @@ class RoleController extends Controller
     public function edit($id) {
         $role = Role::query()->find($id);
         if (!$role) return back();
+        $permissions = Role::getAllPermissions();
         return view('settings.roles.add', [
             'role' => $role,
+            'permissions' => $permissions,
         ]);
     }
 

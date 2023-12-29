@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Helpers\Clover;
-use App\Helpers\Dupr;
 use App\Helpers\General;
 use App\Http\Controllers\Controller;
 use App\Mail\PlanChangeRequest;
+use App\Models\Location;
 use App\Models\Member;
 use App\Models\Plan;
 use App\Models\Setting;
@@ -17,19 +17,43 @@ use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
-    public function me() {
-        $user = Member::query()
-            ->with(['profile', 'location', 'plan'])
-            ->find(auth()->id());
+    public function me(Request $request) {
+        $user = $request->user();
         return response()->json([
             'user' => $user->getInfo(),
         ]);
     }
 
+    public function location(Request $request) {
+        $user = $request->user();
+        $location = Location::query()->find($user['location_id']);
+        return response()->json([
+            'location' => [
+                'name' => $location['name'],
+                'address' => $location['address'],
+                'lat' => $location['lat'],
+                'lng' => $location['lng'],
+                'phone' => $location['phone'],
+                'email' => $location['email'],
+                'website' => $location['website'],
+                'image' => $location['image'],
+            ],
+        ]);
+    }
+
+    public function plan(Request $request) {
+        $user = $request->user();
+        $plan = Plan::query()->find($user['plan_id']);
+        return response()->json([
+            'plan' => [
+                'id' => $plan['id'],
+                'name' => $plan['name'],
+            ],
+        ]);
+    }
+
     public function updateProfile(Request $request) {
-        $user = Member::query()
-            ->with(['profile', 'location', 'plan'])
-            ->find(auth()->id());
+        $user = $request->user();
         $request->validate([
             'avatar' => ['nullable', 'image'],
             'firstname' => ['required'],
@@ -50,16 +74,7 @@ class ProfileController extends Controller
         $profile = $user['profile'];
         $profile['share_age_gender'] = $request['share'] === 'true';
         if ($profile['dupr_id'] != $request['dupr']) {
-            if ($profile['dupr_id'] = $request['dupr']) {
-                $dupr = new Dupr();
-                $duprInfo = $dupr->getPlayInfo($profile['dupr_id']);
-            }
-            $profile['gender'] = $duprInfo['gender'] ?? null;
-            $profile['age'] = $duprInfo['age'] ?? null;
-            $profile['rating'] = $duprInfo['rating'] ?? null;
-            $profile['matches'] = $duprInfo['matches'] ?? null;
-            $profile['wins'] = $duprInfo['wins'] ?? null;
-            $profile['losses'] = $duprInfo['losses'] ?? null;
+            General::saveDUPR($profile, $request['dupr']);
         }
         $profile->save();
         return response()->json([
@@ -79,29 +94,26 @@ class ProfileController extends Controller
             'number.required' => 'The card number field is required.',
             'expires.date_format' => 'The expires field must match the format MM/YY.',
         ]);
-        $user = Member::query()
-            ->with(['profile', 'location', 'plan'])
-            ->find(auth()->id());
-        $clover = new Clover();
         $expires = explode('/', $request['expires']);
-        $brand = $clover->cardType($request['number']);
+        $clover = new Clover();
         $card = $clover->createCardToken([
             'number' => $request['number'],
             'exp_month' => $expires[0],
             'exp_year' => $expires[1],
             'cvv' => $request['cvv'],
-            'brand' => $brand,
+            'brand' => ($brand = $clover->cardType($request['number'])),
             'address' => $request['address'],
             'zipcode' => $request['zipcode'],
         ]);
         if (empty($card['id'])) {
             return response()->json(['message' => 'There was an error, please try again.'], 400);
         }
+        $user = $request->user();
         $customer = $clover->getCustomer($user['customerID']);
         if (empty($customer['id'])) {
             return response()->json(['message' => $customer], 400);
         }
-        if ($cardId = $customer['cards']['elements'][0]['id'] ?? '') {
+        if ($cardId = ($customer['cards']['elements'][0]['id'] ?? '')) {
             $clover->revokeCustomerCard($user['customerID'], $cardId);
         }
         $customer = $clover->updateCustomerCard($user['customerID'], [

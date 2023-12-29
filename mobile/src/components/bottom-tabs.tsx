@@ -5,6 +5,7 @@ import {
   View
 } from 'react-native';
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { mainRoutes } from '../routes';
 import { SvgProps } from 'react-native-svg';
 import Image from 'react-native-scalable-image';
 import Text from './basic/text';
@@ -42,34 +43,38 @@ const MenuItem: FC<MenuItemProps> = ({
       </Text>
     </TouchableOpacity>
   );
-};
+}
 
 const BottomTabs: FC<BottomTabBarProps> = (props): JSX.Element => {
   const { navigation, state: { index } } = props;
+
+  const gotoScreen = (screen: string) => {
+    navigation.navigate(screen);
+  }
 
   return (
     <View style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.bgWhite, t.pX6, t.pT3, t.pB5]}>
       <MenuItem Icon={IconActivity} text="Activity"
         color={index === 1 ? theme.color.active : theme.color.title}
-        onPress={() => navigation.navigate('Activity')}
+        onPress={() => gotoScreen(mainRoutes.Activity)}
       />
       <MenuItem Icon={IconFriends} text="Friends"
         color={2 <= index && index <= 5 ? theme.color.active : theme.color.title}
-        onPress={() => navigation.navigate('Friends')}
+        onPress={() => gotoScreen(mainRoutes.Friends)}
       />
       <Image source={imgLogo} height={78}
-        onPress={() => navigation.navigate('Dashboard')}
+        onPress={() => gotoScreen(mainRoutes.Dashboard)}
       />
       <MenuItem Icon={IconEvents} text="Events"
         color={index === 6 ? theme.color.active : theme.color.title}
-        onPress={() => navigation.navigate('Events')}
+        onPress={() => gotoScreen(mainRoutes.Events)}
       />
       <MenuItem Icon={IconProfile} text="Profile"
         color={7 <= index && index <= 12 ? theme.color.active : theme.color.title}
-        onPress={() => navigation.navigate('Profile')}
+        onPress={() => gotoScreen(mainRoutes.Profile)}
       />
     </View>
   );
-};
+}
 
 export default BottomTabs;

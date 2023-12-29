@@ -72,7 +72,9 @@
                                         {{ env('CONTACT_ADDRESS') }}
                                     </p>
                                     <p style="font-size:12px; line-height:1.5em; margin:0;">
-                                        <a href="{{ url('/') }}" target="_blank" style="color:#d0ff24;">www.ppbrva.com</a>
+                                        <a href="https://ppbrva.com/" target="_blank" style="color:#d0ff24;">
+                                            www.ppbrva.com
+                                        </a>
                                     </p>
                                 </td>
                             </tr>

@@ -6,12 +6,13 @@ import {
   ViewStyle
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { mainRoutes } from '../../routes';
+import { MemberProp } from '../../requests';
 import Card from './card';
 import Text from './text';
 import Title from './title';
 import ProfileImage from './profile-image';
 import Button from './button';
-import { MemberProps } from '../../screens/members/members';
 
 import { t } from 'react-native-tailwindcss';
 import s from '../../utils/styles';
@@ -20,7 +21,7 @@ interface IProps {
   style?: StyleProp<ViewStyle>,
   isMe?: boolean,
   needInputId?: boolean,
-  member: MemberProps,
+  member: MemberProp,
 }
 
 const ProfileCard: FC<IProps> = ({
@@ -30,6 +31,11 @@ const ProfileCard: FC<IProps> = ({
   member,
 }): JSX.Element => {
   const navigation = useNavigation();
+  const profile = member.profile || {};
+  const { gender, age } = profile;
+  let info = '';
+  if (age) info = `${gender ? `${gender},` : 'Age'} ${age}`;
+  else if (gender) info = gender;
 
   return (
     <Card style={[style]}>
@@ -37,18 +43,18 @@ const ProfileCard: FC<IProps> = ({
         <ProfileImage image={member.avatar} style={[s.profileCardImage]} />
         <View style={[t.flexShrink, t.pL6]}>
           <Title style={[s.profileCardTitle]}>
-            DUPR <BaseText style={[s.fontBodyBold, t.text4xl]}>{ member.profile.rating }</BaseText>
+            DUPR <BaseText style={[s.fontBodyBold, t.text4xl]}>{ profile.rating }</BaseText>
           </Title>
           {
             isMe && needInputId ? (
               <Button style={[s.bgPrimary, s.btnXs, t.mT1]}
-                onPress={() => navigation.navigate('MemberProfile' as never)}
+                onPress={() => navigation.navigate(mainRoutes.MemberProfile as never)}
               >
                 Add Dupr ID
               </Button>
-            ) : isMe || member.profile.share_age_gender ? (
+            ) : isMe || profile.share_age_gender ? (
               <Text style={[t.textXl, s.textGray, t.capitalize, t.mT1]}>
-                { member.profile.gender }, { member.profile.age }
+                { info }
               </Text>
             ) : (<></>)
           }

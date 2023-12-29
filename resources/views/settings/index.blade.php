@@ -29,13 +29,19 @@
                             </li>
                             <li class="pt-2">
                                 <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
-                                   href="{{ route('settings.appicons.index') }}">
-                                    Dashboard Icons
+                                   href="{{ route('settings.app-dashboard.index') }}">
+                                    App Dashboard Settings
                                 </a>
                             </li>
                             <li class="pt-2">
                                 <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
-                                   href="{{ route('settings.general') }}">
+                                   href="{{ route('settings.social-media.index') }}">
+                                    Social Media
+                                </a>
+                            </li>
+                            <li class="pt-2">
+                                <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
+                                   href="{{ route('settings.general.index') }}">
                                     General Settings
                                 </a>
                             </li>

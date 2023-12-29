@@ -43,7 +43,7 @@ class Dupr
             $result = $exception->getMessage();
         }
         return [
-            'gender' => $result['result']['gender'] ?? null,
+            'gender' => strtolower($result['result']['gender'] ?? null),
             'age' => $result['result']['age'] ?? null,
             'rating' => $rating ?? null,
             'matches' => null,

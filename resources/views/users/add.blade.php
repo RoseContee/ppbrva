@@ -149,16 +149,16 @@ $user_id = $user['id'] ?? '';
                                         <label for="status" class="block uppercase tracking-wide text-gray-900 text-xs font-bold mb-2">
                                             Status
                                         </label>
-                                        @php $old = old('status', $user['active'] ?? 1); @endphp
+                                        @php $old = old('status', $user['status'] ?? 'active'); @endphp
                                         <select @class([
                                                        "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
                                                        "border-slate-300" => !$errors->first('status'),
                                                        "border-red-500" => $errors->first('status'),
                                                    ])
                                                 id="status" name="status">
-                                            <option value="1" @selected($old)>Active</option>
+                                            <option value="active" @selected($old == 'active')>Active</option>
                                             @if ($user_id != 1)
-                                            <option value="" @selected(!$old)>Inactive</option>
+                                            <option value="inactive" @selected($old != 'active')>Inactive</option>
                                             @endif
                                         </select>
                                         @error('status')

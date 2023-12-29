@@ -1,5 +1,6 @@
 @php
 $user = auth()->user();
+$allPermissions = \App\Models\Role::getAllPermissions();
 @endphp
 
 <nav x-data="{ open: false }" class="bg-white shadow-md">
@@ -15,61 +16,15 @@ $user = auth()->user();
                 </div>
 
                 <!-- Navigation Links -->
-                @if ($user['id'] == 1 || $user->canAccess(\App\Models\Role::PERMISSION_DASHBOARD))
-                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                            {{ __('Dashboard') }}
-                        </x-nav-link>
-                    </div>
-                @endif
-
-                @if ($user['id'] == 1 || $user->canAccess(\App\Models\Role::PERMISSION_LOCATIONS))
-                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                        <x-nav-link :href="route('locations.index')" :active="request()->routeIs('locations.*')">
-                            {{ __('Locations') }}
-                        </x-nav-link>
-                    </div>
-                @endif
-
-                @if ($user['id'] == 1 || $user->canAccess(\App\Models\Role::PERMISSION_MEMBERS))
-                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                        <x-nav-link :href="route('members.index')" :active="request()->routeIs('members.*')">
-                            {{ __('Members') }}
-                        </x-nav-link>
-                    </div>
-                @endif
-
-                @if ($user['id'] == 1 || $user->canAccess(\App\Models\Role::PERMISSION_ACTIVITY))
-                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                        <x-nav-link :href="route('activity.index')" :active="request()->routeIs('activity.*')">
-                            {{ __('Activity') }}
-                        </x-nav-link>
-                    </div>
-                @endif
-
-                @if ($user['id'] == 1 || $user->canAccess(\App\Models\Role::PERMISSION_INVOICES))
-                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                        <x-nav-link :href="route('invoices.index')" :active="request()->routeIs('invoices.*')">
-                            {{ __('Invoices') }}
-                        </x-nav-link>
-                    </div>
-                @endif
-
-                @if ($user['id'] == 1 || $user->canAccess(\App\Models\Role::PERMISSION_USERS))
-                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
-                            {{ __('Users') }}
-                        </x-nav-link>
-                    </div>
-                @endif
-
-                @if ($user['id'] == 1 || $user->canAccess(\App\Models\Role::PERMISSION_SETTINGS))
-                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                        <x-nav-link :href="route('settings.index')" :active="request()->routeIs('settings.*')">
-                            {{ __('Settings') }}
-                        </x-nav-link>
-                    </div>
-                @endif
+                @foreach ($allPermissions as $permission => $p)
+                    @if ($user['id'] == 1 || $user->canAccess($permission))
+                        <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                            <x-nav-link :href="$p['route']" :active="request()->routeIs($p['pattern'])">
+                                {{ $p['label'] }}
+                            </x-nav-link>
+                        </div>
+                    @endif
+                @endforeach
             </div>
 
             <!-- Settings Dropdown -->
@@ -119,32 +74,32 @@ $user = auth()->user();
 
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        @if ($user['id'] == 1 || $user->canAccess(\App\Models\Role::PERMISSION_DASHBOARD))
-            <div class="pt-2 pb-3 space-y-1">
-                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                    {{ __('Dashboard') }}
+        @foreach ($allPermissions as $permission => $p)
+            @if ($user['id'] == 1 || $user->canAccess($permission))
+                <x-responsive-nav-link :href="$p['route']" :active="request()->routeIs($p['pattern'])">
+                    {{ $p['label'] }}
                 </x-responsive-nav-link>
-            </div>
-        @endif
+            @endif
+        @endforeach
 
         <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
+        <div class="pt-2 border-t border-gray-200">
             <div class="px-4">
                 <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
                 <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
             </div>
 
-            <div class="mt-3 space-y-1">
+            <div class="mt-1">
                 <x-responsive-nav-link :href="route('profile.edit')">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 
                 <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
+                <form method="POST" action="{{ route('logout') }}" class="m-0">
                     @csrf
 
                     <x-responsive-nav-link :href="route('logout')"
-                      onclick="event.preventDefault(); this.closest('form').submit();">
+                       onclick="event.preventDefault(); this.closest('form').submit();">
                         {{ __('Log Out') }}
                     </x-responsive-nav-link>
                 </form>

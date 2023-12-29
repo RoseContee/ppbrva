@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import {
   BackHandler,
   Image,
@@ -9,14 +9,14 @@ import {
   useWindowDimensions
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { useAppDispatch, useAppSelector } from '../store';
-import { getMe } from '../store/user';
-import {
-  getDashboardIcons, getDashboardLinks, saveDashboard
-} from '../store/settings';
-import axios from '../utils/axios';
+import { fetchDashboard, fetchLocation, fetchMe, fetchPlan } from '../requests';
+import { mainRoutes } from '../routes';
+import { useAppSelector } from '../store';
+import { getDashboard } from '../store/settings';
+import { getMe, getPlan } from '../store/user';
 import Layouts from '../components/layouts';
 import PageTitle from '../components/basic/page-title';
+import Modal from '../components/basic/modal';
 import Message from '../components/basic/message';
 import Link from '../components/basic/link';
 import Button from '../components/basic/button';
@@ -63,15 +63,17 @@ const CardWidget: FC<CardProps> = ({
       </Card>
     </TouchableOpacity>
   );
-};
+}
 
 const Dashboard: FC = (): JSX.Element => {
   const navigation = useNavigation();
-  const dispatch = useAppDispatch();
+  const settings = useAppSelector(getDashboard);
   const me = useAppSelector(getMe);
-  const icons = useAppSelector(getDashboardIcons);
-  const links = useAppSelector(getDashboardLinks);
+  const plan = useAppSelector(getPlan);
   const { width } = useWindowDimensions();
+  const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState('');
+  const status = me.status;
   const padding = 28; //t.p7
   const cardWidth = (width - (padding * 2) - padding) / 2;
   const cardImgSize = cardWidth - (16 * 2); //t.pX4
@@ -82,10 +84,10 @@ const Dashboard: FC = (): JSX.Element => {
 
   useFocusEffect(
     useCallback(() => {
-      axios.get(`settings/dashboard`)
-      .then(({ data }) => {
-        dispatch(saveDashboard(data));
-      });
+      fetchMe();
+      fetchLocation();
+      fetchPlan();
+      fetchDashboard();
       const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
         BackHandler.exitApp();
         return true;
@@ -94,17 +96,42 @@ const Dashboard: FC = (): JSX.Element => {
     }, [])
   );
 
+  const gotoScreen = (screen: string) => {
+    navigation.navigate(screen as never);
+  }
+
+  const openBillingProfile = () => {
+    gotoScreen('BillingProfile');
+  }
+
+  const openLink = (link: string) => {
+    if (status === 'paused') {
+      setMessage('Your account is in Paused status and cannot reserve courts at this time.');
+      setShowModal(true);
+      return;
+    }
+    if (status === 'suspended') {
+      setMessage('Your account is in Suspended status and cannot reserve courts at this time. Please update your billing information or contact the front desk for assistance.');
+      setShowModal(true);
+      return;
+    }
+    Linking.openURL(link);
+  }
+
   return (
     <Layouts>
+      <Modal text={message}
+        show={showModal} onClose={() => setShowModal(false)}
+      />
       <PageTitle title={`Welcome back ${ me.name }!`} />
       {
         !me.card_last4 &&
         <Message style={[t.mT4]}>
           <Text style={[t.flexShrink, t.textBase, s.textGray, t.pR4]}>
-            Please update your <Link onPress={() => navigation.navigate('BillingProfile' as never)}>billing profile</Link>
+            Please update your <Link onPress={openBillingProfile}>billing profile</Link>
           </Text>
           <Button style={[s.bgPrimary, s.messageBtn, t.pX5]} titleStyle={[t.textSm]}
-            onPress={() => navigation.navigate('BillingProfile' as never)}
+            onPress={openBillingProfile}
           >
             Fix
           </Button>
@@ -113,31 +140,31 @@ const Dashboard: FC = (): JSX.Element => {
       <View style={[s.pX7]}>
         <View style={[t.flexRow, t.flexWrap, {gap: padding}, t.mT8]}>
           <CardWidget cardWidth={cardWidth} defaultImage={imgPlay}
-            image={icons.play} imgSize={cardImgSize} text="Play"
-            onPress={() => Linking.openURL(links.play_link ?? play_link)}
+            image={settings.play_icon} imgSize={cardImgSize} text="Play"
+            onPress={() => openLink(settings.play_link ?? play_link)}
           />
           <CardWidget cardWidth={cardWidth} defaultImage={imgImprove}
-            image={icons.improve} imgSize={cardImgSize} text="Improve"
-            onPress={() => Linking.openURL(links.improve_link ?? improve_link)}
+            image={settings.improve_icon} imgSize={cardImgSize} text="Improve"
+            onPress={() => openLink(settings.improve_link ?? improve_link)}
           />
           <CardWidget cardWidth={cardWidth} defaultImage={imgRent}
-            image={icons.rent} imgSize={cardImgSize} text="Rent"
-            onPress={() => Linking.openURL(links.rent_link ?? rent_link)}
+            image={settings.rent_icon} imgSize={cardImgSize} text="Rent"
+            onPress={() => openLink(settings.rent_link ?? rent_link)}
           />
           <CardWidget cardWidth={cardWidth} defaultImage={imgShop}
-            image={icons.shop} imgSize={cardImgSize} text="Shop"
-            onPress={() => Linking.openURL(links.shop_link ?? shop_link)}
+            image={settings.shop_icon} imgSize={cardImgSize} text="Shop"
+            onPress={() => openLink(settings.shop_link ?? shop_link)}
           />
         </View>
         <View style={[t.mT8]}>
-          <SettingCard title={me.plan?.name} description={`Member #${ me.memberID }`}
+          <SettingCard title={plan.name} description={`Member #${ me.memberID }`}
             image={me.avatar}
-            onPress={() => navigation.navigate('MembershipPlan' as never)}
+            onPress={() => gotoScreen(mainRoutes.MembershipPlan)}
           />
         </View>
       </View>
     </Layouts>
   );
-};
+}
 
 export default Dashboard;

@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react';
+import React, { FC, ReactNode, useEffect } from 'react';
 import {
   ImageBackground,
   KeyboardAvoidingView,
@@ -11,6 +11,10 @@ import Loading from './basic/loading';
 import imgBG from '../assets/img/auth-bg.png';
 
 import { t } from 'react-native-tailwindcss';
+import { useAppSelector } from '../store';
+import { getLoggedIn } from '../store/settings';
+import { useNavigation } from '@react-navigation/native';
+import { appRoutes } from '../routes';
 
 interface BackgroundProps {
   auth?: boolean,
@@ -44,6 +48,15 @@ const Layouts: FC<IProps> = ({
   loading,
   children
 }): JSX.Element => {
+  const navigation = useNavigation();
+  const loggedIn = useAppSelector(getLoggedIn);
+
+  useEffect(() => {
+    if (!loggedIn) {
+      navigation.navigate(appRoutes.AuthScreen as never);
+    }
+  }, [loggedIn]);
+
   return (
     <>
       <Loading show={loading} />
@@ -64,6 +77,6 @@ const Layouts: FC<IProps> = ({
       </Background>
     </>
   );
-};
+}
 
 export default Layouts;

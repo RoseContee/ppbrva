@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Appicon;
 use App\Models\KitchenBar;
 use App\Models\Plan;
 use App\Models\Setting;
@@ -11,12 +10,15 @@ use Illuminate\Http\Request;
 
 class SettingsController extends Controller
 {
+    public function socialMedia() {
+        return response()->json([
+            'social' => Setting::getSocialMedia(),
+        ]);
+    }
+
     public function dashboard() {
         return response()->json([
-            'icons' => Appicon::getIcons(),
-            'links' => Setting::getSetting([
-                'play_link', 'improve_link', 'rent_link', 'shop_link'
-            ]),
+            'dashboard' => Setting::getDashboard(),
         ]);
     }
 

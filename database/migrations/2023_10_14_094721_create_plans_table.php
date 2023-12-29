@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('period')->default('monthly');
             $table->enum('status', ['public', 'private'])->default('public');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

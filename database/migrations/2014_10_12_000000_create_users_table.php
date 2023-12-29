@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->timestamp('last_login')->nullable();
             $table->integer('role_id');
-            $table->boolean('active')->nullable()->default(true);
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->rememberToken();
             $table->timestamps();
         });

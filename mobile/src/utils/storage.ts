@@ -4,7 +4,7 @@ export const saveStorage = async (key: string, value: any) => {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(value));
   } catch (e) {}
-};
+}
 
 export const getStorage = async (key: string) => {
   try {
@@ -13,10 +13,10 @@ export const getStorage = async (key: string) => {
   } catch (e) {
     return null;
   }
-};
+}
 
 export const removeStorage = async (key: string) => {
   try {
     await AsyncStorage.removeItem(key)
   } catch(e) {}
-};
+}

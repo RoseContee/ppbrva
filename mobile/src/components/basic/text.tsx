@@ -12,6 +12,6 @@ const Text: FC<TextProps> = (props): JSX.Element => {
       { props.children }
     </BaseText>
   )
-};
+}
 
 export default Text;

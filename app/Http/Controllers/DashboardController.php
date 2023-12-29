@@ -28,7 +28,7 @@ class DashboardController extends Controller
         $invoices = Invoice::query()
             ->with([
                 'activities' => function ($query) {
-                    $query->whereIn('category', ['Lessons', 'Food & Beverage', 'Rentals']);
+                    $query->whereIn('category', ['Food & Beverage', 'Lessons', 'Rentals', 'Merchandise']);
                 },
             ])
             ->where('paid', true)
@@ -42,37 +42,40 @@ class DashboardController extends Controller
         $members = $prev_members =
         $payments = $prev_payments =
         $dues = $prev_dues =
-        $lessons = $prev_lessons =
         $food_beverage = $prev_food_beverage =
-        $rentals = $prev_rentals = 0;
+        $lessons = $prev_lessons =
+        $rentals = $prev_rentals =
+        $merchandise = $prev_merchandise = 0;
         foreach ($users as $user) {
             if ($start_date <= $user['created_at'] && $user['created_at'] <= $end_date) $members++;
             else $prev_members++;
         }
         $plotting_payments = [];
         for ($i = 0; $i < 12; $i++) {
-            $plotting_payments[date('Y-m', strtotime("+{$i} months", strtotime($period_start)))] = 0;
+            $plotting_payments[date('M y', strtotime("+{$i} months", strtotime($period_start)))] = 0;
         }
         foreach ($invoices as $invoice) {
             if ($start_date <= $invoice['paid_at'] && $invoice['paid_at'] <= $end_date) {
                 $payments += $invoice['amount'];
                 $dues += $invoice['plan_price'];
                 foreach ($invoice['activities'] as $activity) {
-                    if ($activity['category'] == 'Lessons') $lessons += $activity['price'];
-                    else if ($activity['category'] == 'Food & Beverage') $food_beverage += $activity['price'];
+                    if ($activity['category'] == 'Food & Beverage') $food_beverage += $activity['price'];
+                    else if ($activity['category'] == 'Lessons') $lessons += $activity['price'];
                     else if ($activity['category'] == 'Rentals') $rentals += $activity['price'];
+                    else if ($activity['category'] == 'Merchandise') $merchandise += $activity['price'];
                 }
             } else if ($prev_start_date <= $invoice['paid_at'] && $invoice['paid_at'] <= $prev_end_date) {
                 $prev_payments += $invoice['amount'];
                 $prev_dues += $invoice['plan_price'];
                 foreach ($invoice['activities'] as $activity) {
-                    if ($activity['category'] == 'Lessons') $prev_lessons += $activity['price'];
-                    else if ($activity['category'] == 'Food & Beverage') $prev_food_beverage += $activity['price'];
+                    if ($activity['category'] == 'Food & Beverage') $prev_food_beverage += $activity['price'];
+                    else if ($activity['category'] == 'Lessons') $prev_lessons += $activity['price'];
                     else if ($activity['category'] == 'Rentals') $prev_rentals += $activity['price'];
+                    else if ($activity['category'] == 'Merchandise') $prev_merchandise += $activity['price'];
                 }
             }
             if ($period_start <= $invoice['paid_at'] && $invoice['paid_at'] <= $period_end) {
-                $plotting_payments[date('Y-m', strtotime($invoice['paid_at']))] += $invoice['amount'];
+                $plotting_payments[date('M y', strtotime($invoice['paid_at']))] += $invoice['amount'];
             }
         }
         return view('dashboard', [
@@ -84,12 +87,14 @@ class DashboardController extends Controller
             'payments_percent' => $this->getRate($payments, $prev_payments),
             'dues' => $dues,
             'dues_percent' => $this->getRate($dues, $prev_dues),
-            'lessons' => $lessons,
-            'lessons_percent' => $this->getRate($lessons, $prev_lessons),
             'food_beverage' => $food_beverage,
             'food_beverage_percent' => $this->getRate($food_beverage, $prev_food_beverage),
+            'lessons' => $lessons,
+            'lessons_percent' => $this->getRate($lessons, $prev_lessons),
             'rentals' => $rentals,
             'rentals_percent' => $this->getRate($rentals, $prev_rentals),
+            'merchandise' => $merchandise,
+            'merchandise_percent' => $this->getRate($merchandise, $prev_merchandise),
             'plotting_payments' => $plotting_payments,
         ]);
     }

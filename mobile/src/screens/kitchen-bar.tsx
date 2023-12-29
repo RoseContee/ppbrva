@@ -5,7 +5,7 @@ import {
   View
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import axios from '../utils/axios';
+import { KitchenBarData, KitchenBarProp, fetchKitchenBars } from '../requests';
 import Layouts from '../components/layouts';
 import Button from '../components/basic/button';
 import Card from '../components/basic/card';
@@ -15,20 +15,8 @@ import Message from '../components/basic/message';
 import { t } from 'react-native-tailwindcss';
 import s from '../utils/styles';
 
-interface ItemProps {
-  itemID: string,
-  category: string,
-  item: string,
-  price: string,
-}
-
-interface CategoryProps {
-  category: string,
-  data: ItemProps[],
-}
-
 interface IHeaderProps {
-  categories: CategoryProps[],
+  categories: KitchenBarProp[],
   filteredCategories: string[],
   onFilter: (category: string) => void,
 }
@@ -62,29 +50,29 @@ const HeaderComponent: FC<IHeaderProps> = ({
       </ScrollView>
     </>
   );
-};
+}
 
-const ItemComponent: FC<ItemProps> = (item): JSX.Element => {
+const ItemComponent: FC<KitchenBarData> = (data): JSX.Element => {
   return (
     <View style={[s.pX7, t.mY3]}>
       <Card style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.pY6]}>
         <Title style={[t.flexShrink, t.textXl, s.textPrimary, t.pR3]}>
-          { item.item }
+          { data.item }
         </Title>
         <View style={[t.flexRow]}>
           <Title style={[s.textTiny, s.textBody]}>$</Title>
           <Title style={[t.textSm, s.textBody]}>
-            { item.price }
+            { data.price }
           </Title>
         </View>
       </Card>
     </View>
   );
-};
+}
 
 const KitchenBar: FC = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [items, setItems] = useState<CategoryProps[]>([]);
+  const [items, setItems] = useState<KitchenBarProp[]>([]);
   const [filteredCategories, setFilteredCategories] = useState<string[]>([]);
 
   const filteredItems = items.filter(item => {
@@ -94,10 +82,9 @@ const KitchenBar: FC = (): JSX.Element => {
   useFocusEffect(
     useCallback(() => {
       if (!items.length) setLoading(true);
-      axios.get(`/settings/kitchen-bars`)
-      .then(({ data }) => {
-        setItems(data.items);
-      }).finally(() => setLoading(false));
+      fetchKitchenBars()
+        .then(setItems)
+        .finally(() => setLoading(false));
     }, [])
   );
 
@@ -120,7 +107,7 @@ const KitchenBar: FC = (): JSX.Element => {
         onFilter={onFilter}
       />
     );
-  };
+  }
 
   return (
     <Layouts flatlist={true} loading={loading}>
@@ -140,11 +127,11 @@ const KitchenBar: FC = (): JSX.Element => {
             </Title>
           );
         }}
-        renderItem={({item}) => <ItemComponent {...item} />}
+        renderItem={({ item }) => <ItemComponent {...item} />}
       >
       </SectionList>
     </Layouts>
   );
-};
+}
 
 export default KitchenBar;

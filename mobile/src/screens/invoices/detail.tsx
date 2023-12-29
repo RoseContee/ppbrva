@@ -7,7 +7,7 @@ import {
 import {
   useFocusEffect, useNavigation, useRoute
 } from '@react-navigation/native';
-import axios, { downloadInvoice } from '../../utils/axios';
+import { fetchInvoiceDetail, downloadInvoice } from '../../requests';
 import { currencyFormat } from '../../utils/lib';
 import Layouts from '../../components/layouts';
 import Message from '../../components/basic/message';
@@ -21,15 +21,15 @@ import { t } from 'react-native-tailwindcss';
 import s from '../../utils/styles';
 
 interface InvoiceItem {
-  amount: string,
+  amount: number,
   plan_name: string,
-  plan_price: string,
+  plan_price: number,
   from: string,
   to: string,
   activities: {
     category: string,
     detail: string,
-    price: string
+    price: number,
   }[],
 }
 
@@ -43,10 +43,9 @@ const InvoiceDetail: FC = (): JSX.Element => {
   useFocusEffect(
     useCallback(() => {
       setLoading(true);
-      axios.get(`invoices/${invoiceID}`)
-      .then(({ data }) => {
-        setInvoice(data.invoice);
-      }).finally(() => setLoading(false));
+      fetchInvoiceDetail(invoiceID)
+        .then(invoice => setInvoice(invoice as InvoiceItem))
+        .finally(() => setLoading(false));
     }, [])
   );
 
@@ -128,6 +127,6 @@ const InvoiceDetail: FC = (): JSX.Element => {
       }
     </Layouts>
   );
-};
+}
 
 export default InvoiceDetail;

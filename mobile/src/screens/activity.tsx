@@ -7,7 +7,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import {
   Collapse, CollapseHeader, CollapseBody
 } from 'accordion-collapse-react-native';
-import axios from '../utils/axios';
+import { ActivityProp, fetchActivities } from '../requests';
 import { currencyFormat } from '../utils/lib';
 import Layouts from '../components/layouts';
 import PageTitle from '../components/basic/page-title';
@@ -22,27 +22,11 @@ import { t } from 'react-native-tailwindcss';
 import s from '../utils/styles';
 import theme from '../utils/theme';
 
-interface ActivityItem {
-  name: string,
-  price: string,
-}
-
-interface ActivityProps {
-  category: string,
-  detail: string,
-  price: string,
-  date: string,
-  timestamp: number,
-  items: ActivityItem[],
-}
-
-type SortType = 'newest' | 'oldest' | 'highest' | 'lowest';
-
 interface IHeaderProps {
   keyword: string,
   onSearch: (keyword: string) => void,
-  sort: SortType,
-  onSort: (type: SortType) => void,
+  sort: string,
+  onSort: (type: string) => void,
 }
 
 const HeaderComponent: FC<IHeaderProps> = ({
@@ -65,13 +49,13 @@ const HeaderComponent: FC<IHeaderProps> = ({
           {value: 'lowest', text: 'Lowest Total First'},
         ]}
         activeMenu={sort}
-        onMenuSelect={menu => onSort(menu as SortType)}
+        onMenuSelect={onSort}
       />
     </>
   );
-};
+}
 
-const ActivityItem: FC<ActivityProps> = (activity): JSX.Element => {
+const ActivityItem: FC<ActivityProp> = (activity): JSX.Element => {
   return (
     <View style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.mY1]}>
       <View style={[t.flexShrink, t.flexRow, t.itemsCenter]}>
@@ -93,9 +77,9 @@ const ActivityItem: FC<ActivityProps> = (activity): JSX.Element => {
       </Text>
     </View>
   );
-};
+}
 
-const ItemComponent: FC<ActivityProps> = (activity): JSX.Element => {
+const ItemComponent: FC<ActivityProp> = (activity): JSX.Element => {
   return (
     <View style={[s.pX7, t.mT4]}>
       <Card style={[t.pX4, t.pY3]}>
@@ -132,19 +116,19 @@ const ItemComponent: FC<ActivityProps> = (activity): JSX.Element => {
       </Card>
     </View>
   );
-};
+}
 
 const Activity: FC = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [activities, setActivities] = useState<ActivityProps[]>([]);
+  const [activities, setActivities] = useState<ActivityProp[]>([]);
   const [keyword, setKeyword] = useState<string>('');
-  const [sort, setSort] = useState<SortType>('newest');
+  const [sort, setSort] = useState<string>('newest');
 
   const filteredActivities = activities.filter(activity => {
     const q = keyword.toLowerCase();
-    return activity.date.toLocaleLowerCase().includes(q)
-      || `${activity.category} - ${activity.detail}`.toLocaleLowerCase().includes(q)
-      || activity.price.toLocaleLowerCase().includes(q)
+    return activity.date.toLowerCase().includes(q)
+      || `${activity.category} - ${activity.detail}`.toLowerCase().includes(q)
+      || `${activity.price}`.includes(q);
   });
   filteredActivities.sort((a, b) => {
     if (sort === 'newest') {
@@ -152,19 +136,20 @@ const Activity: FC = (): JSX.Element => {
     } else if (sort === 'oldest') {
       return a.timestamp - b.timestamp;
     } else if (sort === 'highest') {
-      return Number(b.price) - Number(a.price);
-    } else {
-      return Number(a.price) - Number(b.price);
+      return b.price - a.price;
+    } else { //lowest
+      return a.price - b.price;
     }
   });
 
   useFocusEffect(
     useCallback(() => {
+      setKeyword('');
+      setSort('newest');
       if (!activities.length) setLoading(true);
-      axios.get(`activities`)
-      .then(({ data }) => {
-        setActivities(data.activities);
-      }).finally(() => setLoading(false));
+      fetchActivities()
+        .then(setActivities)
+        .finally(() => setLoading(false));
     }, [])
   );
 
@@ -175,7 +160,7 @@ const Activity: FC = (): JSX.Element => {
         sort={sort} onSort={setSort}
       />
     );
-  };
+  }
 
   return (
     <Layouts flatlist={true} loading={loading}>
@@ -188,10 +173,10 @@ const Activity: FC = (): JSX.Element => {
             text={activities.length ? 'Activities not found.' : 'No activity yet...'}
           />
         )}
-        renderItem={({item}) => <ItemComponent {...item} />}
+        renderItem={({ item }) => <ItemComponent {...item} />}
       />
     </Layouts>
   );
-};
+}
 
 export default Activity;

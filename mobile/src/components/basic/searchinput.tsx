@@ -34,6 +34,6 @@ const SearchInput: FC<IProps> = ({
       />
     </View>
   );
-};
+}
 
 export default SearchInput;

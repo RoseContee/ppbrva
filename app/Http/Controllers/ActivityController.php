@@ -11,12 +11,16 @@ class ActivityController extends Controller
 {
     public function index() {
         $activities = Activity::query()
-            ->with(['member'])
+            ->with([
+                'member' => function ($query) {
+                    $query->select(['id', 'memberID', 'firstname', 'lastname', 'avatar']);
+                }
+            ])
             ->orderByDesc('date')
             ->orderBy('member_id')
             ->orderBy('category')
             ->orderBy('detail')
-            ->get();
+            ->get(['member_id', 'category', 'detail', 'price', 'date', 'from', 'invoiceID']);
         return view('activity.index', [
             'activities' => $activities,
         ]);

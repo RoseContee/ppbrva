@@ -10,7 +10,13 @@ use Illuminate\Validation\Rule;
 class UsersController extends Controller
 {
     public function index() {
-        $users = User::query()->with(['role'])->get();
+        $users = User::query()
+            ->with([
+                'role' => function ($query) {
+                    $query->select(['id', 'name']);
+                }
+            ])
+            ->get(['id', 'name', 'email', 'phone', 'last_login', 'role_id', 'status']);
         return view('users.index', [
             'users' => $users,
         ]);
@@ -29,6 +35,7 @@ class UsersController extends Controller
             'email' => ['required', 'email', 'unique:users'],
             'password' => ['required', 'min:8', 'confirmed'],
             'role' => ['required', 'exists:roles,id'],
+            'status' => ['required', 'in:active,inactive'],
         ]);
         User::query()->create([
             'name' => $request['name'],
@@ -36,7 +43,7 @@ class UsersController extends Controller
             'password' => bcrypt($request['password']),
             'phone' => $request['phone'],
             'role_id' => $request['role'],
-            'active' => !empty($request['status']),
+            'status' => $request['status'],
         ]);
         return redirect()->route('users.index')
             ->with('success_message', 'New user has been added.');
@@ -60,13 +67,14 @@ class UsersController extends Controller
             'email' => ['required', 'email', Rule::unique('users')->ignore($user['id'])],
             'password' => ['nullable', 'min:8', 'confirmed'],
             'role' => ['required', 'exists:roles,id'],
+            'status' => ['required', 'in:active,inactive'],
         ]);
         $user['name'] = $request['name'];
         $user['email'] = $request['email'];
         $user['password'] = bcrypt($request['password']);
         $user['phone'] = $request['phone'];
         $user['role_id'] = $request['role'];
-        $user['active'] = $user['id'] == 1 || !empty($request['status']);
+        $user['status'] = $user['id'] == 1 ? 'active' : $request['status'];
         $user->save();
         return back()->with('info_message', 'User has been updated.');
     }

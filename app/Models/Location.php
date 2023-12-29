@@ -10,8 +10,7 @@ class Location extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'address', 'lat', 'lng',
-        'phone', 'email', 'website', 'image',
+        'name', 'address', 'lat', 'lng', 'phone', 'email', 'website', 'image',
     ];
 
     public function getImageAttribute() {
@@ -19,10 +18,5 @@ class Location extends Model
             return asset($this->attributes['image']);
         }
         return null;
-    }
-
-    public function removeImage() {
-        $image = public_path($this->attributes['image']);
-        if (is_file($image)) unlink($image);
     }
 }

@@ -41,15 +41,15 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        if (!Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
             ]);
         }
-        if (!$this->user()->active) {
-            auth('web')->logout();
+        if ($this->user()->status != 'active') {
+            Auth::guard('web')->logout();
             throw ValidationException::withMessages([
                 'email' => 'Your account has been deactivated.',
             ]);

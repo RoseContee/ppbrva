@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -15,7 +16,8 @@ class Member extends Authenticatable
     protected $fillable = [
         'memberID', 'firstname', 'lastname', 'email', 'password', 'original_pass',
         'gender', 'phone', 'dob', 'address', 'city', 'state', 'zipcode',
-        'location_id', 'plan_id', 'membership_card_id', 'avatar',
+        'location_id', 'plan_id', 'primary_id', 'is_child', 'secondary_fee',
+        'membership_card_id', 'avatar', 'note',
         'customerID', 'card_last4', 'card_type',
         'status', 'pause_from', 'pause_to',
     ];
@@ -59,6 +61,10 @@ class Member extends Authenticatable
         return $this->hasOne(MemberProfile::class)->withDefault();
     }
 
+    public function secondaries() {
+        return $this->hasMany(Member::class, 'primary_id', 'id');
+    }
+
     public function activities() {
         return $this->hasMany(Activity::class);
     }
@@ -77,15 +83,25 @@ class Member extends Authenticatable
             ->as('relation');
     }
 
-    public function removeAvatar() {
-        $avatar = public_path($this->attributes['avatar']);
-        if (is_file($avatar)) unlink($avatar);
-    }
-
     public function getInfo() {
+        if (($status = $this['status']) === 'paused') {
+            $today = date('Y-m-d');
+            if ($this['pause_to'] < $today) {
+                $this['status'] = 'active';
+                $this['pause_from'] = null;
+                $this['pause_to'] = null;
+                $this->save();
+                $status = 'active';
+            } else if ($today < $this['pause_from']) {
+                $status = 'active';
+            }
+        }
         $profile = $this['profile'];
-        $location = $this['location'];
-        $plan = $this['plan'];
+        if (!($gender = $this['gender'])) $gender = strtolower($profile['gender']);
+        else if ($gender === 'prefer_to_not_say') $gender = '';
+        if ($this['dob']) $age = Carbon::parse($this['dob'])->age;
+        else $age = $profile['age'];
+        $dupr_link = Setting::getSetting('dupr_link', 'https://ppbrva.com/dupr');
         return [
             'id' => $this['id'],
             'memberID' => $this['memberID'],
@@ -94,8 +110,8 @@ class Member extends Authenticatable
             'name' => $this['name'],
             'email' => $this['email'],
             'original_pass' => $this['original_pass'],
-            'gender' => $this['gender'],
             'phone' => $this['phone'],
+            'gender' => $this['gender'],
             'dob' => $this['dob'] ? date('m/d/Y', strtotime($this['dob'])) : null,
             'address' => $this['address'],
             'city' => $this['city'],
@@ -104,31 +120,17 @@ class Member extends Authenticatable
             'avatar' => $this['avatar'],
             'card_type' => $this['card_type'],
             'card_last4' => $this['card_last4'],
-            'status' => $this['status'],
+            'status' => $status,
             'profile' => [
                 'share_age_gender' => !empty($profile['share_age_gender']),
                 'dupr_id' => $profile['dupr_id'],
-                'dupr_link' => Setting::getSetting('dupr_link'),
-                'gender' => $profile['gender'],
-                'age' => $profile['age'],
+                'dupr_link' => $dupr_link,
+                'gender' => $gender,
+                'age' => $age,
                 'rating' => $profile['rating'],
                 'matches' => $profile['matches'],
                 'wins' => $profile['wins'],
                 'losses' => $profile['losses'],
-            ],
-            'location' => [
-                'name' => $location['name'],
-                'address' => $location['address'],
-                'lat' => $location['lat'],
-                'lng' => $location['lng'],
-                'phone' => $location['phone'],
-                'email' => $location['email'],
-                'website' => $location['website'],
-                'image' => $location['image'],
-            ],
-            'plan' => [
-                'id' => $plan['id'],
-                'name' => $plan['name'],
             ],
         ];
     }

@@ -13,6 +13,6 @@ const Card: FC<ViewProps> = (props): JSX.Element => {
       { props.children }
     </View>
   )
-};
+}
 
 export default Card;

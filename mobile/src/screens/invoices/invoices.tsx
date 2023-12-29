@@ -7,7 +7,8 @@ import {
 import {
   NavigationProp, useFocusEffect, useNavigation
 } from '@react-navigation/native';
-import axios from '../../utils/axios';
+import { invoiceRoutes, mainRoutes } from '../../routes';
+import { InvoiceProp, fetchInvoices } from '../../requests';
 import { currencyFormat } from '../../utils/lib';
 import Layouts from '../../components/layouts';
 import SearchBar from '../../components/basic/search-bar';
@@ -17,20 +18,11 @@ import SettingCard from '../../components/basic/setting-card';
 import { t } from 'react-native-tailwindcss';
 import s from '../../utils/styles';
 
-interface InvoiceItem {
-  invoiceID: string,
-  period: string,
-  amount: string,
-  period_timestamp: number
-}
-
-type SortType = 'newest' | 'oldest' | 'highest' | 'lowest';
-
 interface IHeaderProps {
   keyword: string,
   onSearch: (keyword: string) => void,
-  sort: SortType,
-  onSort: (type: SortType) => void,
+  sort: string,
+  onSort: (type: string) => void,
 }
 
 const HeaderComponent: FC<IHeaderProps> = ({
@@ -51,24 +43,24 @@ const HeaderComponent: FC<IHeaderProps> = ({
         {value: 'lowest', text: 'Lowest Total First'},
       ]}
       activeMenu={sort}
-      onMenuSelect={menu => onSort(menu as SortType)}
+      onMenuSelect={onSort}
     />
   );
-};
+}
 
 interface IItemProps {
   navigation: NavigationProp<ReactNavigation.RootParamList>,
-  invoice: InvoiceItem,
+  invoice: InvoiceProp,
 }
 
-const ItemComponent: FC<IItemProps> = ({navigation, invoice}): JSX.Element => {
+const ItemComponent: FC<IItemProps> = ({ navigation, invoice }): JSX.Element => {
   return (
     <View style={[s.pX7, t.mT6]}>
       <SettingCard title={ invoice.period }
         description={ currencyFormat(invoice.amount) }
         onPress={() => {
           navigation.navigate({
-            name: 'InvoiceDetail',
+            name: invoiceRoutes.InvoiceDetail,
             params: {
               title: invoice.period,
               invoiceID: invoice.invoiceID,
@@ -78,20 +70,20 @@ const ItemComponent: FC<IItemProps> = ({navigation, invoice}): JSX.Element => {
       />
     </View>
   );
-};
+}
 
 const Invoices: FC = (): JSX.Element => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState<boolean>(false);
-  const [invoices, setInvoices] = useState<InvoiceItem[]>([]);
+  const [invoices, setInvoices] = useState<InvoiceProp[]>([]);
   const [keyword, setKeyword] = useState<string>('');
-  const [sort, setSort] = useState<SortType>('newest');
+  const [sort, setSort] = useState<string>('newest');
 
   const filteredInvoices = invoices.filter(invoice => {
     const q = keyword.toLowerCase();
-    return invoice.invoiceID.toLocaleLowerCase().includes(q)
-      || invoice.amount.toLocaleLowerCase().includes(q)
-      || invoice.period.toLocaleLowerCase().includes(q)
+    return invoice.invoiceID.toLowerCase().includes(q)
+      || invoice.period.toLowerCase().includes(q)
+      || `${invoice.amount}`.includes(q);
   });
   filteredInvoices.sort((a, b) => {
     if (sort === 'newest') {
@@ -99,21 +91,22 @@ const Invoices: FC = (): JSX.Element => {
     } else if (sort === 'oldest') {
       return a.period_timestamp - b.period_timestamp;
     } else if (sort === 'highest') {
-      return Number(b.amount) - Number(a.amount);
-    } else {
-      return Number(a.amount) - Number(b.amount);
+      return b.amount - a.amount;
+    } else { //lowest
+      return a.amount - b.amount;
     }
   });
 
   useFocusEffect(
     useCallback(() => {
       if (!invoices.length) setLoading(true);
-      axios.get(`invoices`)
-      .then(({ data }) => {
-        setInvoices(data.invoices);
-      }).finally(() => setLoading(false));
+      setKeyword('');
+      setSort('newest');
+      fetchInvoices()
+        .then(setInvoices)
+        .finally(() => setLoading(false));
       const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
-        navigation.navigate('BillingProfile' as never);
+        navigation.navigate(mainRoutes.BillingProfile as never);
         return true;
       });
       return () => subscribe.remove();
@@ -127,7 +120,7 @@ const Invoices: FC = (): JSX.Element => {
         sort={sort} onSort={setSort}
       />
     );
-  };
+  }
 
   return (
     <Layouts flatlist={true} loading={loading}>
@@ -140,6 +133,6 @@ const Invoices: FC = (): JSX.Element => {
       />
     </Layouts>
   );
-};
+}
 
 export default Invoices;

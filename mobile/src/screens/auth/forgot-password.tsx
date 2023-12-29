@@ -4,7 +4,8 @@ import {
   View
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import axios, { getErrorMessage } from '../../utils/axios';
+import { postForgotPassword } from '../../requests';
+import { authRoutes } from '../../routes';
 import Layouts from '../../components/layouts';
 import Message from '../../components/basic/message';
 import Button from '../../components/basic/button';
@@ -21,21 +22,19 @@ const ForgotPassword: FC = (): JSX.Element => {
 
   const sendResetCode = () => {
     if (!email) {
-      setMessage('The email field is required.');
-      return;
+      return setMessage('The email field is required.');
     }
     setLoading(true);
     setMessage('');
-    axios.post(`/forgot-password`, {
-      email
-    }).then(() => {
-      navigation.navigate({
-        name: 'EnterCode',
-        params: { email },
-      } as never);
-    }).catch(error => {
-      setMessage(getErrorMessage(error));
-    }).finally(() => setLoading(false));
+    postForgotPassword({ email })
+      .then(() => {
+        navigation.navigate({
+          name: authRoutes.EnterCode,
+          params: { email },
+        } as never);
+      })
+      .catch(setMessage)
+      .finally(() => setLoading(false));
   }
 
   return (
@@ -55,6 +54,6 @@ const ForgotPassword: FC = (): JSX.Element => {
       </View>
     </Layouts>
   );
-};
+}
 
 export default ForgotPassword;

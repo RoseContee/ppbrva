@@ -30,6 +30,10 @@ class GetKitchenBarItems extends Command
         $clover = new Clover();
         $inventoryItems = $clover->getInventoryItems();
         foreach ($inventoryItems as $item) {
+            $category = $item['category'] ?? '';
+            if (!$category || !strcasecmp($category, 'Merchandise')) {
+                continue;
+            }
             KitchenBar::updateOrCreate([
                 'itemID' => $item['itemID'],
             ], [

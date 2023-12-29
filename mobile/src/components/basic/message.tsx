@@ -33,6 +33,6 @@ const Message: FC<IProps> = ({
     }
     </>
   )
-};
+}
 
 export default Message;

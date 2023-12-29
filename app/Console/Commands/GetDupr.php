@@ -32,6 +32,7 @@ class GetDupr extends Command
             ->whereNotNull('dupr_id')
             ->get();
         foreach ($members as $member) {
+            if (!$member['dupr_id']) continue;
             $duprInfo = $dupr->getPlayInfo($member['dupr_id']);
             $member['gender'] = $duprInfo['gender'];
             $member['age'] = $duprInfo['age'];

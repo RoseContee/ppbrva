@@ -8,12 +8,13 @@ import {
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { launchImageLibrary, Asset } from 'react-native-image-picker';
+import { mainRoutes } from '../../routes';
+import { postProfile } from '../../requests';
+import store, { useAppSelector } from '../../store';
+import { getMe } from '../../store/user';
+import { Genders, States } from '../../utils/lib';
 import Image from 'react-native-scalable-image';
 import MaskInput from 'react-native-mask-input';
-import store, { useAppDispatch, useAppSelector } from '../../store';
-import { saveMe, getMe } from '../../store/user';
-import axios, { getErrorMessage } from '../../utils/axios';
-import { Genders, States } from '../../utils/lib';
 import Layouts from '../../components/layouts';
 import ProfileImage from '../../components/basic/profile-image';
 import Message from '../../components/basic/message';
@@ -32,7 +33,6 @@ import theme from '../../utils/theme';
 
 const MemberProfile: FC = (): JSX.Element => {
   const navigation = useNavigation();
-  const dispatch = useAppDispatch();
   const me = useAppSelector(getMe);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string>();
@@ -55,7 +55,7 @@ const MemberProfile: FC = (): JSX.Element => {
     useCallback(() => {
       initStates();
       const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
-        navigation.navigate('Profile' as never);
+        navigation.navigate(mainRoutes.Profile as never);
         return true;
       });
       return () => {
@@ -87,44 +87,35 @@ const MemberProfile: FC = (): JSX.Element => {
       if (response.didCancel) setAvatar(me.avatar);
       else setAvatar(response.assets ? response.assets[0] : undefined);
     });
-  };
+  }
 
   const updateProfile = () => {
     if (!firstname) {
-      setMessage('The first name field is required.');
-      return;
+      return setMessage('The first name field is required.');
     }
     if (!lastname) {
-      setMessage('The last name field is required.');
-      return;
+      return setMessage('The last name field is required.');
     }
     if (!gender) {
-      setMessage('The gender field is required.');
-      return;
+      return setMessage('The gender field is required.');
     }
     if (!email) {
-      setMessage('The email field is required.');
-      return;
+      return setMessage('The email field is required.');
     }
     if (!dob) {
-      setMessage('The date of birth field is required.');
-      return;
+      return setMessage('The date of birth field is required.');
     }
     if (!address) {
-      setMessage('The address field is required.');
-      return;
+      return setMessage('The address field is required.');
     }
     if (!city) {
-      setMessage('The city field is required.');
-      return;
+      return setMessage('The city field is required.');
     }
     if (!state) {
-      setMessage('The state field is required.');
-      return;
+      return setMessage('The state field is required.');
     }
     if (!zipcode) {
-      setMessage('The zip code field is required.');
-      return;
+      return setMessage('The zip code field is required.');
     }
     setLoading(true);
     setMessage('');
@@ -148,16 +139,10 @@ const MemberProfile: FC = (): JSX.Element => {
     formData.append('zipcode', zipcode);
     formData.append('dupr', duprId);
     formData.append('share', share);
-    axios.post(`profile`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    }).then(({ data: { user } }) => {
-      dispatch(saveMe(user));
-      setMessage('Profile has been updated.');
-    }).catch(error => {
-      setMessage(getErrorMessage(error));
-    }).finally(() => setLoading(false));
+    postProfile(formData)
+      .then(() => setMessage('Profile has been updated.'))
+      .catch(setMessage)
+      .finally(() => setLoading(false));
   }
 
   return (
@@ -272,6 +257,6 @@ const MemberProfile: FC = (): JSX.Element => {
       </View>
     </Layouts>
   );
-};
+}
 
 export default MemberProfile;

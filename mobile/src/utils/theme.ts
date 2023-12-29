@@ -8,7 +8,7 @@ const Font = {
   body: 'OpenSans-Regular',
   bodyBold: 'OpenSans-Bold',
   bodyCondBold: 'OpenSansSemiCondensed-Bold',
-};
+}
 
 const Color = {
   title: '#1a2755',
@@ -26,27 +26,27 @@ const Color = {
   inactive: '#95a5a6',
   inputIcon: '#6b696a',
   social: '#23a9e1',
-};
+}
 
 const FontSize = {
   tiny: 10,
   input: 18,
   screenTitle: 28,
-};
+}
 
 const Size = {
   logo: 130,
   headerIcon: 30,
-  socialIcon: 50,
+  socialIcon: 40,
   bottomIcon: 40,
   inputIcon: 20,
   settingIcon: 38,
-};
+}
 
 const BorderRadius = {
   input: 10,
   circle: 9999,
-};
+}
 
 const Theme = {
   font: Font,
@@ -68,6 +68,6 @@ const Theme = {
     shadowRadius: 2,
     elevation: 2,
   },
-};
+}
 
 export default Theme;

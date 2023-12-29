@@ -5,9 +5,10 @@ import {
   View
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { mainRoutes } from '../../routes';
+import { postUpdateBilling } from '../../requests';
 import { useAppDispatch, useAppSelector } from '../../store';
-import { getMe, saveMe } from '../../store/user';
-import axios, { getErrorMessage } from '../../utils/axios';
+import { getMe } from '../../store/user';
 import MaskInput from 'react-native-mask-input';
 import Layouts from '../../components/layouts';
 import SettingCard from '../../components/basic/setting-card';
@@ -37,7 +38,7 @@ const BillingProfile: FC = (): JSX.Element => {
     useCallback(() => {
       initStates();
       const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
-        navigation.navigate('Profile' as never);
+        navigation.navigate(mainRoutes.Profile as never);
         return true;
       });
       return () => subscribe.remove();
@@ -56,26 +57,20 @@ const BillingProfile: FC = (): JSX.Element => {
   const addCard = () => {
     setLoading(true);
     setMessage('');
-    axios.post(`update-billing`, {
-      number, expires, cvv, address, zipcode
-    }).then(({ data: { user } }) => {
-      dispatch(saveMe(user));
-      setMessage('New card added successfully');
-      setNumber('');
-      setExpires('');
-      setCvv('');
-      setAddress('');
-      setZipcode('');
-    }).catch(error => {
-      setMessage(getErrorMessage(error));
-    }).finally(() => setLoading(false));
-  };
+    postUpdateBilling({ number, expires, cvv, address, zipcode })
+      .then(() => {
+        initStates();
+        setMessage('New card added successfully');
+      })
+      .catch(setMessage)
+      .finally(() => setLoading(false));
+  }
 
   return (
     <Layouts loading={loading}>
       <View style={[s.pX7, t.mT5]}>
         <SettingCard title="Monthly Invoices" description="View your billing history"
-          onPress={() => navigation.navigate('InvoiceScreen' as never)}
+          onPress={() => navigation.navigate(mainRoutes.InvoiceScreen as never)}
         />
       </View>
       <Message style={[t.mT8]} text={message} />
@@ -135,6 +130,6 @@ const BillingProfile: FC = (): JSX.Element => {
       </View>
     </Layouts>
   );
-};
+}
 
 export default BillingProfile;

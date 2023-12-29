@@ -12,10 +12,14 @@ class InvoicesController extends Controller
 {
     public function index() {
         $invoices = Invoice::query()
-            ->with(['member'])
+            ->with([
+                'member' => function ($query) {
+                    $query->select(['id', 'memberID', 'firstname', 'lastname', 'avatar']);
+                }
+            ])
             ->orderByDesc('paid_at')
             ->latest()
-            ->get();
+            ->get(['id', 'invoiceID', 'member_id', 'period', 'amount', 'paid']);
         return view('invoices.index', [
             'invoices' => $invoices,
         ]);
@@ -36,6 +40,9 @@ class InvoicesController extends Controller
             ->with(['member', 'activities'])
             ->find($id);
         if (!$invoice) return back();
+        /*return view('invoices.download', [
+            'invoice' => $invoice,
+        ]);*/
         return Pdf::loadView('invoices.download', [
             'invoice' => $invoice
         ])->download("{$invoice['invoiceID']}.pdf");

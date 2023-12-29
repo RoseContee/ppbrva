@@ -6,6 +6,7 @@ use App\Helpers\Clover;
 use App\Models\Invoice;
 use App\Models\Member;
 use Illuminate\Console\Command;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Str;
 
 class CreateInvoices extends Command
@@ -31,13 +32,24 @@ class CreateInvoices extends Command
     {
         $period = date('F Y', strtotime('-1 days'));
         $clover = new Clover();
-        $members = Member::with([
-            'plan',
-            'activities' => function ($q) {
-                $q->where('date', '<', date('Y-m-d'))
-                    ->whereNull('invoiceID');
-            }
-        ])->get();
+        $members = Member::query()
+            ->with([
+                'plan',
+                'activities' => function ($q) {
+                    $q->where('date', '<', date('Y-m-d'))
+                        ->whereNull('invoiceID');
+                }
+            ])
+            ->where('status', 'active')
+            ->orWhere(function (Builder $query) {
+                $query->where('status', 'paused')
+                    ->where(function (Builder $query) {
+                        $today = date('Y-m-d');
+                        $query->where('pause_from', '>', $today)
+                            ->orWhere('pause_to', '<', $today);
+                    });
+            })
+            ->get();
         foreach ($members as $member) {
             $activities = $member['activities'];
             $amount = $plan_price = $member['plan']['price'] ?? 0;

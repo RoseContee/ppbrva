@@ -22,6 +22,8 @@ class Kernel extends ConsoleKernel
             ->monthly();
         $schedule->command('app:update-clover-orders')
             ->daily();
+        $schedule->command('app:update-member-status')
+            ->daily();
     }
 
     /**

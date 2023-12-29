@@ -261,6 +261,22 @@ const styles = StyleSheet.create({
   },
   /* Message End */
 
+  /* Modal Start */
+  modal: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+    height: Dimensions.get('window').height,
+  },
+  modalBody: {
+    backgroundColor: '#fff',
+    borderRadius: theme.borderRadius.input,
+    padding: 20,
+    alignItems: 'center',
+    ...theme.cardShadow,
+  },
+  /* Modal End */
+
   screenTitle: {
     fontSize: theme.fontSize.screenTitle,
     textTransform: 'capitalize',

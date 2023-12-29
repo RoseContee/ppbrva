@@ -7,14 +7,11 @@ import {
   useWindowDimensions
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { parse as HtmlParse} from 'fast-html-parser';
-import rssParser from 'react-native-rss-parser';
-import _ from 'lodash';
-import Image from 'react-native-scalable-image';
-import axios from 'axios';
+import { EventProp, fetchEvents, fetchLocation } from '../requests';
 import { useAppSelector } from '../store';
-import { getMe } from '../store/user';
+import { getLocation } from '../store/user';
 import { dateFormat } from '../utils/lib';
+import Image from 'react-native-scalable-image';
 import Layouts from '../components/layouts';
 import Message from '../components/basic/message';
 import PageTitle from '../components/basic/page-title';
@@ -27,20 +24,12 @@ import imgEvent from '../assets/img/event.jpg';
 import { t } from 'react-native-tailwindcss';
 import s from '../utils/styles';
 
-interface EventItem {
-  id: string
-  image: string | null
-  date: string
-  title: string
-  link: string
-}
-
 interface IHeaderProps {
   width: number,
-  event: EventItem,
+  event: EventProp,
 }
 
-const ItemComponent: FC<IHeaderProps> = ({width, event}): JSX.Element => {
+const ItemComponent: FC<IHeaderProps> = ({ width, event }): JSX.Element => {
   return (
     <View style={[s.pX7, t.mB4]}>
       <TouchableOpacity onPress={() => Linking.openURL(event.link)}>
@@ -60,33 +49,21 @@ const ItemComponent: FC<IHeaderProps> = ({width, event}): JSX.Element => {
       </TouchableOpacity>
     </View>
   );
-};
+}
 
 const Events: FC = (): JSX.Element => {
-  const me = useAppSelector(getMe);
+  const location = useAppSelector(getLocation);
   const { width } = useWindowDimensions();
   const [loading, setLoading] = useState<boolean>(false);
-  const [events, setEvents] = useState<EventItem[]>([]);
+  const [events, setEvents] = useState<EventProp[]>([]);
 
   useFocusEffect(
     useCallback(() => {
       if (!events.length) setLoading(true);
-      axios.get(`https://ppbrva.com/feed/`)
-      .then(({ data }) => {
-        rssParser.parse(data)
-        .then(rss => {
-          setEvents(rss.items.map(item => {
-            const img = HtmlParse(item.content).querySelector('#rss-image img');
-            return {
-              id: item.id,
-              image: img ? (_.trim(img.rawAttributes.src, '"<')) : null,
-              date: item.published,
-              title: item.title,
-              link: item.links[0].url
-            };
-          }));
-        }).finally(() => setLoading(false));
-      }).finally(() => setLoading(false));
+      fetchLocation();
+      fetchEvents()
+        .then(setEvents)
+        .finally(() => setLoading(false));
     }, [])
   );
 
@@ -95,7 +72,7 @@ const Events: FC = (): JSX.Element => {
       <FlatList style={[t.hFull]}
         data={events}
         keyExtractor={(item, index) => index + '-' + item.id}
-        ListHeaderComponent={() => <PageTitle title={me.location?.name} style={[t.mB3]} />}
+        ListHeaderComponent={() => <PageTitle title={location.name} style={[t.mB3]} />}
         ListEmptyComponent={() => (
           <Message style={[t.mT10]}
             text={events.length ? 'Events not found.' : 'No events yet...'}
@@ -105,6 +82,6 @@ const Events: FC = (): JSX.Element => {
       />
     </Layouts>
   );
-};
+}
 
 export default Events;

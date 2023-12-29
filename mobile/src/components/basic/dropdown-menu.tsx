@@ -45,7 +45,7 @@ const MenuItem: FC<IMenuProps> = ({
       <Text style={[t.mL2]}>{ item.text }</Text>
     </TouchableOpacity>
   );
-};
+}
 
 interface IProps {
   style?: StyleProp<ViewStyle>,
@@ -102,6 +102,6 @@ const DropdownMenu: FC<IProps> = ({
       </Modal>
     </>
   );
-};
+}
 
 export default DropdownMenu;

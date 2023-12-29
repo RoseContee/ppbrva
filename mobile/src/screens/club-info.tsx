@@ -1,12 +1,14 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 import {
   Linking,
   View,
   useWindowDimensions
 } from 'react-native';
-import Image from 'react-native-scalable-image';
+import { useFocusEffect } from '@react-navigation/native';
+import { fetchLocation } from '../requests';
 import { useAppSelector } from '../store';
-import { getMe } from '../store/user';
+import { getLocation } from '../store/user';
+import Image from 'react-native-scalable-image';
 import Layouts from '../components/layouts';
 import PageTitle from '../components/basic/page-title';
 import Link from '../components/basic/link';
@@ -17,22 +19,28 @@ import { t } from 'react-native-tailwindcss';
 import s from '../utils/styles';
 
 const ClubInfo: FC = (): JSX.Element => {
-  const me = useAppSelector(getMe);
+  const location = useAppSelector(getLocation);
   const { width } = useWindowDimensions();
-  const lat = Number(me.location?.lat);
-  const lng = Number(me.location?.lng);
+  const lat = Number(location.lat);
+  const lng = Number(location.lng);
   const map_link = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&dir_action=navigate`;
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchLocation();
+    }, [])
+  );
 
   return (
     <Layouts>
-      <PageTitle title={me.location?.name} />
-      <Image source={{uri: me.location?.image}} width={width} style={[t.mT5]} />
+      <PageTitle title={location.name} />
+      <Image source={{uri: location.image}} width={width} style={[t.mT5]} />
       <View style={[s.pX7, t.mT3, t.mB2]}>
         <Text style={[t.textXl, t.textCenter, t.mT10]}>
-          Performace Pickleball RVA
+          Performance Pickleball RVA
         </Text>
         <Text style={[s.fontBodyLight, t.textXl, t.textCenter, t.mT2]}>
-          { me.location?.address }
+          { location.address }
         </Text>
         <Link style={[s.fontBodyLight, t.textXl, t.textCenter, t.mT2]}
           onPress={() => Linking.openURL('https://ppbrva.com/')}
@@ -46,13 +54,13 @@ const ClubInfo: FC = (): JSX.Element => {
           Directions
         </Button>
         <Button style={[s.border, s.borderPrimary, s.mT7]} titleStyle={[s.textPrimary]}
-          onPress={() => Linking.openURL(`tel:${me.location?.phone}`)}
+          onPress={() => Linking.openURL(`tel:${location.phone}`)}
         >
           Call Front Desk
         </Button>
       </View>
     </Layouts>
   );
-};
+}
 
 export default ClubInfo;

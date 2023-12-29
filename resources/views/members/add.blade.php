@@ -15,13 +15,131 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
                     <x-messages />
 
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                        <form class="flex items-center justify-between p-4 bg-white dark:bg-gray-900"
+                        <form class="flex justify-between p-4 bg-white dark:bg-gray-900"
                               action="{{ $route }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @if (!$add)
                                 @method('PUT')
                             @endif
                             <div class="w-full max-w-lg">
+                                <div class="flex flex-wrap -mx-3 mb-6">
+                                    <div class="w-full px-3">
+                                        <label for="plan" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                            Membership Plan
+                                        </label>
+                                        @php $old_plan = old('plan', $member['plan_id'] ?? ''); @endphp
+                                        <select @class([
+                                                       "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
+                                                       "border-slate-300" => !$errors->first('plan'),
+                                                       "border-red-500" => $errors->first('plan'),
+                                                   ])
+                                                id="plan" name="plan" v-model="plan" required>
+                                            <option value="">Choose...</option>
+                                            @foreach ($plans as $plan)
+                                                <option value="{{ $plan['id'] }}"
+                                                    @selected($old_plan == $plan['id'])>
+                                                    {{ $plan['name'] }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap -mx-3 mb-6"
+                                     :class="{'hidden': plan !== '{{ $family_plan_id }}'}">
+                                    <div class="w-full px-3">
+                                        <label for="family_type" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                            Family Member Type
+                                        </label>
+                                        @php
+                                            if (($member['plan_id'] ?? '') == $family_plan_id) {
+                                                $old_family_type = empty($member['primary_id']) ? 'primary' : 'secondary';
+                                            }
+                                            $old_family_type = old('family_type', $old_family_type ?? '');
+                                        @endphp
+                                        <select @class([
+                                                       "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
+                                                       "border-slate-300" => !$errors->first('family_type'),
+                                                       "border-red-500" => $errors->first('family_type'),
+                                                   ])
+                                                id="family_type" name="family_type"
+                                                v-model="family_type" :required="plan === '{{ $family_plan_id }}'">
+                                            <option value="">Choose...</option>
+                                            <option value="primary" @selected($old_family_type === 'primary')>Primary</option>
+                                            <option value="secondary" @selected($old_family_type === 'secondary')>Secondary</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap -mx-3 mb-6"
+                                     :class="{'hidden': plan !== '{{ $family_plan_id }}' || family_type !== 'secondary'}">
+                                    <div class="w-full px-3">
+                                        <label for="primary_account" class="block uppercase tracking-wide text-gray-900 text-xs font-bold mb-2">
+                                            Assign Primary Account
+                                        </label>
+                                        <select @class([
+                                                   "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
+                                                   "border-slate-300" => !$errors->first('primary_account'),
+                                                   "border-red-500" => $errors->first('primary_account'),
+                                               ])
+                                                id="primary_account" name="primary_account"
+                                                :required="plan === '{{ $family_plan_id }}' && family_type === 'secondary'">
+                                            <option value="">Please select a primary member...</option>
+                                            @foreach ($primary_members as $m)
+                                                <option value="{{ $m['id'] }}"
+                                                    @selected(old('primary_account', $member['primary_id'] ?? '') == $m['id'])>
+                                                    {{ $m['name'] }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('primary_account')
+                                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap -mx-3 mb-6"
+                                     :class="{'hidden': plan !== '{{ $family_plan_id }}' || family_type !== 'secondary'}">
+                                    <div class="w-full px-3">
+                                        <label for="additional_monthly_fee" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                            Additional Monthly Fee
+                                        </label>
+                                        <input @class([
+                                                   "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
+                                                   "border-slate-300" => !$errors->first('additional_monthly_fee'),
+                                                   "border-red-500" => $errors->first('additional_monthly_fee'),
+                                               ])
+                                               type="number" id="additional_monthly_fee" name="additional_monthly_fee"
+                                               value="{{ old('additional_monthly_fee', $member['secondary_fee'] ?? '') }}"
+                                               placeholder="Additional Monthly Fee...">
+                                        @error('additional_monthly_fee')
+                                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap -mx-3 mb-6">
+                                    <div class="w-full px-3">
+                                        <label for="location" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                            Location
+                                        </label>
+                                        @php $old = old('location', $member['location_id'] ?? ''); @endphp
+                                        <select @class([
+                                                       "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
+                                                       "border-slate-300" => !$errors->first('location'),
+                                                       "border-red-500" => $errors->first('location'),
+                                                   ])
+                                                id="location" name="location" required>
+                                            <option value="">Choose...</option>
+                                            @foreach ($locations as $location)
+                                                <option value="{{ $location['id'] }}" @selected($location['id'] == $old)>
+                                                    {{ $location['name'] }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
                                 <div class="flex flex-wrap -mx-3 mb-6">
                                     <div class="w-full px-3">
                                         <label for="firstname" class="block uppercase tracking-wide text-gray-900 text-xs font-bold mb-2">
@@ -137,7 +255,7 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
                                                    "border-slate-300" => !$errors->first('dob'),
                                                    "border-red-500" => $errors->first('dob'),
                                                ])
-                                               type="text" id="dob" name="dob" required
+                                               type="text" id="dob" name="dob"
                                                value="{{ old('dob', !empty($member['dob']) ? date('m/d/Y', strtotime($member['dob'])) : '') }}"
                                                autocomplete="off"
                                                placeholder="MM/DD/YYYY">
@@ -157,7 +275,7 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
                                                    "border-slate-300" => !$errors->first('address'),
                                                    "border-red-500" => $errors->first('address'),
                                                ])
-                                               type="text" id="address" name="address" required
+                                               type="text" id="address" name="address"
                                                value="{{ old('address', $member['address'] ?? '') }}"
                                                placeholder="Address...">
                                         @error('address')
@@ -176,7 +294,7 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
                                                    "border-slate-300" => !$errors->first('city'),
                                                    "border-red-500" => $errors->first('city'),
                                                ])
-                                               type="text" id="city" name="city" required
+                                               type="text" id="city" name="city"
                                                value="{{ old('city', $member['city'] ?? '') }}"
                                                placeholder="City...">
                                         @error('city')
@@ -195,7 +313,7 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
                                                    "border-slate-300" => !$errors->first('state'),
                                                    "border-red-500" => $errors->first('state'),
                                                 ])
-                                                id="state" name="state" required>
+                                                id="state" name="state">
                                             <option value="">Choose...</option>
                                             @foreach ($states as $key => $state)
                                                 <option value="{{ $key }}" @selected(old('state', $member['state'] ?? '') == $key)>
@@ -219,56 +337,12 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
                                                    "border-slate-300" => !$errors->first('zipcode'),
                                                    "border-red-500" => $errors->first('zipcode'),
                                                ])
-                                               type="text" id="zipcode" name="zipcode" required
+                                               type="text" id="zipcode" name="zipcode"
                                                value="{{ old('zipcode', $member['zipcode'] ?? '') }}"
                                                placeholder="Zip Code...">
                                         @error('zipcode')
                                         <p class="text-red-500 text-xs italic">{{ $message }}</p>
                                         @enderror
-                                    </div>
-                                </div>
-
-                                <div class="flex flex-wrap -mx-3 mb-6">
-                                    <div class="w-full px-3">
-                                        <label for="location" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                                            Location
-                                        </label>
-                                        @php $old = old('location', $member['location_id'] ?? ''); @endphp
-                                        <select @class([
-                                                       "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
-                                                       "border-slate-300" => !$errors->first('location'),
-                                                       "border-red-500" => $errors->first('location'),
-                                                   ])
-                                                id="location" name="location" required>
-                                            <option value="">Choose...</option>
-                                            @foreach ($locations as $location)
-                                                <option value="{{ $location['id'] }}" @selected($location['id'] == $old)>
-                                                    {{ $location['name'] }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="flex flex-wrap -mx-3 mb-6">
-                                    <div class="w-full px-3">
-                                    <label for="plan" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                                        Membership Plan
-                                    </label>
-                                        @php $old = old('plan', $member['plan_id'] ?? ''); @endphp
-                                        <select @class([
-                                                       "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
-                                                       "border-slate-300" => !$errors->first('plan'),
-                                                       "border-red-500" => $errors->first('plan'),
-                                                   ])
-                                                id="plan" name="plan" required>
-                                            <option value="">Choose...</option>
-                                            @foreach ($plans as $plan)
-                                                <option value="{{ $plan['id'] }}" @selected($plan['id'] == $old)>
-                                                    {{ $plan['name'] }}
-                                                </option>
-                                            @endforeach
-                                        </select>
                                     </div>
                                 </div>
 
@@ -291,23 +365,83 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
                                     </div>
                                 </div>
 
-                                @if (!$add && $member['status'] != 'pending')
+                                <div class="flex flex-wrap -mx-3 mb-6">
+                                    <div class="w-full px-3">
+                                        <label for="dupr_id" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                            DUPR ID
+                                        </label>
+                                        <input @class([
+                                                   "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
+                                                   "border-slate-300" => !$errors->first('dupr_id'),
+                                                   "border-red-500" => $errors->first('dupr_id'),
+                                               ])
+                                               type="text" id="dupr_id" name="dupr_id"
+                                               value="{{ old('dupr_id', $member['profile']['dupr_id'] ?? '') }}"
+                                               placeholder="DUPR ID...">
+                                        @error('dupr_id')
+                                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                @if (!($pending_member = $add || $member['status'] == 'pending'))
                                     <div class="flex flex-wrap -mx-3 mb-6">
                                         <div class="w-full px-3">
                                             <label for="status" class="block uppercase tracking-wide text-gray-900 text-xs font-bold mb-2">
                                                 Status
                                             </label>
-                                            @php $old = old('status', $member['status']); @endphp
                                             <select @class([
                                                            "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
                                                            "border-slate-300" => !$errors->first('status'),
                                                            "border-red-500" => $errors->first('status'),
                                                        ])
-                                                    id="status" name="status" required>
-                                                <option value="active" @selected($old == 'active')>Active</option>
-                                                <option value="inactive" @selected($old == 'inactive')>Inactive</option>
+                                                    id="status" name="status" v-model="status" required>
+                                                <option value="active">Active</option>
+                                                <option value="paused">Paused</option>
+                                                <option value="suspended">Suspend</option>
+                                                <option value="inactive">Inactive</option>
                                             </select>
                                             @error('status')
+                                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="flex flex-wrap -mx-3 mb-6" :class="{'hidden': status !== 'paused'}">
+                                        <div class="w-full px-3">
+                                            <label for="pause_from" class="block uppercase tracking-wide text-gray-900 text-xs font-bold mb-2">
+                                                Pause From
+                                            </label>
+                                            <input @class([
+                                                   "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
+                                                   "border-slate-300" => !$errors->first('pause_from'),
+                                                   "border-red-500" => $errors->first('pause_from'),
+                                               ])
+                                                   type="text" id="pause_from" name="pause_from" :required="status === 'paused'"
+                                                   value="{{ old('pause_from', !empty($member['pause_from']) ? date('m/d/Y', strtotime($member['pause_from'])) : '') }}"
+                                                   autocomplete="off"
+                                                   placeholder="MM/DD/YYYY">
+                                            @error('pause_from')
+                                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="flex flex-wrap -mx-3 mb-6" :class="{'hidden': status !== 'paused'}">
+                                        <div class="w-full px-3">
+                                            <label for="pause_to" class="block uppercase tracking-wide text-gray-900 text-xs font-bold mb-2">
+                                                Pause To
+                                            </label>
+                                            <input @class([
+                                                   "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
+                                                   "border-slate-300" => !$errors->first('pause_to'),
+                                                   "border-red-500" => $errors->first('pause_to'),
+                                               ])
+                                                   type="text" id="pause_to" name="pause_to" :required="status === 'paused'"
+                                                   value="{{ old('pause_to', !empty($member['pause_to']) ? date('m/d/Y', strtotime($member['pause_to'])) : '') }}"
+                                                   autocomplete="off"
+                                                   placeholder="MM/DD/YYYY">
+                                            @error('pause_to')
                                             <p class="text-red-500 text-xs italic">{{ $message }}</p>
                                             @enderror
                                         </div>
@@ -343,6 +477,24 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
                                         @enderror
                                     </div>
                                 </div>
+
+                                <div class="flex flex-wrap -mx-3 mb-6">
+                                    <div class="w-full px-3">
+                                        <label for="note" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                            Note
+                                        </label>
+                                        <textarea @class([
+                                                   "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
+                                                   "border-slate-300" => !$errors->first('note'),
+                                                   "border-red-500" => $errors->first('note'),
+                                               ])
+                                               type="text" id="note" name="note" rows="7"
+                                               placeholder="Notes...">{{ old('note', $member['note'] ?? '') }}</textarea>
+                                        @error('note')
+                                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -357,7 +509,9 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
 
             createApp({
                 setup() {
-                    const original_avatar = '{{ $add || !$member['avatar'] ? '' : asset($member['avatar']) }}';
+                    const plan = ref('{{ $old_plan }}');
+                    const family_type = ref('{{ $old_family_type }}');
+                    const original_avatar = '{{ $member['avatar'] ?? '' }}';
                     const avatar = ref(original_avatar);
                     const selectAvatar = e => {
                         const files = e.target.files;
@@ -371,16 +525,44 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
                         };
                         fr.readAsDataURL(files[0]);
                     }
+                    @if (!$pending_member)
+                        const status = ref('{{ old('status', $member['status']) }}');
+                    @endif
 
                     return {
-                        avatar,
-                        selectAvatar
+                        plan, family_type,
+                        avatar, selectAvatar,
+                        @if (!$pending_member)
+                            status,
+                        @endif
                     }
                 },
                 mounted() {
                     new Datepicker(document.getElementById('dob'), {
                         autohide: true,
                     });
+                    new Choices(document.querySelector('#primary_account'), {
+                        allowHTML: true,
+                        placeholder: true,
+                        searchPlaceholderValue: 'Find primary member',
+                        noResultsText: 'No primary members found',
+                        itemSelectText: '',
+                        classNames: {
+                            containerOuter: 'choices m-0',
+                            containerInner: 'choices--inner '
+                                + 'appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white'
+                                + '@if(!$errors->first('primary_account')) border-slate-300 @else border-red-500 @endif',
+                            listSingle: '',
+                        }
+                    });
+                    @if (!$pending_member)
+                        new Datepicker(document.getElementById('pause_from'), {
+                            autohide: true,
+                        });
+                        new Datepicker(document.getElementById('pause_to'), {
+                            autohide: true,
+                        });
+                    @endif
                 }
             }).mount('#app');
         </script>

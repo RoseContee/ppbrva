@@ -4,7 +4,8 @@ import {
   View
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import axios, { getErrorMessage } from '../../utils/axios';
+import { postVaildateCode } from '../../requests';
+import { authRoutes } from '../../routes';
 import Layouts from '../../components/layouts';
 import Message from '../../components/basic/message';
 import Button from '../../components/basic/button';
@@ -28,27 +29,25 @@ const EnterCode: FC = (): JSX.Element => {
       return nums;
     });
     if (num) codeRefs.current[i + 1]?.current?.focus();
-  };
+  }
 
   const validateCode = () => {
     let code = nums.reduce((code, num) => code + num, '');
     if (code.length < 6) {
-      setMessage('Please input code.');
-      return;
+      return setMessage('Please input code.');
     }
     setLoading(true);
     setMessage('');
-    axios.post(`validate-code`, {
-      email, code
-    }).then(() => {
-      navigation.navigate({
-        name: 'ResetPassword',
-        params: { email, code },
-      } as never);
-    }).catch(error => {
-      setMessage(getErrorMessage(error));
-    }).finally(() => setLoading(false));
-  };
+    postVaildateCode({ email, code })
+      .then(() => {
+        navigation.navigate({
+          name: authRoutes.ResetPassword,
+          params: { email, code },
+        } as never);
+      })
+      .catch(setMessage)
+      .finally(() => setLoading(false));
+  }
 
   return (
     <Layouts auth={true} loading={loading}>
@@ -74,6 +73,6 @@ const EnterCode: FC = (): JSX.Element => {
       </View>
     </Layouts>
   );
-};
+}
 
 export default EnterCode;

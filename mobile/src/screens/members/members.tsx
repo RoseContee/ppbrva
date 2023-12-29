@@ -7,9 +7,10 @@ import {
 import {
   NavigationProp, useFocusEffect, useNavigation, useRoute
 } from '@react-navigation/native';
+import { mainRoutes } from '../../routes';
+import { MemberProp, fetchMembers } from '../../requests';
 import { useAppSelector } from '../../store';
-import { getMe } from '../../store/user';
-import axios from '../../utils/axios';
+import { getLocation, getMe } from '../../store/user';
 import Layouts from '../../components/layouts';
 import PageTitle from '../../components/basic/page-title';
 import Message from '../../components/basic/message';
@@ -21,36 +22,11 @@ import MemberCard from '../../components/basic/member-card';
 import { t } from 'react-native-tailwindcss';
 import s from '../../utils/styles';
 
-export interface MemberProps {
-  memberID: string,
-  name: string,
-  email: string,
-  phone: string,
-  avatar: string,
-  profile: {
-    share_age_gender: boolean,
-    age: string,
-    gender: string,
-    rating: string,
-    matches: number,
-    wins: number,
-    losses: number,
-  },
-
-  email_share: boolean,
-  phone_share: boolean,
-  my_email_share: boolean,
-  my_phone_share: boolean,
-  friend_status: '' | 'pending' | 'waiting' | 'accepted',
-}
-
-type FilterType = 'all' | 'males' | 'females' | '2.0' | '3.0' | '4.0' | '5.0';
-
 interface IHeaderProps {
   keyword: string,
   onSearch: (keyword: string) => void,
-  filter: FilterType,
-  onFilter: (type: FilterType) => void,
+  filter: string,
+  onFilter: (type: string) => void,
   pending?: number,
 }
 
@@ -64,18 +40,19 @@ const HeaderComponent: FC<IHeaderProps> = ({
   const navigation = useNavigation();
   const route = useRoute();
   const me = useAppSelector(getMe);
+  const location = useAppSelector(getLocation);
 
   return (
     <>
-      <PageTitle title={ me.location?.name } />
+      <PageTitle title={location.name} />
       {
-        route.name === 'Friends' && pending ? (
+        route.name === mainRoutes.Friends && pending ? (
           <Message style={[t.mT4]}>
             <Text style={[t.flexShrink, t.textBase, s.textGray, t.pR4]}>
               You have { pending } pending requests!
             </Text>
             <Button style={[s.bgPrimary, s.messageBtn, t.pX5]} titleStyle={[t.textSm]}
-              onPress={() => navigation.navigate('PendingRequests' as never)}
+              onPress={() => navigation.navigate(mainRoutes.PendingRequests as never)}
             >
               View
             </Button>
@@ -85,27 +62,32 @@ const HeaderComponent: FC<IHeaderProps> = ({
       <SearchBar style={[t.mT8, t.mB4]}
         keyword={keyword}
         onSearch={onSearch}
-        buttonText="Filter"
+        buttonText="Sort"
         items={[
-          {value: 'all', text: 'All'},
-          {value: 'males', text: 'Only Males'},
-          {value: 'females', text: 'Only Females'},
-          {value: '2.0', text: 'DUPR 2.0-2.9'},
-          {value: '3.0', text: 'DUPR 3.0-3.9'},
-          {value: '4.0', text: 'DUPR 4.0-4.9'},
-          {value: '5.0', text: 'DUPR 5.0+'},
+          {value: ''        , text: 'Clear'},
+          {value: 'highest' , text: 'Highest DUPR first'},
+          {value: 'lowest'  , text: 'Lowest DUPR first'},
+          {value: 'men'     , text: 'Only Men'},
+          {value: 'women'   , text: 'Only Women'},
+          {value: 'oldest'  , text: 'Oldest first'},
+          {value: 'youngest', text: 'Youngest first'},
+          {value: '18-30'   , text: 'Age 18-30'},
+          {value: '31-50'   , text: 'Age 31-50'},
+          {value: '51-60'   , text: 'Age 51-60'},
+          {value: '61-70'   , text: 'Age 61-70'},
+          {value: '70+'     , text: 'Age 70+'},
         ]}
         activeMenu={filter}
-        onMenuSelect={menu => onFilter(menu as FilterType)}
+        onMenuSelect={onFilter}
       />
     </>
   );
-};
+}
 
 interface IItemProps {
   navigation: NavigationProp<ReactNavigation.RootParamList>,
   route: string,
-  member: MemberProps,
+  member: MemberProp,
 }
 
 const ItemComponent: FC<IItemProps> = ({
@@ -117,24 +99,24 @@ const ItemComponent: FC<IItemProps> = ({
     <View style={[s.pX7, t.mT6]}>
       <MemberCard member={member}
         onPress={() => {
-          if (route === 'Friends') {
+          if (route === mainRoutes.Friends) {
             navigation.navigate({
-              name: 'AcceptedFriend',
+              name: mainRoutes.AcceptedFriend,
               params: {
                 title: member.name,
                 memberID: member.memberID,
               },
             } as never);
-          } else if (route === 'PendingRequests') {
+          } else if (route === mainRoutes.PendingRequests) {
             navigation.navigate({
-              name: 'FriendRequest',
+              name: mainRoutes.FriendRequest,
               params: {
                 memberID: member.memberID,
               },
             } as never);
-          } else if (route === 'Members') {
+          } else if (route === mainRoutes.Members) {
             navigation.navigate({
-              name: 'MemberInvite',
+              name: mainRoutes.MemberInvite,
               params: {
                 title: member.name,
                 memberID: member.memberID,
@@ -145,50 +127,55 @@ const ItemComponent: FC<IItemProps> = ({
       />
     </View>
   );
-};
+}
 
 const Members: FC = (): JSX.Element => {
   const navigation = useNavigation();
   const route = useRoute();
   const [loading, setLoading] = useState<boolean>(false);
-  const [members, setMembers] = useState<MemberProps[]>([]);
+  const [members, setMembers] = useState<MemberProp[]>([]);
   const [pending, setPending] = useState<number>();
   const [keyword, setKeyword] = useState<string>('');
-  const [filter, setFilter] = useState<FilterType>('all');
+  const [filter, setFilter] = useState<string>('');
 
   const filteredMembers = members.filter(member => {
     const q = keyword.toLowerCase();
-    const profile = member.profile || {
-      share_age_gender: false,
-      gender: '',
-      rating: 0,
-    };
-    const rating = Number(profile.rating);
+    const profile = member.profile;
     return member.name.toLowerCase().includes(q)
-      && (filter === 'all'
-        || (filter === 'males' && profile.share_age_gender && profile.gender.toLocaleLowerCase() === 'male')
-        || (filter === 'females' && profile.share_age_gender && profile.gender.toLocaleLowerCase() === 'female')
-        || (filter === '2.0' && 2.0 <= rating && rating < 3)
-        || (filter === '3.0' && 3.0 <= rating && rating < 4)
-        || (filter === '4.0' && 4.0 <= rating && rating < 5)
-        || (filter === '5.0' && 5.0 <= rating)
+      && (['', 'highest', 'lowest', 'oldest', 'youngest'].includes(filter)
+        || (filter === 'men' && profile.share_age_gender && profile.gender.toLocaleLowerCase() === 'male')
+        || (filter === 'women' && profile.share_age_gender && profile.gender.toLocaleLowerCase() === 'female')
+        || (filter === '18-30' && 18 <= profile.age && profile.age <= 30)
+        || (filter === '31-50' && 31 <= profile.age && profile.age <= 50)
+        || (filter === '51-60' && 51 <= profile.age && profile.age <= 60)
+        || (filter === '61-70' && 61 <= profile.age && profile.age <= 70)
+        || (filter === '70+' && 71 <= profile.age)
       );
   });
+  if (['highest', 'lowest', 'oldest', 'youngest'].includes(filter)) {
+    filteredMembers.sort((a, b) => {
+      if (filter === 'highest') return b.profile.rating - a.profile.rating;
+      if (filter === 'lowest') return a.profile.rating - b.profile.rating;
+      if (filter === 'oldest') return b.profile.age - a.profile.age;
+      return a.profile.age - b.profile.age;
+    });
+  }
 
   useFocusEffect(
     useCallback(() => {
       if (!members.length) setLoading(true);
-      const url = route.name === 'Members' ? '/members'
-        : route.name === 'Friends' ? '/friends'
+      const url = route.name === mainRoutes.Members ? '/members'
+        : route.name === mainRoutes.Friends ? '/friends'
         : '/pending-friends';
-      axios.get(url)
-      .then(({ data }) => {
-        setMembers(data.members);
-        setPending(data.pending_requests);
-      }).finally(() => setLoading(false));
+      fetchMembers(url)
+        .then(data => {
+          setMembers(data.members);
+          setPending(data.pending_requests);
+        })
+        .finally(() => setLoading(false));
       const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
-        if (route.name === 'PendingRequests') {
-          navigation.navigate('Friends' as never);
+        if (route.name === mainRoutes.PendingRequests) {
+          navigation.navigate(mainRoutes.Friends as never);
           return true;
         }
         return false;
@@ -205,7 +192,7 @@ const Members: FC = (): JSX.Element => {
         pending={pending}
       />
     );
-  };
+  }
 
   return (
     <Layouts flatlist={true} loading={loading}>
@@ -216,8 +203,8 @@ const Members: FC = (): JSX.Element => {
         ListEmptyComponent={() => (
           <Message style={[t.mT10]}
             text={members.length
-              ? `${ route.name === 'Friends' ? 'Friends' : 'Members' } not found.`
-              : `No ${ route.name === 'Friends' ? 'friends' : 'members' } yet...`
+              ? `${ route.name === mainRoutes.Friends ? 'Friends' : 'Members' } not found.`
+              : `No ${ route.name === mainRoutes.Friends ? 'friends' : 'members' } yet...`
             }
           />
         )}
@@ -230,6 +217,6 @@ const Members: FC = (): JSX.Element => {
       />
     </Layouts>
   );
-};
+}
 
 export default Members;

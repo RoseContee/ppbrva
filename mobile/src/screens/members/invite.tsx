@@ -3,19 +3,17 @@ import {
   BackHandler,
   View
 } from 'react-native';
-import {
-  useFocusEffect, useNavigation, useRoute
-} from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import { mainRoutes } from '../../routes';
+import { MemberProp, fetchMemberDetail, postMemberInvite } from '../../requests';
 import { useAppSelector } from '../../store';
 import { getMe } from '../../store/user';
-import axios from '../../utils/axios';
 import Layouts from '../../components/layouts';
 import Message from '../../components/basic/message';
 import ProfileCard from '../../components/basic/profile-card';
 import Title from '../../components/basic/title';
 import Switch from '../../components/basic/switch';
 import Button from '../../components/basic/button';
-import { MemberProps } from './members';
 import IconMail from '../../assets/img/icons/mail.svg';
 import IconPhoneCall from '../../assets/img/icons/phone-call.svg';
 
@@ -29,7 +27,7 @@ const MemberInvite: FC = (): JSX.Element => {
   const me = useAppSelector(getMe);
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>();
-  const [member, setMember] = useState<MemberProps>();
+  const [member, setMember] = useState<MemberProp>();
   const [email_share, setEmailShare] = useState<boolean>(true);
   const [phone_share, setPhoneShare] = useState<boolean>(true);
   const [disabled, setDisabled] = useState<boolean>(false);
@@ -41,33 +39,31 @@ const MemberInvite: FC = (): JSX.Element => {
       setMessage('');
       setDisabled(false);
       setLoading(true);
-      axios.get(`members/${memberID}`)
-      .then(({ data }) => {
-        const member = data.member as MemberProps;
-        if (member.friend_status === 'accepted') {
-          navigation.navigate({
-            name: 'AcceptedFriend',
-            params: {
-              title: member.name,
-              memberID: member.memberID,
-            },
-          } as never);
-        } else if (member.friend_status === 'pending') {
-          navigation.navigate({
-            name: 'FriendRequest',
-            params: {
-              memberID: member.memberID,
-            },
-          } as never);
-        } else if (member.friend_status === 'waiting') {
-          setMessage(`If ${ member.name } accepts, they will appear as a Friend!`);
-        }
-        setMember(member);
-      }).catch(() => {
-        setMessage('Something went wrong.');
-      }).finally(() => setLoading(false));
+      fetchMemberDetail(memberID)
+        .then(member => {
+          if (member.friend_status === 'accepted') {
+            navigation.navigate({
+              name: mainRoutes.AcceptedFriend,
+              params: {
+                title: member.name,
+                memberID: member.memberID,
+              },
+            } as never);
+          } else if (member.friend_status === 'pending') {
+            navigation.navigate({
+              name: mainRoutes.FriendRequest,
+              params: {
+                memberID: member.memberID,
+              },
+            } as never);
+          } else if (member.friend_status === 'waiting') {
+            setMessage(`If ${ member.name } accepts, they will appear as a Friend!`);
+          }
+          setMember(member);
+        })
+        .finally(() => setLoading(false));
       const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
-        navigation.navigate('Members' as never);
+        navigation.navigate(mainRoutes.Members as never);
         return true;
       });
       return () => subscribe.remove();
@@ -76,13 +72,12 @@ const MemberInvite: FC = (): JSX.Element => {
 
   const onAddFriend = () => {
     setLoading(true);
-    axios.post(`members/${memberID}/invite`, {
-      email_share,
-      phone_share,
-    }).then(() => {
-      setMessage('Your invitation has been sent!');
-      setDisabled(true);
-    }).finally(() => setLoading(false));
+    postMemberInvite(memberID, { email_share, phone_share })
+      .then(() => {
+        setMessage('Your invitation has been sent!');
+        setDisabled(true);
+      })
+      .finally(() => setLoading(false));
   }
 
   return (
@@ -137,6 +132,6 @@ const MemberInvite: FC = (): JSX.Element => {
       }
     </Layouts>
   );
-};
+}
 
 export default MemberInvite;

@@ -24,15 +24,16 @@ class AuthController extends Controller
             'device' => ['required'],
         ]);
         $user = Member::query()
-            ->with(['profile', 'location', 'plan'])
+            ->with(['profile'])
             ->where('email', $request['email'])
+            ->where('status', '<>', 'pending')
             ->first();
         if (!$user || !Hash::check($request['password'], $user['password'])) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
-        if ($user['status'] != 'active') {
+        if ($user['status'] == 'inactive') {
             throw ValidationException::withMessages([
                 'email' => ['Your account has been deactivated.'],
             ]);

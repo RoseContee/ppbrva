@@ -44,6 +44,6 @@ const Button: FC<IProps> = ({
       }
     </>
   )
-};
+}
 
 export default Button;

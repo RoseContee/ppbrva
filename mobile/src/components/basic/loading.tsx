@@ -30,6 +30,6 @@ const Loading: FC<IProps> = ({ show, style, size }): JSX.Element => {
       }
     </>
   );
-};
+}
 
 export default Loading;

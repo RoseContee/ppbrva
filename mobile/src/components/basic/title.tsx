@@ -9,6 +9,6 @@ const Title: FC<TextProps> = (props): JSX.Element => {
       { props.children }
     </Text>
   )
-};
+}
 
 export default Title;

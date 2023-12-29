@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\General;
 use App\Models\Location;
 use Illuminate\Http\Request;
 
 class LocationController extends Controller
 {
     public function index() {
-        $locations = Location::query()->latest()->get();
+        $locations = Location::query()
+            ->latest()
+            ->get(['id', 'name', 'address', 'image']);
         return view('locations.index', [
             'locations' => $locations,
         ]);
@@ -75,7 +78,7 @@ class LocationController extends Controller
         $location['email'] = $request['email'];
         $location['website'] = $request['website'];
         if ($request->hasFile('image')) {
-            $location->removeImage();
+            General::removeImage($location->getRawOriginal('image'));
             $location['image'] = 'uploads/'.$request->file('image')->store('locations');
         }
         $location->save();

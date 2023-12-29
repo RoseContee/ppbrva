@@ -3,11 +3,19 @@
 namespace App\Helpers;
 
 use App\Models\Member;
+use App\Models\MemberProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class General
 {
+    public static int $FamilyPlanId = 8;
+
+    public static function removeImage(string $image = null) {
+        $image = public_path($image);
+        if (is_file($image)) unlink($image);
+    }
+
     public static function getStates() {
         return [
             'AL' => 'Alabama',
@@ -64,6 +72,18 @@ class General
         ];
     }
 
+    public static function saveDUPR(MemberProfile $profile, string|null $duprId) {
+        $dupr = new Dupr();
+        $duprInfo = $dupr->getPlayInfo($duprId);
+        $profile['dupr_id'] = $duprId;
+        $profile['gender'] = $duprInfo['gender'] ?? null;
+        $profile['age'] = $duprInfo['age'] ?? null;
+        $profile['rating'] = $duprInfo['rating'] ?? null;
+        $profile['matches'] = $duprInfo['matches'] ?? null;
+        $profile['wins'] = $duprInfo['wins'] ?? null;
+        $profile['losses'] = $duprInfo['losses'] ?? null;
+    }
+
     public static function createMember(Request $request, string $status) {
         $clover = new Clover();
         $customer = $clover->createCustomer([
@@ -73,6 +93,13 @@ class General
             'phone' => $request['phone'],
         ]);
         if (empty($customer['id'])) return $customer;
+        $primary_id = $secondary_fee = null;
+        if ($request['plan'] == self::$FamilyPlanId) {
+            if ($request['family_type'] == 'secondary') {
+                $primary_id = $request['primary_account'];
+            }
+            $secondary_fee = $request['additional_monthly_fee'];
+        }
         $password = Str::random(8);
         $member = Member::query()->create([
             'memberID' => Str::random(),
@@ -90,7 +117,11 @@ class General
             'zipcode' => $request['zipcode'],
             'location_id' => $request['location'],
             'plan_id' => $request['plan'],
+            'primary_id' => $primary_id,
+            'is_child' => null,
+            'secondary_fee' => $secondary_fee,
             'membership_card_id' => $request['membership_card_id'],
+            'note' => $request['note'],
             'customerID' => $customer['id'],
             'status' => $status,
         ]);
@@ -103,13 +134,13 @@ class General
             $member['memberID'] = 'PPB'.$member['id'];
         }
         $member->save();
-        $member->profile()->updateOrCreate([
-            'member_id' => $member['id'],
-        ]);
+        $profile = $member['profile'];
+        self::saveDUPR($profile, $request['dupr_id']);
+        $profile->save();
         return $member;
     }
 
-    public static function updateMember($member, Request $request) {
+    public static function updateMember(Member $member, Request $request) {
         if ($member['firstname'] != $request['firstname']
             || $member['lastname'] != $request['lastname']
             || $member['email'] != $request['email']
@@ -153,7 +184,7 @@ class General
         $member['state'] = $request['state'];
         $member['zipcode'] = $request['zipcode'];
         if ($request->hasFile('avatar')) {
-            $member->removeAvatar();
+            self::removeImage($member->getRawOriginal('avatar'));
             $member['avatar'] = 'uploads/'.$request->file('avatar')->store('avatars');
         }
         return $member;

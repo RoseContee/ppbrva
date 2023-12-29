@@ -49,107 +49,120 @@
                     </button>
                 </form>
 
-                <div class="bg-gray-200 flex flex-wrap items-center justify-between px-5 py-5">
-                    <div class="w-full">
-                        <div class="-mx-2 md:flex">
-                            <div class="w-full md:w-1/3 px-2">
-                                <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 pt-8 pb-10 mb-4 text-center">
-                                    <h4 class="text-sm uppercase text-gray-500 leading-tight">Members</h4>
-                                    <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
-                                        {{ $members }}
-                                    </h3>
-                                    <p @class([
-                                            "text-xs leading-tight",
-                                            "text-green-500" => $members_percent >= 0,
-                                            "text-red-500" => $members_percent < 0,
-                                       ])>
-                                        {{ $members_percent >= 0 ? '▲' : '▼' }} {{ $members_percent }}%
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="w-full md:w-1/3 px-2">
-                                <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 pt-8 pb-10 mb-4 text-center">
-                                    <h4 class="text-sm uppercase text-gray-500 leading-tight">Payments</h4>
-                                    <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
-                                        ${{ number_format($payments) }}
-                                    </h3>
-                                    <p @class([
-                                            "text-xs leading-tight",
-                                            "text-green-500" => $payments_percent >= 0,
-                                            "text-red-500" => $payments_percent < 0,
-                                       ])>
-                                        {{ $payments_percent >= 0 ? '▲' : '▼' }} {{ $payments_percent }}%
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="w-full md:w-1/3 px-2">
-                                <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 pt-8 pb-10 mb-4 text-center">
-                                    <h4 class="text-sm uppercase text-gray-500 leading-tight">Dues</h4>
-                                    <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
-                                        ${{ number_format($dues) }}
-                                    </h3>
-                                    <p @class([
-                                            "text-xs leading-tight",
-                                            "text-green-500" => $dues_percent >= 0,
-                                            "text-red-500" => $dues_percent < 0,
-                                       ])>
-                                        {{ $dues_percent >= 0 ? '▲' : '▼' }} {{ $dues_percent }}%
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="w-full md:w-1/3 px-2">
-                                <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 pt-8 pb-10 mb-4 text-center">
-                                    <h4 class="text-sm uppercase text-gray-500 leading-tight">Lessons</h4>
-                                    <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
-                                        ${{ number_format($lessons) }}
-                                    </h3>
-                                    <p @class([
-                                            "text-xs leading-tight",
-                                            "text-green-500" => $lessons_percent >= 0,
-                                            "text-red-500" => $lessons_percent < 0,
-                                       ])>
-                                        {{ $lessons_percent >= 0 ? '▲' : '▼' }} {{ $lessons_percent }}%
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="w-full md:w-1/3 px-2">
-                                <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 pt-8 pb-10 mb-4 text-center">
-                                    <h4 class="text-sm uppercase text-gray-500 leading-tight">Food & Beverage</h4>
-                                    <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
-                                        ${{ number_format($food_beverage) }}
-                                    </h3>
-                                    <p @class([
-                                            "text-xs leading-tight",
-                                            "text-green-500" => $food_beverage_percent >= 0,
-                                            "text-red-500" => $food_beverage_percent < 0,
-                                       ])>
-                                        {{ $food_beverage_percent >= 0 ? '▲' : '▼' }} {{ $food_beverage_percent }}%
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="w-full md:w-1/3 px-2">
-                                <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 pt-8 pb-10 mb-4 text-center">
-                                    <h4 class="text-sm uppercase text-gray-500 leading-tight">Rentals</h4>
-                                    <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
-                                        ${{ number_format($rentals) }}
-                                    </h3>
-                                    <p @class([
-                                            "text-xs leading-tight",
-                                            "text-green-500" => $rentals_percent >= 0,
-                                            "text-red-500" => $rentals_percent < 0,
-                                       ])>
-                                        {{ $rentals_percent >= 0 ? '▲' : '▼' }} {{ $rentals_percent }}%
-                                    </p>
-                                </div>
+                <div class="w-full px-5 py-5">
+                    <div class="-mx-2 md:flex">
+                        <div class="w-full px-2">
+                            <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 pt-8 pb-10 mb-4 text-center">
+                                <h4 class="text-sm uppercase text-gray-500 leading-tight">Members</h4>
+                                <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
+                                    {{ $members }}
+                                </h3>
+                                <p @class([
+                                        "text-xs leading-tight",
+                                        "text-green-500" => $members_percent >= 0,
+                                        "text-red-500" => $members_percent < 0,
+                                   ])>
+                                    {{ $members_percent >= 0 ? '▲' : '▼' }} {{ $members_percent }}%
+                                </p>
                             </div>
                         </div>
-                        <div class="md:flex">
-                            <div class="mt-8 px-4 md:w-70">
-                                <canvas id="payment-chart"></canvas>
+                        <div class="w-full px-2">
+                            <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 pt-8 pb-10 mb-4 text-center">
+                                <h4 class="text-sm uppercase text-gray-500 leading-tight">Payments</h4>
+                                <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
+                                    ${{ number_format($payments) }}
+                                </h3>
+                                <p @class([
+                                        "text-xs leading-tight",
+                                        "text-green-500" => $payments_percent >= 0,
+                                        "text-red-500" => $payments_percent < 0,
+                                   ])>
+                                    {{ $payments_percent >= 0 ? '▲' : '▼' }} {{ $payments_percent }}%
+                                </p>
                             </div>
-                            <div class="mt-8 px-4 md:w-30">
-                                <canvas id="pie-chart"></canvas>
+                        </div>
+                        <div class="w-full px-2">
+                            <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 pt-8 pb-10 mb-4 text-center">
+                                <h4 class="text-sm uppercase text-gray-500 leading-tight">Dues</h4>
+                                <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
+                                    ${{ number_format($dues) }}
+                                </h3>
+                                <p @class([
+                                        "text-xs leading-tight",
+                                        "text-green-500" => $dues_percent >= 0,
+                                        "text-red-500" => $dues_percent < 0,
+                                   ])>
+                                    {{ $dues_percent >= 0 ? '▲' : '▼' }} {{ $dues_percent }}%
+                                </p>
                             </div>
+                        </div>
+                        <div class="w-full px-2">
+                            <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 pt-8 pb-10 mb-4 text-center">
+                                <h4 class="text-sm uppercase text-gray-500 leading-tight">Food & Beverage</h4>
+                                <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
+                                    ${{ number_format($food_beverage) }}
+                                </h3>
+                                <p @class([
+                                        "text-xs leading-tight",
+                                        "text-green-500" => $food_beverage_percent >= 0,
+                                        "text-red-500" => $food_beverage_percent < 0,
+                                   ])>
+                                    {{ $food_beverage_percent >= 0 ? '▲' : '▼' }} {{ $food_beverage_percent }}%
+                                </p>
+                            </div>
+                        </div>
+                        <div class="w-full px-2">
+                            <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 pt-8 pb-10 mb-4 text-center">
+                                <h4 class="text-sm uppercase text-gray-500 leading-tight">Lessons</h4>
+                                <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
+                                    ${{ number_format($lessons) }}
+                                </h3>
+                                <p @class([
+                                        "text-xs leading-tight",
+                                        "text-green-500" => $lessons_percent >= 0,
+                                        "text-red-500" => $lessons_percent < 0,
+                                   ])>
+                                    {{ $lessons_percent >= 0 ? '▲' : '▼' }} {{ $lessons_percent }}%
+                                </p>
+                            </div>
+                        </div>
+                        <div class="w-full px-2">
+                            <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 pt-8 pb-10 mb-4 text-center">
+                                <h4 class="text-sm uppercase text-gray-500 leading-tight">Rentals</h4>
+                                <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
+                                    ${{ number_format($rentals) }}
+                                </h3>
+                                <p @class([
+                                        "text-xs leading-tight",
+                                        "text-green-500" => $rentals_percent >= 0,
+                                        "text-red-500" => $rentals_percent < 0,
+                                   ])>
+                                    {{ $rentals_percent >= 0 ? '▲' : '▼' }} {{ $rentals_percent }}%
+                                </p>
+                            </div>
+                        </div>
+                        <div class="w-full px-2">
+                            <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 pt-8 pb-10 mb-4 text-center">
+                                <h4 class="text-sm uppercase text-gray-500 leading-tight">Merchandise</h4>
+                                <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
+                                    ${{ number_format($merchandise) }}
+                                </h3>
+                                <p @class([
+                                        "text-xs leading-tight",
+                                        "text-green-500" => $merchandise_percent >= 0,
+                                        "text-red-500" => $merchandise_percent < 0,
+                                   ])>
+                                    {{ $merchandise_percent >= 0 ? '▲' : '▼' }} {{ $merchandise_percent }}%
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:flex">
+                        <div class="mt-8 px-4 md:w-70">
+                            <canvas id="payment-chart"></canvas>
+                        </div>
+                        <div class="mt-8 px-4 md:w-30">
+                            <canvas id="pie-chart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -174,7 +187,24 @@
                 options: {
                     scales: {
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            ticks: {
+                                callback: value => '$' + value,
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: context => {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    if (context.parsed.y !== null) {
+                                        label += '$' + context.parsed.y;
+                                    }
+                                    return label;
+                                }
+                            }
                         }
                     }
                 }
@@ -183,14 +213,26 @@
             new Chart(document.getElementById('pie-chart'), {
                 type: 'pie',
                 data: {
-                    labels: ['Dues', 'Lessons', 'Food & Beverage', 'Rentals'],
+                    labels: ['Dues', 'Food & Beverage', 'Lessons', 'Rentals', 'Merchandise'],
                     datasets: [{
-                        data: [{{ $dues }}, {{ $lessons }}, {{ $food_beverage }}, {{ $rentals }}],
-                        backgroundColor: ['#4bc0c0', '#36a2eb', '#ff6384', '#ff9f40'],
+                        data: [{{ $dues }}, {{ $food_beverage }}, {{ $lessons }}, {{ $rentals }}, {{ $merchandise }}],
+                        backgroundColor: ['#4bc0c0', '#36a2eb', '#ff6384', '#ff9f40', '#ffcd56'],
                     }]
                 },
                 options: {
                     responsive: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: context => {
+                                    if (context.parsed !== null) {
+                                        return '$' + context.parsed;
+                                    }
+                                    return '';
+                                }
+                            }
+                        }
+                    }
                 },
             });
         </script>

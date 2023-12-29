@@ -3,17 +3,17 @@ import {
   BackHandler,
   View
 } from 'react-native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import { mainRoutes } from '../../routes';
 import {
-  useFocusEffect, useNavigation, useRoute
-} from '@react-navigation/native';
-import axios from '../../utils/axios';
+  MemberProp, fetchMemberDetail, postMemberRemove, postMemberShareSetting
+} from '../../requests';
 import Layouts from '../../components/layouts';
 import Message from '../../components/basic/message';
 import ProfileCard from '../../components/basic/profile-card';
 import Title from '../../components/basic/title';
 import Switch from '../../components/basic/switch';
 import Button from '../../components/basic/button';
-import { MemberProps } from './members';
 import IconMail from '../../assets/img/icons/mail.svg';
 import IconPhoneCall from '../../assets/img/icons/phone-call.svg';
 
@@ -26,7 +26,7 @@ const AcceptedFriend: FC = (): JSX.Element => {
   const route = useRoute();
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>();
-  const [member, setMember] = useState<MemberProps>();
+  const [member, setMember] = useState<MemberProp>();
   const [email_share, setEmailShare] = useState<boolean>(false);
   const [phone_share, setPhoneShare] = useState<boolean>(false);
   const [disabled, setDisabled] = useState<boolean>(false);
@@ -38,33 +38,31 @@ const AcceptedFriend: FC = (): JSX.Element => {
       setMessage('');
       setDisabled(false);
       setLoading(true);
-      axios.get(`members/${memberID}`)
-      .then(({ data }) => {
-        const member = data.member as MemberProps;
-        if (member.friend_status === 'pending') {
-          navigation.navigate({
-            name: 'FriendRequest',
-            params: {
-              memberID: member.memberID,
-            },
-          } as never);
-        } else if (member.friend_status !== 'accepted') {
-          navigation.navigate({
-            name: 'MemberInvite',
-            params: {
-              title: member.name,
-              memberID: member.memberID,
-            },
-          } as never);
-        }
-        setMember(member);
-        setEmailShare(member.my_email_share);
-        setPhoneShare(member.my_phone_share);
-      }).catch(() => {
-        setMessage('Something went wrong.');
-      }).finally(() => setLoading(false));
+      fetchMemberDetail(memberID)
+        .then(member => {
+          if (member.friend_status === 'pending') {
+            navigation.navigate({
+              name: mainRoutes.FriendRequest,
+              params: {
+                memberID: member.memberID,
+              },
+            } as never);
+          } else if (member.friend_status !== 'accepted') {
+            navigation.navigate({
+              name: mainRoutes.MemberInvite,
+              params: {
+                title: member.name,
+                memberID: member.memberID,
+              },
+            } as never);
+          }
+          setMember(member);
+          setEmailShare(member.my_email_share);
+          setPhoneShare(member.my_phone_share);
+        })
+        .finally(() => setLoading(false));
       const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
-        navigation.navigate('Friends' as never);
+        navigation.navigate(mainRoutes.Friends as never);
         return true;
       });
       return () => subscribe.remove();
@@ -75,18 +73,18 @@ const AcceptedFriend: FC = (): JSX.Element => {
     setLoading(true);
     setEmailShare(setting.email_share);
     setPhoneShare(setting.phone_share)
-    axios.post(`members/${memberID}/share-setting`, {
-      ...setting
-    }).finally(() => setLoading(false));
+    postMemberShareSetting(memberID, {...setting})
+      .finally(() => setLoading(false));
   }
 
   const onRemoveFriend = () => {
     setLoading(true);
-    axios.post(`members/${memberID}/remove`)
-    .then(() => {
-      setMessage('Member has been removed as a friend!');
-      setDisabled(true);
-    }).finally(() => setLoading(false));
+    postMemberRemove(memberID)
+      .then(() => {
+        setMessage('Member has been removed as a friend!');
+        setDisabled(true);
+      })
+      .finally(() => setLoading(false));
   }
 
   return (
@@ -149,6 +147,6 @@ const AcceptedFriend: FC = (): JSX.Element => {
       }
     </Layouts>
   );
-};
+}
 
 export default AcceptedFriend;

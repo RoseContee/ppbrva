@@ -196,6 +196,8 @@ class Clover
         } catch (Exception $exception) {
             $result = $exception->getMessage();
         }
+        logger('Card Error!');
+        logger($result);
         return $this->getErrorMessage($result);
     }
 

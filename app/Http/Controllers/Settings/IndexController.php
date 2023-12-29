@@ -13,25 +13,22 @@ class IndexController extends Controller
     }
 
     public function general() {
-        $settings = Setting::getSetting();
+        $settings = Setting::getSetting([
+            'contact_email', 'dupr_link', 'secondary_limit'
+        ]);
         return view('settings.general', [
             'settings' => $settings,
         ]);
     }
 
-    public function update(Request $request) {
+    public function storeGeneral(Request $request) {
         $request->validate([
             'contact_email' => ['required', 'email'],
-            'play_link' => ['required', 'url'],
-            'improve_link' => ['required', 'url'],
-            'rent_link' => ['required', 'url'],
-            'shop_link' => ['required', 'url'],
             'dupr_link' => ['required', 'url'],
+            'secondary_limit' => ['required', 'numeric'],
         ]);
         Setting::saveSetting($request->only([
-            'contact_email',
-            'play_link', 'improve_link', 'rent_link', 'shop_link',
-            'dupr_link',
+            'contact_email', 'dupr_link', 'secondary_limit'
         ]));
         return back()->with('success_message', 'Settings have been updated.');
     }

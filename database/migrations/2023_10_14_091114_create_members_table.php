@@ -28,12 +28,16 @@ return new class extends Migration
             $table->string('zipcode', 20)->nullable();
             $table->bigInteger('location_id');
             $table->integer('plan_id');
+            $table->bigInteger('primary_id')->nullable();
+            $table->boolean('is_child')->nullable();
+            $table->decimal('secondary_fee')->nullable();
             $table->string('membership_card_id', 20)->nullable();
             $table->string('avatar')->nullable();
+            $table->text('note')->nullable();
             $table->string('customerID');
             $table->string('card_last4', 4)->nullable();
             $table->enum('card_type', ['visa', 'mc', 'amex', 'discover', 'diners_club', 'jcb', 'unknown'])->default('unknown');
-            $table->enum('status', ['active', 'inactive', 'paused', 'pending'])->default('active');
+            $table->enum('status', ['active', 'inactive', 'paused', 'suspended', 'pending'])->default('active');
             $table->date('pause_from')->nullable();
             $table->date('pause_to')->nullable();
             $table->timestamps();

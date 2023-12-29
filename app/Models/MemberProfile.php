@@ -16,14 +16,6 @@ class MemberProfile extends Model
         'dupr_id', 'gender', 'age', 'rating', 'matches', 'wins', 'losses',
     ];
 
-    public function getGenderAttribute() {
-        return $this->attributes['gender'] ?? '-';
-    }
-
-    public function getAgeAttribute() {
-        return $this->attributes['age'] ?? '-';
-    }
-
     public function getRatingAttribute() {
         return $this->attributes['rating'] ?? '-';
     }

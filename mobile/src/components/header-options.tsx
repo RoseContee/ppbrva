@@ -5,13 +5,7 @@ import {
   View,
 ViewStyle
 } from 'react-native';
-import {
-  DrawerActions,
-  ParamListBase,
-  RouteProp
-} from '@react-navigation/native';
-import { StackNavigationOptions } from '@react-navigation/stack';
-import { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
+import { DrawerActions, ParamListBase, RouteProp } from '@react-navigation/native';
 import Title from './basic/title';
 import IconBack from '../assets/img/icons/back.svg';
 import IconMenu from '../assets/img/icons/menu.svg';
@@ -19,6 +13,7 @@ import IconMenu from '../assets/img/icons/menu.svg';
 import { t } from 'react-native-tailwindcss';
 import s from '../utils/styles';
 import theme from '../utils/theme';
+import { appRoutes, authRoutes, invoiceRoutes, mainRoutes } from '../routes';
 
 interface IHeaderButtonProps {
   route: RouteProp<ParamListBase, string>,
@@ -26,29 +21,33 @@ interface IHeaderButtonProps {
 }
 
 const HeaderLeft: FC<IHeaderButtonProps> = ({ route, navigation }): JSX.Element => {
+  const gotoScreen = (screen: string) => {
+    navigation.navigate(screen);
+  }
+
   const onBack = () => {
-    if (route.name === 'ResetPassword') {
-      navigation.navigate('Login');
-    } else if (route.name === 'SetNewPassword') {
-      navigation.navigate('HomeScreen');
+    if (route.name === authRoutes.ResetPassword) {
+      gotoScreen(authRoutes.Login);
+    } else if (route.name === appRoutes.SetNewPassword) {
+      gotoScreen(appRoutes.HomeScreen);
     } else if ([
-      'MemberProfile', 'BillingProfile', 'MembershipPlan',
+      mainRoutes.MemberProfile, mainRoutes.BillingProfile, mainRoutes.MembershipPlan,
     ].includes(route.name)) {
-      navigation.navigate('Profile');
-    } else if (route.name === 'Invoices') {
-      navigation.navigate('BillingProfile');
+      gotoScreen(mainRoutes.Profile);
+    } else if (route.name === invoiceRoutes.Invoices) {
+      gotoScreen(mainRoutes.BillingProfile);
     } else if ([
-      'PendingRequests', 'AcceptedFriend'
+      mainRoutes.PendingRequests, mainRoutes.AcceptedFriend,
     ].includes(route.name)) {
-      navigation.navigate('Friends');
-    } else if (route.name === 'FriendRequest') {
-      navigation.navigate('PendingRequests');
-    } else if (route.name === 'MemberInvite') {
-      navigation.navigate('Members');
+      gotoScreen(mainRoutes.Friends);
+    } else if (route.name === mainRoutes.FriendRequest) {
+      gotoScreen(mainRoutes.PendingRequests);
+    } else if (route.name === mainRoutes.MemberInvite) {
+      gotoScreen(mainRoutes.Members);
     } else {
       navigation.goBack();
     }
-  };
+  }
 
   return (
     <View style={[t.mL4]}>
@@ -59,7 +58,7 @@ const HeaderLeft: FC<IHeaderButtonProps> = ({ route, navigation }): JSX.Element 
       </TouchableOpacity>
     </View>
   );
-};
+}
 
 const HeaderRight: FC<IHeaderButtonProps> = ({ navigation }): JSX.Element => {
   return (
@@ -71,7 +70,7 @@ const HeaderRight: FC<IHeaderButtonProps> = ({ navigation }): JSX.Element => {
       </TouchableOpacity>
     </View>
   );
-};
+}
 
 interface IHeaderTitleProps {
   title: string,
@@ -82,7 +81,7 @@ const HeaderTitle: FC<IHeaderTitleProps> = ({ title, style }): JSX.Element => {
   return (
     <Title style={[s.screenTitle, style]}>{ title }</Title>
   );
-};
+}
 
 const HeaderOptions = ({
   route, navigation
@@ -94,15 +93,15 @@ const HeaderOptions = ({
     headerShadowVisible: false,
     headerLeft: () => <HeaderLeft route={route} navigation={navigation} />,
     headerTitleAlign: 'center',
-    headerTitle: ({ children }) => <HeaderTitle title={children} />,
+    headerTitle: ({ children }: { children: string }) => <HeaderTitle title={children} />,
     headerRight: () => <HeaderRight route={route} navigation={navigation} />
-  } as StackNavigationOptions | BottomTabNavigationOptions;
-};
+  }
+}
 
 export const HideLeftButton = {
   headerLeft: () => <></>,
   headerTitleAlign: 'left',
   headerLeftContainerStyle: {...t.pL3},
-} as BottomTabNavigationOptions;
+}
 
 export default HeaderOptions;

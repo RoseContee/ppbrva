@@ -76,8 +76,7 @@
                         });
                     });
                     return {
-                        keyword,
-                        filteredLocations,
+                        keyword, filteredLocations,
                     }
                 }
             }).mount('#app');

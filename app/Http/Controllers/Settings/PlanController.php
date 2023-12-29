@@ -63,7 +63,11 @@ class PlanController extends Controller
 
     public function destroy(Request $request) {
         $plans = explode(',', $request['plans']);
-        Plan::query()->doesntHave('members')->whereIn('id', $plans)->delete();
+        Plan::query()
+            ->doesntHave('members')
+            ->whereIn('id', $plans)
+            ->where('id', '<>', 8)
+            ->delete();
         return back()->with('error_message', 'Plans have been removed.');
     }
 }

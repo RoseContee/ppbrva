@@ -11,6 +11,6 @@ const Link: FC<TextProps> = (props): JSX.Element => {
       { props.children }
     </Text>
   )
-};
+}
 
 export default Link;

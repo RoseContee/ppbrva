@@ -240,6 +240,24 @@
             @enderror
         </div>
 
+        <!-- DUPR ID -->
+        <div class="mt-4">
+            <label for="dupr_id" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                DUPR ID
+            </label>
+            <input @class([
+                       "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
+                       "border-slate-300" => !$errors->first('dupr_id'),
+                       "border-red-500" => $errors->first('dupr_id'),
+                   ])
+                   type="text" id="dupr_id" name="dupr_id"
+                   value="{{ old('dupr_id') }}"
+                   placeholder="DUPR ID...">
+            @error('dupr_id')
+            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+            @enderror
+        </div>
+
         <!-- Disclaimer -->
         <div class="mt-4">
             <p><strong>DISCLAIMER:</strong></p>

@@ -27,8 +27,10 @@ Route::prefix('app')->group(function() {
         Route::post('reset-password', [AuthController::class, 'resetPassword']);
     });
 
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware(['auth:sanctum', 'active'])->group(function () {
         Route::get('me', [ProfileController::class, 'me']);
+        Route::get('location', [ProfileController::class, 'location']);
+        Route::get('plan', [ProfileController::class, 'plan']);
         Route::post('profile', [ProfileController::class, 'updateProfile']);
         Route::post('update-billing', [ProfileController::class, 'updateBilling']);
         Route::post('update-password', [ProfileController::class, 'updatePassword']);
@@ -50,6 +52,7 @@ Route::prefix('app')->group(function() {
         Route::post('members/{memberID}/remove', [MembersController::class, 'remove']);
 
         Route::prefix('settings')->group(function() {
+            Route::get('social', [SettingsController::class, 'socialMedia']);
             Route::get('dashboard', [SettingsController::class, 'dashboard']);
             Route::get('plans', [SettingsController::class, 'plans']);
             Route::get('kitchen-bars', [SettingsController::class, 'kitchenBars']);

@@ -42,7 +42,7 @@
                             </thead>
                             <tbody>
                                 <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                                    v-for="(activity, index) in filteredActivities" key="index">
+                                    v-for="(activity, index) in pageActivities" key="index">
                                     <td scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                                         <img class="w-10 h-10 rounded-full" v-if="activity.member.avatar"
                                              :src="activity.member.avatar"
@@ -70,7 +70,7 @@
                                     </td>
                                 </tr>
                                 <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                                    v-if="!filteredActivities.length">
+                                    v-if="!pageActivities.length">
                                     <td class="px-6 py-4 italic" colspan="5">
                                         No activities found.
                                     </td>
@@ -79,12 +79,12 @@
                         </table>
 
                         <nav class="flex items-center justify-between text-sm p-4"
-                             v-if="activities.length">
-                            <span v-text="pagination_info"></span>
+                             v-if="filteredActivities.length">
+                            <span v-text="paginationInfo"></span>
                             <ul class="flex -space-x-px h-8">
                                 <li>
                                     <a class="flex items-center justify-center bg-white border border-slate-300 focus:outline-none hover:bg-gray-100 focus:ring-gray-200 font-medium rounded-l-lg text-sm px-3 h-8 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 text-gray-500"
-                                       :class="{'cursor-not-allowed': firstPage}"
+                                       :class="{'cursor-not-allowed': isFirstPage}"
                                        v-on:click="prevPage">
                                         <span class="sr-only">Previous</span>
                                         <svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
@@ -94,7 +94,7 @@
                                 </li>
                                 <li>
                                     <a class="flex items-center justify-center bg-white border border-slate-300 focus:outline-none hover:bg-gray-100 focus:ring-gray-200 font-medium rounded-r-lg text-sm px-3 h-8 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 text-gray-500"
-                                       :class="{'cursor-not-allowed': lastPage}"
+                                       :class="{'cursor-not-allowed': isLastPage}"
                                        v-on:click="nextPage">
                                         <span class="sr-only">Next</span>
                                         <svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
@@ -112,51 +112,55 @@
 
     @push('scripts')
         <script type="module">
-            const { createApp, ref, computed } = Vue
+            const { createApp, ref, computed, watch } = Vue
 
             createApp({
                 setup() {
-                    const per_page = 50;
                     const activities = ref({!! $activities !!});
                     const keyword = ref('');
+                    const filteredActivities = computed(() => {
+                        return activities.value.filter(activity => {
+                            const q = keyword.value.toLowerCase();
+                            return activity.member.name.toLowerCase().includes(q)
+                                || activity.member.memberID.toLowerCase().includes(q)
+                                || activity.category.toLowerCase().includes(q)
+                                || activity.detail.toLowerCase().includes(q)
+                                || ('$' + activity.price).toLowerCase().includes(q)
+                                || activity.date.toLowerCase().includes(q);
+                        });
+                    });
+                    const per_page = 50;
                     const page = ref(1);
-                    const pagination_info = computed(() => {
-                        const total = activities.value.length;
+                    watch(keyword, () => page.value = 1);
+                    const pageActivities = computed(() => {
+                        return filteredActivities.value.filter((activity, index) => {
+                            return (page.value - 1) * per_page <= index
+                                && index < Math.min(page.value * per_page, filteredActivities.value.length);
+                        });
+                    });
+                    const paginationInfo = computed(() => {
+                        const total = filteredActivities.value.length;
                         const from = (page.value - 1) * per_page + 1;
                         const to = Math.min(page.value * per_page, total);
                         return `From ${from} to ${to} of ${total} activities`;
                     });
-                    const firstPage = computed(() => page.value === 1);
-                    const prevPage = () => {
-                        if (!firstPage.value) page.value--;
-                    }
-                    const lastPage = computed(() => page.value * per_page >= activities.value.length);
-                    const nextPage = () => {
-                        if (!lastPage.value) page.value++;
-                    }
-                    const filteredActivities = computed(() => {
-                        return activities.value.filter((activity, index) => {
-                            const q = keyword.value.toLowerCase();
-                            return (activity.member.name.toLowerCase().includes(q)
-                                    || activity.member.memberID.toLowerCase().includes(q)
-                                    || activity.category.toLowerCase().includes(q)
-                                    || activity.detail.toLowerCase().includes(q)
-                                    || ('$' + activity.price).toLowerCase().includes(q)
-                                    || activity.date.toLowerCase().includes(q)
-                                ) && (page.value - 1) * per_page <= index
-                                && index < Math.min(page.value * per_page, activities.value.length);
-                        });
+                    const isFirstPage = computed(() => {
+                        return page.value === 1;
                     });
-                    const currencyFormat = value => {
-                        return new Intl.NumberFormat('en-US', {
-                            style: 'currency',
-                            currency: 'USD',
-                        }).format(value);
+                    const prevPage = () => {
+                        if (!isFirstPage.value) page.value--;
                     }
+                    const isLastPage = computed(() => {
+                        return page.value * per_page >= filteredActivities.value.length;
+                    });
+                    const nextPage = () => {
+                        if (!isLastPage.value) page.value++;
+                    }
+                    const currencyFormat = window.currencyFormat;
 
                     return {
-                        activities, keyword,
-                        pagination_info, firstPage, prevPage, lastPage, nextPage, filteredActivities,
+                        keyword, filteredActivities, pageActivities,
+                        paginationInfo, isFirstPage, prevPage, isLastPage, nextPage,
                         currencyFormat,
                     }
                 }

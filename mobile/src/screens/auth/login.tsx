@@ -6,10 +6,8 @@ import {
 } from 'react-native';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import DeviceInfo from 'react-native-device-info';
-import { useAppDispatch } from '../../store';
-import { saveAccessToken, saveMe } from '../../store/user';
-import { saveStorage } from '../../utils/storage';
-import axios, { getErrorMessage } from '../../utils/axios';
+import { postLogin } from '../../requests';
+import { appRoutes, authRoutes } from '../../routes';
 import Image from 'react-native-scalable-image';
 import Layouts from '../../components/layouts';
 import Message from '../../components/basic/message';
@@ -25,11 +23,10 @@ import theme from '../../utils/theme';
 const Login: FC = (): JSX.Element => {
   const route = useRoute();
   const navigation = useNavigation();
-  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<string>();
-  const [email, setEmail] = useState<string>();
-  const [password, setPassword] = useState<string>();
+  const [message, setMessage] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const msg = (route.params as any)?.message;
 
   useFocusEffect(
@@ -51,31 +48,24 @@ const Login: FC = (): JSX.Element => {
 
   const login = () => {
     if (!email) {
-      setMessage('The email field is required.');
-      return;
+      return setMessage('The email field is required.');
     }
     if (!password) {
-      setMessage('The password field is required.');
-      return;
+      return setMessage('The password field is required.');
     }
     setLoading(true);
     setMessage('');
     const device = DeviceInfo.getDeviceId() + '-' + email;
-    axios.post(`/login`, {
-      email, password, device
-    }).then(({ data: { access_token, user }}) => {
-      saveStorage('access_token', access_token);
-      dispatch(saveAccessToken(access_token));
-      dispatch(saveMe(user));
-      if (user.original_pass) {
-        navigation.navigate('SetNewPassword' as never);
-      } else {
-        navigation.navigate('HomeScreen' as never);
-      }
-    }).catch(error => {
-      setMessage(getErrorMessage(error));
-    }).finally(() => setLoading(false));
-  };
+    postLogin({ email, password, device })
+      .then(user => {
+        const screen = user.original_pass
+          ? appRoutes.SetNewPassword
+          : appRoutes.HomeScreen;
+        navigation.navigate(screen as never);
+      })
+      .catch(setMessage)
+      .finally(() => setLoading(false));
+  }
 
   return (
     <Layouts auth={true} loading={loading}>
@@ -100,13 +90,13 @@ const Login: FC = (): JSX.Element => {
           Login
         </Button>
         <Link style={[t.textLg, t.mT8]}
-          onPress={() => navigation.navigate('ForgotPassword' as never)}
+          onPress={() => navigation.navigate(authRoutes.ForgotPassword as never)}
         >
           Reset Password
         </Link>
       </View>
     </Layouts>
   );
-};
+}
 
 export default Login;

@@ -34,17 +34,187 @@
                                 </div>
                             </div>
 
-                            <label for="table-search" class="sr-only">Search</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                                    </svg>
+                            <div class="flex items-center">
+                                <div class="relative mr-2">
+                                    <button class="inline-flex items-center text-gray-500 bg-white border border-slate-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                                            v-on:click="toggleFilter">
+                                        <span v-text="'Filter: ' + filterText"></span>
+                                        <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                        </svg>
+                                    </button>
+                                    <div class="absolute hidden z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
+                                         :style="{display: showFilter ? 'block' : 'none'}">
+                                        <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
+                                            <li>
+                                                <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                   href="javascript:void(0);"
+                                                   :class="{'bg-zinc-100': filter === 'all'}"
+                                                   v-on:click="filter = 'all'; showFilter = false;">
+                                                    All
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                   href="javascript:void(0);"
+                                                   :class="{'bg-zinc-100': filter === 'plan'}"
+                                                   v-on:click="filter = 'plan'; showFilter = false;">
+                                                    By Plan
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                   href="javascript:void(0);"
+                                                   :class="{'bg-zinc-100': filter === 'status'}"
+                                                   v-on:click="filter = 'status'; showFilter = false;">
+                                                    By Status
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                   href="javascript:void(0);"
+                                                   :class="{'bg-zinc-100': filter === 'lastAsc'}"
+                                                   v-on:click="filter = 'lastAsc'; showFilter = false;">
+                                                    Last Name A-Z
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                   href="javascript:void(0);"
+                                                   :class="{'bg-zinc-100': filter === 'lastDesc'}"
+                                                   v-on:click="filter = 'lastDesc'; showFilter = false;">
+                                                    Last Name Z-A
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                   href="javascript:void(0);"
+                                                   :class="{'bg-zinc-100': filter === 'firstAsc'}"
+                                                   v-on:click="filter = 'firstAsc'; showFilter = false;">
+                                                    First Name A-Z
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                   href="javascript:void(0);"
+                                                   :class="{'bg-zinc-100': filter === 'firstDesc'}"
+                                                   v-on:click="filter = 'firstDesc'; showFilter = false;">
+                                                    First Name Z-A
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                   href="javascript:void(0);"
+                                                   :class="{'bg-zinc-100': filter === 'highest'}"
+                                                   v-on:click="filter = 'highest'; showFilter = false;">
+                                                    Highest Membership ID#
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                   href="javascript:void(0);"
+                                                   :class="{'bg-zinc-100': filter === 'lowest'}"
+                                                   v-on:click="filter = 'lowest'; showFilter = false;">
+                                                    Lowest Membership ID#
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-                                <input class="block p-2 pl-10 text-sm text-gray-900 border border-slate-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                       type="text"
-                                       placeholder="Search name or member ID..."
-                                       v-model="keyword">
+
+                                <div class="relative hidden mr-2"
+                                     :style="{display: filter === 'plan' ? 'block' : 'none'}">
+                                    <button class="inline-flex items-center text-gray-500 bg-white border border-slate-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                                            v-on:click="togglePlanFilter">
+                                        <span v-text="'Plan: ' + planFilterText"></span>
+                                        <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                        </svg>
+                                    </button>
+                                    <div class="absolute hidden z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
+                                         :style="{display: showPlanFilter ? 'block' : 'none'}">
+                                        <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
+                                            @foreach ($plans as $plan)
+                                                <li>
+                                                    <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                       href="javascript:void(0);"
+                                                       :class="{'bg-zinc-100': planFilter === '{{ $plan['id'] }}'}"
+                                                       v-on:click="planFilter = '{{ $plan['id'] }}'; showPlanFilter = false;">
+                                                        {{ $plan['name'] }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="relative mr-2"
+                                     :style="{display: filter === 'status' ? 'block' : 'none'}">
+                                    <button class="inline-flex items-center text-gray-500 bg-white border border-slate-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                                            v-on:click="toggleStatusFilter">
+                                        <span v-text="'Status: ' + statusFilterText"></span>
+                                        <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                        </svg>
+                                    </button>
+                                    <div class="absolute hidden z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
+                                         :style="{display: showStatusFilter ? 'block' : 'none'}">
+                                        <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
+                                            <li>
+                                                <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                   href="javascript:void(0);"
+                                                   :class="{'bg-zinc-100': statusFilter === 'active'}"
+                                                   v-on:click="statusFilter = 'active'; showStatusFilter = false;">
+                                                    Active
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                   href="javascript:void(0);"
+                                                   :class="{'bg-zinc-100': statusFilter === 'inactive'}"
+                                                   v-on:click="statusFilter = 'inactive'; showStatusFilter = false;">
+                                                    Inactive
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                   href="javascript:void(0);"
+                                                   :class="{'bg-zinc-100': statusFilter === 'paused'}"
+                                                   v-on:click="statusFilter = 'paused'; showStatusFilter = false;">
+                                                    Paused
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                   href="javascript:void(0);"
+                                                   :class="{'bg-zinc-100': statusFilter === 'suspended'}"
+                                                   v-on:click="statusFilter = 'suspended'; showStatusFilter = false;">
+                                                    Suspended
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                   href="javascript:void(0);"
+                                                   :class="{'bg-zinc-100': statusFilter === 'pending'}"
+                                                   v-on:click="statusFilter = 'pending'; showStatusFilter = false;">
+                                                    Pending
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                                        </svg>
+                                    </div>
+                                    <input class="block p-2 pl-10 text-sm text-gray-900 border border-slate-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                           type="text"
+                                           placeholder="Search name or member ID..."
+                                           v-model="keyword">
+                                </div>
                             </div>
 
                             <a class="inline-flex items-center px-4 py-2 bg-blue border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
@@ -75,7 +245,7 @@
                             </thead>
                             <tbody>
                                 <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                                    v-for="(member, index) in filteredMembers" key="index">
+                                    v-for="(member, index) in pageMembers" key="index">
                                     <td class="w-4 p-4">
                                         <div class="flex items-center">
                                             <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
@@ -138,7 +308,7 @@
                                     </td>
                                 </tr>
                                 <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                                    v-if="!filteredMembers.length">
+                                    v-if="!pageMembers.length">
                                     <td class="px-6 py-4 italic" colspan="7">
                                         No members found.
                                     </td>
@@ -147,12 +317,12 @@
                         </table>
 
                         <nav class="flex items-center justify-between text-sm p-4"
-                             v-if="members.length">
-                            <span v-text="pagination_info"></span>
+                             v-if="filteredMembers.length">
+                            <span v-text="paginationInfo"></span>
                             <ul class="flex -space-x-px h-8">
                                 <li>
                                     <a class="flex items-center justify-center bg-white border border-slate-300 focus:outline-none hover:bg-gray-100 focus:ring-gray-200 font-medium rounded-l-lg text-sm px-3 h-8 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 text-gray-500"
-                                       :class="{'cursor-not-allowed': firstPage}"
+                                       :class="{'cursor-not-allowed': isFirstPage}"
                                        v-on:click="prevPage">
                                         <span class="sr-only">Previous</span>
                                         <svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
@@ -162,7 +332,7 @@
                                 </li>
                                 <li>
                                     <a class="flex items-center justify-center bg-white border border-slate-300 focus:outline-none hover:bg-gray-100 focus:ring-gray-200 font-medium rounded-r-lg text-sm px-3 h-8 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 text-gray-500"
-                                       :class="{'cursor-not-allowed': lastPage}"
+                                       :class="{'cursor-not-allowed': isLastPage}"
                                        v-on:click="nextPage">
                                         <span class="sr-only">Next</span>
                                         <svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
@@ -193,52 +363,125 @@
 
     @push('scripts')
         <script type="module">
-            const { createApp, ref, computed } = Vue
+            const { createApp, ref, computed, watch } = Vue
 
             createApp({
                 setup() {
-                    const per_page = 50;
                     const members = ref({!! $members !!});
                     const keyword = ref('');
+                    const filter = ref('all');
+                    const planFilter = ref('{{ $plans[0]['id'] ?? '' }}');
+                    const statusFilter = ref('active');
+                    const filteredMembers = computed(() => {
+                        return members.value.filter(member => {
+                            const q = keyword.value.toLowerCase();
+                            return (member.name.toLowerCase().includes(q)
+                                || member.memberID.toLowerCase().includes(q)
+                            ) && ((filter.value === 'plan' && member.plan_id == planFilter.value)
+                                || (filter.value === 'status' && member.status === statusFilter.value)
+                                || [
+                                    'all',
+                                    'lastAsc', 'lastDesc',
+                                    'firstAsc', 'firstDesc',
+                                    'highest', 'lowest'
+                                ].includes(filter.value)
+                            )
+                        }).sort((a, b) => {
+                            if (filter.value === 'lastAsc') {
+                                return a.lastname.toLowerCase().localeCompare(b.lastname.toLowerCase());
+                            }
+                            if (filter.value === 'lastDesc') {
+                                return b.lastname.toLowerCase().localeCompare(a.lastname.toLowerCase());
+                            }
+                            if (filter.value === 'firstAsc') {
+                                return a.firstname.toLowerCase().localeCompare(b.firstname.toLowerCase());
+                            }
+                            if (filter.value === 'firstDesc') {
+                                return b.firstname.toLowerCase().localeCompare(a.firstname.toLowerCase());
+                            }
+                            if (filter.value === 'highest') {
+                                return b.id - a.id;
+                            }
+                            return a.id - b.id;
+                        });
+                    });
+                    const per_page = 50;
                     const page = ref(1);
-                    const pagination_info = computed(() => {
-                        const total = members.value.length;
+                    watch(keyword, () => page.value = 1);
+                    const pageMembers = computed(() => {
+                        return filteredMembers.value.filter((member, index) => {
+                            return (page.value - 1) * per_page <= index
+                                && index < Math.min(page.value * per_page, filteredMembers.value.length)
+                        });
+                    });
+                    const showFilter = ref(false);
+                    const toggleFilter = () => {
+                        showFilter.value = !showFilter.value;
+                    }
+                    const filterText = computed(() => {
+                        if (filter.value === 'plan') return 'By Plan';
+                        if (filter.value === 'status') return 'By Status';
+                        if (filter.value === 'lastAsc') return 'Last Name A-Z';
+                        if (filter.value === 'lastDesc') return 'Last Name Z-A';
+                        if (filter.value === 'firstAsc') return 'First Name A-Z';
+                        if (filter.value === 'firstDesc') return 'First Name Z-A';
+                        if (filter.value === 'highest') return 'Highest Membership ID#';
+                        if (filter.value === 'lowest') return 'Lowest Membership ID#';
+                        return 'All';
+                    });
+                    const showPlanFilter = ref(false);
+                    const togglePlanFilter = () => {
+                        showPlanFilter.value = !showPlanFilter.value;
+                    }
+                    const planFilterText = computed(() => {
+                        const plans = {{ Js::from($plans) }};
+                        return plans.find(plan => plan.id == planFilter.value)?.name;
+                    });
+                    const showStatusFilter = ref(false);
+                    const toggleStatusFilter = () => {
+                        showStatusFilter.value = !showStatusFilter.value;
+                    }
+                    const statusFilterText = computed(() => {
+                        return [...statusFilter.value].map((char, index) => index ? char : char.toUpperCase()).join('');
+                    });
+                    const paginationInfo = computed(() => {
+                        const total = filteredMembers.value.length;
                         const from = (page.value - 1) * per_page + 1;
                         const to = Math.min(page.value * per_page, total);
                         return `From ${from} to ${to} of ${total} members`;
                     });
-                    const firstPage = computed(() => page.value === 1);
-                    const prevPage = () => {
-                        if (!firstPage.value) page.value--;
-                    }
-                    const lastPage = computed(() => page.value * per_page >= members.value.length);
-                    const nextPage = () => {
-                        if (!lastPage.value) page.value++;
-                    }
-                    const filteredMembers = computed(() => {
-                        return members.value.filter((member, index) => {
-                            const q = keyword.value.toLowerCase();
-                            return (member.name.toLowerCase().includes(q)
-                                    || member.memberID.toLowerCase().includes(q)
-                                    || member.status.toLowerCase().includes(q)
-                                ) && (page.value - 1) * per_page <= index
-                                && index < Math.min(page.value * per_page, members.value.length);
-                        });
+                    const isFirstPage = computed(() => {
+                        return page.value === 1;
                     });
+                    const prevPage = () => {
+                        if (!isFirstPage.value) page.value--;
+                    }
+                    const isLastPage = computed(() => {
+                        return page.value * per_page >= filteredMembers.value.length
+                    });
+                    const nextPage = () => {
+                        if (!isLastPage.value) page.value++;
+                    }
                     const selectedAll = ref(false);
                     const selectedItems = ref([]);
                     const selectAll = (checked) => {
-                        if (checked) selectedItems.value = members.value.map(item => item.id);
-                        else selectedItems.value = [];
+                        if (checked) {
+                            selectedItems.value = filteredMembers.value.map(member => member.id);
+                        } else {
+                            selectedItems.value = [];
+                        }
                     }
                     const selectItem = (item, checked) => {
-                        if (checked) selectedItems.value.push(item.id);
-                        else selectedItems.value = selectedItems.value.filter(el => el !== item.id);
-                        let all = true;
-                        members.value.forEach(item => {
-                            if (!selectedItems.value.includes(item.id)) all = false;
-                        });
-                        selectedAll.value = all;
+                        if (checked) {
+                            selectedItems.value = [
+                                ...selectedItems.value.filter(el => el <= item.id),
+                                item.id,
+                                ...selectedItems.value.filter(el => el > item.id),
+                            ];
+                        } else {
+                            selectedItems.value = selectedItems.value.filter(el => el !== item.id);
+                        }
+                        selectedAll.value = selectedItems.value.length === filteredMembers.value.length;
                     };
                     const showMenu = ref(false);
                     const toggleMenu = () => {
@@ -264,8 +507,11 @@
                     }
 
                     return {
-                        members, keyword,
-                        pagination_info, firstPage, prevPage, lastPage, nextPage, filteredMembers,
+                        keyword, filter, planFilter, statusFilter, filteredMembers, pageMembers,
+                        showFilter, toggleFilter, filterText,
+                        showPlanFilter, togglePlanFilter, planFilterText,
+                        showStatusFilter, toggleStatusFilter, statusFilterText,
+                        paginationInfo, isFirstPage, prevPage, isLastPage, nextPage,
                         selectedAll, selectAll, selectedItems, selectItem,
                         showMenu, toggleMenu, deleteItems,
                         sendInvite, approveMember,

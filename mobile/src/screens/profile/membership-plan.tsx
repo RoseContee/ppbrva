@@ -4,9 +4,12 @@ import {
   View
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { mainRoutes } from '../../routes';
+import {
+  PlanProp, fetchPlan, fetchPlans, postPlanChangeRequest
+} from '../../requests';
 import { useAppSelector } from '../../store';
-import { getMe } from '../../store/user';
-import axios, { getErrorMessage } from '../../utils/axios';
+import { getMe, getPlan } from '../../store/user';
 import { getStorage, saveStorage } from '../../utils/storage';
 import Layouts from '../../components/layouts';
 import Card from '../../components/basic/card';
@@ -22,24 +25,20 @@ import ProfileImage from '../../components/basic/profile-image';
 import { t } from 'react-native-tailwindcss';
 import s from '../../utils/styles';
 
-interface IPlanProps {
-  id: string,
-  name: string,
-  price: string,
-}
-
 const ProfileMembershipPlan: FC = (): JSX.Element => {
   const navigation = useNavigation();
   const me = useAppSelector(getMe);
+  const plan = useAppSelector(getPlan);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string>('');
-  const [plans, setPlans] = useState<IPlanProps[]>([]);
-  const [selectedPlan, setSelectedPlan] = useState<IPlanProps | null>();
+  const [plans, setPlans] = useState<PlanProp[]>([]);
+  const [selectedPlan, setSelectedPlan] = useState<PlanProp | null>();
   const [canRequest, setCanRequest] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
       initStates();
+      fetchPlan();
       getStorage('plan_requested_at').then(plan_requested_at => {
         const requested_at = Number(plan_requested_at);
         if (!requested_at
@@ -47,18 +46,16 @@ const ProfileMembershipPlan: FC = (): JSX.Element => {
         ) {
           setLoading(true);
           setCanRequest(true);
-          axios.get(`settings/plans`)
-          .then(({ data: { plans } }) => {
-            setPlans(plans);
-          }).catch(error => {
-            setMessage(getErrorMessage(error));
-          }).finally(() => setLoading(false));
+          fetchPlans()
+            .then(setPlans)
+            .catch(setMessage)
+            .finally(() => setLoading(false));
         } else {
           setMessage('You already requested to change your membership plan.');
         }
       });
       const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
-        navigation.navigate('Profile' as never);
+        navigation.navigate(mainRoutes.Profile as never);
         return true;
       });
       return () => subscribe.remove();
@@ -74,15 +71,14 @@ const ProfileMembershipPlan: FC = (): JSX.Element => {
   const onRequest = () => {
     setLoading(true);
     setMessage('');
-    axios.post(`plan-change-request`, {
-      plan: selectedPlan?.id,
-    }).then(() => {
-      setMessage('Your request has been sent successfully.');
-      setCanRequest(false);
-      saveStorage('plan_requested_at', new Date().getTime());
-    }).catch(error => {
-      setMessage(getErrorMessage(error));
-    }).finally(() => setLoading(false));
+    postPlanChangeRequest({ plan: selectedPlan?.id })
+      .then(() => {
+        setMessage('Your request has been sent successfully.');
+        setCanRequest(false);
+        saveStorage('plan_requested_at', new Date().getTime());
+      })
+      .catch(setMessage)
+      .finally(() => setLoading(false));
   }
 
   return (
@@ -92,7 +88,7 @@ const ProfileMembershipPlan: FC = (): JSX.Element => {
           <View style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.mB2]}>
             <View style={[t.flexShrink, t.pR3]}>
               <Title style={[t.textXl, s.textPrimary]}>
-                { me.plan?.name }
+                { plan.name }
               </Title>
               <Text style={[s.fontBodyLight, t.textBase, s.textGray, t.mT1]}>
                 Member #{ me.memberID }
@@ -121,7 +117,7 @@ const ProfileMembershipPlan: FC = (): JSX.Element => {
         <View style={[s.pX7]}>
           <Select style={[t.mT5]}
             placeholder="Change plan..."
-            data={plans.filter(el => el.id != me.plan?.id).map(plan => ({ label: plan.name, value: plan.id }))}
+            data={plans.filter(el => el.id != plan.id).map(plan => ({ label: plan.name, value: plan.id }))}
             value={selectedPlan && {label: selectedPlan.name, value: selectedPlan.id}}
             onChange={value => setSelectedPlan(plans.find(el => el.id === value.value))}
           />
@@ -134,6 +130,6 @@ const ProfileMembershipPlan: FC = (): JSX.Element => {
       }
     </Layouts>
   );
-};
+}
 
 export default ProfileMembershipPlan;

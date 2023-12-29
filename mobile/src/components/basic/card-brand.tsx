@@ -30,6 +30,6 @@ const CardBrand: FC<IProps> = ({ brand }): JSX.Element => {
       return <IconJCB width={width} height={height} />
   }
   return <Image source={IconUnknown} height={height} />
-};
+}
 
 export default CardBrand;

@@ -10,7 +10,8 @@ use App\Http\Controllers\Settings\IndexController as SettingsController;
 use App\Http\Controllers\Settings\PlanController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\CategoryController;
-use App\Http\Controllers\Settings\AppiconsController;
+use App\Http\Controllers\Settings\AppSettingsController;
+use App\Http\Controllers\ScanController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,7 +30,7 @@ Route::get('join', [MemberController::class, 'joinForm'])->name('members.join');
 Route::post('join', [MemberController::class, 'join']);
 Route::get('thanks', [MemberController::class, 'thanks'])->name('members.thanks');
 
-Route::middleware(['auth', 'role'])->group(function () {
+Route::middleware(['auth', 'active', 'role'])->group(function () {
     Route::get('/', function() {
         return redirect()->route('dashboard');
     });
@@ -51,20 +52,27 @@ Route::middleware(['auth', 'role'])->group(function () {
 
     Route::prefix('settings')->group(function () {
         Route::get('/', [SettingsController::class, 'index'])->name('settings.index');
-        Route::get('general', [SettingsController::class, 'general'])->name('settings.general');
-        Route::post('general', [SettingsController::class, 'update']);
         Route::resources([
             'plans' => PlanController::class,
             'roles' => RoleController::class,
             'categories' => CategoryController::class,
-            'appicons' => AppiconsController::class,
         ], [
             'as' => 'settings'
         ]);
         Route::delete('plans', [PlanController::class, 'destroy'])->name('settings.plans.destroy');
         Route::delete('roles', [RoleController::class, 'destroy'])->name('settings.roles.destroy');
         Route::delete('categories', [CategoryController::class, 'destroy'])->name('settings.categories.destroy');
+
+        Route::get('app-dashboard', [AppSettingsController::class, 'dashboard'])->name('settings.app-dashboard.index');
+        Route::post('app-dashboard', [AppSettingsController::class, 'storeDashboard'])->name('settings.app-dashboard.store');
+
+        Route::get('social-media', [AppSettingsController::class, 'socialMedia'])->name('settings.social-media.index');
+        Route::post('social-media', [AppSettingsController::class, 'storeSocialMedia'])->name('settings.social-media.store');
+
+        Route::get('general', [SettingsController::class, 'general'])->name('settings.general.index');
+        Route::post('general', [SettingsController::class, 'storeGeneral'])->name('settings.general.store');
     });
+    Route::resource('scan', ScanController::class)->only(['index', 'store']);
 
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');

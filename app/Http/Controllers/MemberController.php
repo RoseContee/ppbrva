@@ -9,7 +9,9 @@ use App\Models\Member;
 use App\Models\Plan;
 use App\Models\Setting;
 use App\Notifications\MemberInvite;
+use App\Rules\Family as FamilyRule;
 use App\Rules\State as StateRule;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
@@ -71,8 +73,19 @@ class MemberController extends Controller
     }
 
     public function index() {
-        $members = Member::query()->with(['plan'])->get();
+        $plans = Plan::query()->get(['id', 'name']);
+        $members = Member::query()
+            ->with([
+                'plan' => function ($query) {
+                    $query->select(['id', 'name']);
+                }
+            ])
+            ->get([
+                'id', 'avatar', 'memberID', 'firstname', 'lastname',
+                'email', 'phone', 'status', 'plan_id',
+            ]);
         return view('members.index', [
+            'plans' => $plans,
             'members' => $members,
         ]);
     }
@@ -81,10 +94,18 @@ class MemberController extends Controller
         $states = General::getStates();
         $locations = Location::query()->get();
         $plans = Plan::query()->get();
+        $secondary_limit = Setting::getSetting('secondary_limit', 5);
+        $primary_members = Member::query()
+            ->has('secondaries', '<', $secondary_limit)
+            ->where('plan_id', General::$FamilyPlanId)
+            ->whereNull('primary_id')
+            ->get();
         return view('members.add', [
             'states' => $states,
             'locations' => $locations,
             'plans' => $plans,
+            'family_plan_id' => General::$FamilyPlanId,
+            'primary_members' => $primary_members,
         ]);
     }
 
@@ -94,14 +115,16 @@ class MemberController extends Controller
             'lastname' => ['required'],
             'gender' => ['required', 'in:male,female,prefer_not_to_say'],
             'email' => ['required', 'email', 'unique:members'],
-            'dob' => ['required', 'dateFormat:m/d/Y'],
-            'address' => ['required'],
-            'city' => ['required'],
-            'state' => ['required', new StateRule],
-            'zipcode' => ['required'],
+            'dob' => ['nullable', 'dateFormat:m/d/Y'],
+            'state' => ['nullable', new StateRule],
             'location' => ['required', 'exists:locations,id'],
             'plan' => ['required', 'exists:plans,id'],
+            'family_type' => ['nullable', 'required_if:plan,8', 'in:primary,secondary'],
+            'primary_account' => ['nullable', new FamilyRule],
+            'additional_monthly_fee' => ['nullable', 'numeric'],
             'avatar' => ['nullable', 'image'],
+        ], [
+            'family_type.required_if' => 'The family type field is required when family plan is selected.',
         ]);
         $member = General::createMember($request, 'active');
         if (empty($member['id'])) {
@@ -119,38 +142,53 @@ class MemberController extends Controller
         $member = Member::query()->find($id);
         if (!$member) return back();
         $states = General::getStates();
-        $locations = Location::get();
-        $plans = Plan::get();
+        $locations = Location::query()->get();
+        $plans = Plan::query()->get();
+        $secondary_limit = Setting::getSetting('secondary_limit', 5);
+        $primary_members = Member::query()
+            ->whereHas('secondaries', function (Builder $query) use ($id) {
+                $query->where('id', '<>', $id);
+            }, '<', $secondary_limit)
+            ->where('id', '<>', $id)
+            ->where('plan_id', General::$FamilyPlanId)
+            ->whereNull('primary_id')
+            ->get();
         return view('members.add', [
             'member' => $member,
             'states' => $states,
             'locations' => $locations,
             'plans' => $plans,
+            'family_plan_id' => General::$FamilyPlanId,
+            'primary_members' => $primary_members,
         ]);
     }
 
     public function update(Request $request, $id) {
-        $member = Member::query()->find($id);
+        $member = Member::query()
+            ->with(['profile'])
+            ->find($id);
         if (!$member) return back();
         $request->validate([
             'firstname' => ['required'],
             'lastname' => ['required'],
             'gender' => ['required', 'in:male,female,prefer_not_to_say'],
             'email' => ['required', 'email', Rule::unique('members')->ignore($member['id'])],
-            'dob' => ['required', 'dateFormat:m/d/Y'],
-            'address' => ['required'],
-            'city' => ['required'],
-            'state' => ['required', new StateRule],
-            'zipcode' => ['required'],
+            'dob' => ['nullable', 'dateFormat:m/d/Y'],
+            'state' => ['nullable', new StateRule],
             'location' => ['required', 'exists:locations,id'],
             'plan' => ['required', 'exists:plans,id'],
+            'family_type' => ['nullable', 'required_if:plan,8', 'in:primary,secondary'],
+            'primary_account' => ['nullable', new FamilyRule($member['id'])],
+            'additional_monthly_fee' => ['nullable', 'numeric'],
             'avatar' => ['nullable', 'image'],
+        ], [
+            'family_type.required_if' => 'The family type field is required when family plan is selected.',
         ]);
         if ($member['status'] != 'pending') {
             $request->validate([
-                'status' => ['required', 'in:active,inactive,paused'],
-                'pause_from' => ['required_if:status,paused', 'dateFormat:m/d/Y'],
-                'pause_to' => ['required_if:status,paused', 'dateFormat:m/d/Y'],
+                'status' => ['required', 'in:active,paused,suspended,inactive'],
+                'pause_from' => ['nullable', 'required_if:status,paused', 'dateFormat:m/d/Y', 'before:pause_to'],
+                'pause_to' => ['nullable', 'required_if:status,paused', 'dateFormat:m/d/Y', 'after:pause_from'],
             ]);
         }
         $member = General::updateMember($member, $request);
@@ -159,7 +197,16 @@ class MemberController extends Controller
         }
         $member['location_id'] = $request['location'];
         $member['plan_id'] = $request['plan'];
+        $member['primary_id'] = null;
+        $member['secondary_fee'] = null;
+        if ($request['plan'] == General::$FamilyPlanId) {
+            if ($request['family_type'] == 'secondary') {
+                $member['primary_id'] = $request['primary_account'];
+            }
+            $member['secondary_fee'] = $request['additional_monthly_fee'];
+        }
         $member['membership_card_id'] = $request['membership_card_id'];
+        $member['note'] = $request['note'];
         if ($member['status'] !== 'pending') {
             $member['status'] = $request['status'];
             $member['pause_from'] = null;
@@ -170,9 +217,11 @@ class MemberController extends Controller
             }
         }
         $member->save();
-        $member->profile()->updateOrCreate([
-            'member_id' => $member['id'],
-        ]);
+        $profile = $member['profile'];
+        if ($profile['dupr_id'] != $request['dupr_id']) {
+            General::saveDUPR($profile, $request['dupr_id']);
+            $profile->save();
+        }
         return back()->with('info_message', 'Member has been updated.');
     }
 
@@ -215,7 +264,7 @@ class MemberController extends Controller
             ->with('error_message', 'Invitation has not been sent.');
     }
 
-    protected function notifyInvite($member) {
+    protected function notifyInvite(Member $member) {
         try {
             $member->notify(new MemberInvite([
                 'name' => $member['name'],

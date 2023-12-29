@@ -62,9 +62,9 @@
                             </thead>
                             <tbody>
                                 <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                                    v-for="(plan, index) in filteredPlans" key="index">
+                                    v-for="(plan, index) in pagePlans" key="index">
                                     <td class="w-4 p-4">
-                                        <div class="flex items-center" v-if="!plan.members.length">
+                                        <div class="flex items-center" v-if="!plan.members.length && plan.id !== 8">
                                             <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                                    type="checkbox"
                                                    :id="'plan-' + plan.id"
@@ -80,9 +80,9 @@
                                                v-text="plan.name"></a>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4" v-text="'$' + plan.price"></td>
+                                    <td class="px-6 py-4" v-text="currencyFormat(plan.price)"></td>
                                     <td class="px-6 py-4" v-text="plan.members.length"></td>
-                                    <td class="px-6 py-4">$0</td>
+                                    <td class="px-6 py-4" v-text="currencyFormat(plan.price * plan.members.length)"></td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center">
                                             <div class="h-2.5 w-2.5 rounded-full mr-2"
@@ -98,7 +98,7 @@
                                     </td>
                                 </tr>
                                 <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                                    v-if="!filteredPlans.length">
+                                    v-if="!pagePlans.length">
                                     <td class="px-6 py-4 italic" colspan="6">
                                         No plans found.
                                     </td>
@@ -108,11 +108,11 @@
 
                         <nav class="flex items-center justify-between text-sm p-4"
                              v-if="plans.length">
-                            <span v-text="pagination_info"></span>
+                            <span v-text="paginationInfo"></span>
                             <ul class="flex -space-x-px h-8">
                                 <li>
                                     <a class="flex items-center justify-center bg-white border border-slate-300 focus:outline-none hover:bg-gray-100 focus:ring-gray-200 font-medium rounded-l-lg text-sm px-3 h-8 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 text-gray-500"
-                                       :class="{'cursor-not-allowed': firstPage}"
+                                       :class="{'cursor-not-allowed': isFirstPage}"
                                        v-on:click="prevPage">
                                         <span class="sr-only">Previous</span>
                                         <svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
@@ -122,7 +122,7 @@
                                 </li>
                                 <li>
                                     <a class="flex items-center justify-center bg-white border border-slate-300 focus:outline-none hover:bg-gray-100 focus:ring-gray-200 font-medium rounded-r-lg text-sm px-3 h-8 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 text-gray-500"
-                                       :class="{'cursor-not-allowed': lastPage}"
+                                       :class="{'cursor-not-allowed': isLastPage}"
                                        v-on:click="nextPage">
                                         <span class="sr-only">Next</span>
                                         <svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
@@ -149,49 +149,55 @@
 
             createApp({
                 setup() {
-                    const per_page = 50;
                     const plans = ref({!! $plans !!});
+                    const per_page = 50;
                     const page = ref(1);
-                    const pagination_info = computed(() => {
+                    const pagePlans = computed(() => {
+                        return plans.value.filter((el, index) => {
+                            return (page.value - 1) * per_page <= index
+                                && index < Math.min(page.value * per_page, plans.value.length);
+                        });
+                    });
+                    const paginationInfo = computed(() => {
                         const total = plans.value.length;
                         const from = (page.value - 1) * per_page + 1;
                         const to = Math.min(page.value * per_page, total);
                         return `From ${from} to ${to} of ${total} plans`;
                     });
-                    const firstPage = computed(() => page.value === 1);
-                    const prevPage = () => {
-                        if (!firstPage.value) page.value--;
-                    }
-                    const lastPage = computed(() => page.value * per_page >= plans.value.length);
-                    const nextPage = () => {
-                        if (!lastPage.value) page.value++;
-                    }
-                    const filteredPlans = computed(() => {
-                        return plans.value.filter((el, index) => {
-                            return (page.value - 1) * per_page <= index && index < Math.min(page.value * per_page, plans.value.length);
-                        });
+                    const isFirstPage = computed(() => {
+                        return page.value === 1;
                     });
+                    const prevPage = () => {
+                        if (!isFirstPage.value) page.value--;
+                    }
+                    const isLastPage = computed(() => {
+                        return page.value * per_page >= plans.value.length;
+                    });
+                    const nextPage = () => {
+                        if (!isLastPage.value) page.value++;
+                    }
                     const selectedAll = ref(false);
                     const selectedItems = ref([]);
                     const selectAll = (checked) => {
                         if (checked) {
                             selectedItems.value = plans.value
                                 .filter(plan => !plan.members.length)
-                                .map(item => item.id);
+                                .map(plan => plan.id);
                         } else {
                             selectedItems.value = [];
                         }
                     }
                     const selectItem = (item, checked) => {
-                        if (checked) selectedItems.value.push(item.id);
-                        else selectedItems.value = selectedItems.value.filter(el => el !== item.id);
-                        let all = true;
-                        plans.value
-                            .filter(plan => !plan.members.length)
-                            .forEach(item => {
-                                if (!selectedItems.value.includes(item.id)) all = false;
-                            });
-                        selectedAll.value = all;
+                        if (checked) {
+                            selectedItems.value = [
+                                ...selectedItems.value.filter(el => el <= item.id),
+                                item.id,
+                                ...selectedItems.value.filter(el => el > item.id),
+                            ];
+                        } else {
+                            selectedItems.value = selectedItems.value.filter(el => el !== item.id);
+                        }
+                        selectedAll.value = selectedItems.value.length === plans.value.length;
                     };
                     const showMenu = ref(false);
                     const toggleMenu = () => {
@@ -203,12 +209,14 @@
                             document.deleteForm.submit();
                         }
                     }
+                    const currencyFormat = window.currencyFormat;
 
                     return {
-                        plans,
-                        pagination_info, firstPage, prevPage, lastPage, nextPage, filteredPlans,
+                        plans, pagePlans,
+                        paginationInfo, isFirstPage, prevPage, isLastPage, nextPage,
                         selectedAll, selectAll, selectedItems, selectItem,
                         showMenu, toggleMenu, deleteItems,
+                        currencyFormat,
                     }
                 }
             }).mount('#app');
