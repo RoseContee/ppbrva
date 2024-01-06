@@ -7,7 +7,7 @@ import {
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { mainRoutes } from '../../routes';
 import { postUpdateBilling } from '../../requests';
-import { useAppDispatch, useAppSelector } from '../../store';
+import { useAppSelector } from '../../store';
 import { getMe } from '../../store/user';
 import MaskInput from 'react-native-mask-input';
 import Layouts from '../../components/layouts';
@@ -24,7 +24,6 @@ import theme from '../../utils/theme';
 
 const BillingProfile: FC = (): JSX.Element => {
   const navigation = useNavigation();
-  const dispatch = useAppDispatch();
   const me = useAppSelector(getMe);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string>();
@@ -54,13 +53,13 @@ const BillingProfile: FC = (): JSX.Element => {
     setZipcode('');
   }
 
-  const addCard = () => {
+  const onAddCard = () => {
     setLoading(true);
     setMessage('');
     postUpdateBilling({ number, expires, cvv, address, zipcode })
       .then(() => {
-        initStates();
         setMessage('New card added successfully');
+        initStates();
       })
       .catch(setMessage)
       .finally(() => setLoading(false));
@@ -123,7 +122,7 @@ const BillingProfile: FC = (): JSX.Element => {
         </View>
         <Button style={[s.bgPrimary, s.mT7]}
           disabled={!number || !expires || !cvv || !address || !zipcode}
-          onPress={addCard}
+          onPress={onAddCard}
         >
           Add Card
         </Button>

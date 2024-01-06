@@ -74,7 +74,10 @@ class AuthController extends Controller
                     'created_at' => now(),
                 ]);
             }
-            $user->notify(new MemberResetCode($code ?? $reset->code, $this->code_expiration));
+            $user->notify(new MemberResetCode([
+                'code' => $code ?? $reset->code,
+                'expiration' => $this->code_expiration,
+            ]));
         } catch (\Exception $exception) {
             throw ValidationException::withMessages([
                 'email' => [$exception->getMessage()],

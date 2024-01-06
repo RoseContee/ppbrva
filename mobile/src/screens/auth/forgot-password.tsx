@@ -4,8 +4,8 @@ import {
   View
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { postForgotPassword } from '../../requests';
 import { authRoutes } from '../../routes';
+import { postForgotPassword } from '../../requests';
 import Layouts from '../../components/layouts';
 import Message from '../../components/basic/message';
 import Button from '../../components/basic/button';
@@ -21,9 +21,6 @@ const ForgotPassword: FC = (): JSX.Element => {
   const [email, setEmail] = useState<string>();
 
   const sendResetCode = () => {
-    if (!email) {
-      return setMessage('The email field is required.');
-    }
     setLoading(true);
     setMessage('');
     postForgotPassword({ email })
@@ -47,6 +44,7 @@ const ForgotPassword: FC = (): JSX.Element => {
           value={email} onChangeText={setEmail}
         />
         <Button style={[s.bgPrimary, s.mT7]}
+          disabled={!email}
           onPress={sendResetCode}
         >
           Send reset code

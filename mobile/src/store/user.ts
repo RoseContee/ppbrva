@@ -20,6 +20,7 @@ export interface MeProps {
   card_type: string,
   card_last4: string,
   status: string,
+  is_child: boolean,
   profile: {
     share_age_gender: boolean,
     dupr_id: string,
@@ -47,6 +48,7 @@ interface LocationProps {
 interface PlanProps {
   id: string,
   name: string,
+  family: boolean,
 }
 
 interface StateProps {

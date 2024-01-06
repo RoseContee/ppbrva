@@ -10,12 +10,12 @@ class ActivityItem extends Model
     use HasFactory;
 
     protected $fillable = [
-        'orderID', // detail in activities table
+        'activity_id',
         'name',
         'price',
     ];
 
     public function activity() {
-        return $this->belongsTo(Activity::class, 'orderID', 'detail');
+        return $this->belongsTo(Activity::class);
     }
 }

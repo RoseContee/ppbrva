@@ -9,6 +9,10 @@ class Setting extends Model
 {
     use HasFactory;
 
+    public const DefaultContactEmail = 'info@ppbrva.com';
+    public const DefaultDuprLink = 'https://ppbrva.com/dupr';
+    public const DefaultSecondaryLimit = 5;
+
     protected $fillable = [
         'key', 'value',
     ];

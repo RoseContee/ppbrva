@@ -20,7 +20,7 @@ class ActivityController extends Controller
             ->orderBy('member_id')
             ->orderBy('category')
             ->orderBy('detail')
-            ->get(['member_id', 'category', 'detail', 'price', 'date', 'from', 'invoiceID']);
+            ->get();
         return view('activity.index', [
             'activities' => $activities,
         ]);
@@ -57,9 +57,9 @@ class ActivityController extends Controller
 
     public function edit($id) {
         $activity = Activity::query()
-            ->editable()
-            ->where('id', $id)
-            ->first();
+            ->where('from', 'admin')
+            ->whereNull('invoice_id')
+            ->find($id);
         if (!$activity) return back();
         $members = Member::query()->get();
         $categories = Category::query()->get();
@@ -72,9 +72,9 @@ class ActivityController extends Controller
 
     public function update(Request $request, $id) {
         $activity = Activity::query()
-            ->editable()
-            ->where('id', $id)
-            ->first();
+            ->where('from', 'admin')
+            ->whereNull('invoice_id')
+            ->find($id);
         if (!$activity) return back();
         $request->validate([
             'member' => ['required', 'exists:members,id'],
@@ -95,7 +95,8 @@ class ActivityController extends Controller
 
     public function destroy($id) {
         Activity::query()
-            ->editable()
+            ->where('from', 'admin')
+            ->whereNull('invoice_id')
             ->where('id', $id)
             ->delete();
         return redirect()->route('activity.index')

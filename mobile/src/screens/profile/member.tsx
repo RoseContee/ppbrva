@@ -58,9 +58,7 @@ const MemberProfile: FC = (): JSX.Element => {
         navigation.navigate(mainRoutes.Profile as never);
         return true;
       });
-      return () => {
-        subscribe.remove();
-      }
+      return () => subscribe.remove();
     }, [])
   );
 
@@ -90,33 +88,6 @@ const MemberProfile: FC = (): JSX.Element => {
   }
 
   const updateProfile = () => {
-    if (!firstname) {
-      return setMessage('The first name field is required.');
-    }
-    if (!lastname) {
-      return setMessage('The last name field is required.');
-    }
-    if (!gender) {
-      return setMessage('The gender field is required.');
-    }
-    if (!email) {
-      return setMessage('The email field is required.');
-    }
-    if (!dob) {
-      return setMessage('The date of birth field is required.');
-    }
-    if (!address) {
-      return setMessage('The address field is required.');
-    }
-    if (!city) {
-      return setMessage('The city field is required.');
-    }
-    if (!state) {
-      return setMessage('The state field is required.');
-    }
-    if (!zipcode) {
-      return setMessage('The zip code field is required.');
-    }
     setLoading(true);
     setMessage('');
     const formData = new FormData();

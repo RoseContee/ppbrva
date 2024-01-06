@@ -2,14 +2,19 @@
 
 namespace App\Helpers;
 
+use App\Mail\NewMemberCreated;
+use App\Mail\PlanChangeRequest;
 use App\Models\Member;
 use App\Models\MemberProfile;
+use App\Models\Plan;
+use App\Models\Setting;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class General
 {
-    public static int $FamilyPlanId = 8;
 
     public static function removeImage(string $image = null) {
         $image = public_path($image);
@@ -72,6 +77,11 @@ class General
         ];
     }
 
+    public static function generateMemberID($id) {
+        if ($id >= 10000) return 'PPB'.$id;
+        return 'PPB'.str_pad($id, 4, '0', STR_PAD_LEFT);
+    }
+
     public static function saveDUPR(MemberProfile $profile, string|null $duprId) {
         $dupr = new Dupr();
         $duprInfo = $dupr->getPlayInfo($duprId);
@@ -84,83 +94,22 @@ class General
         $profile['losses'] = $duprInfo['losses'] ?? null;
     }
 
-    public static function createMember(Request $request, string $status) {
+    public static function updateCloverCustomer(Member $member, Request $request) {
         $clover = new Clover();
-        $customer = $clover->createCustomer([
-            'firstname' => $request['firstname'],
-            'lastname' => $request['lastname'],
-            'email' => $request['email'],
-            'phone' => $request['phone'],
-        ]);
-        if (empty($customer['id'])) return $customer;
-        $primary_id = $secondary_fee = null;
-        if ($request['plan'] == self::$FamilyPlanId) {
-            if ($request['family_type'] == 'secondary') {
-                $primary_id = $request['primary_account'];
-            }
-            $secondary_fee = $request['additional_monthly_fee'];
-        }
-        $password = Str::random(8);
-        $member = Member::query()->create([
-            'memberID' => Str::random(),
-            'firstname' => $request['firstname'],
-            'lastname' => $request['lastname'],
-            'email' => $request['email'],
-            'password' => bcrypt($password),
-            'original_pass' => $password,
-            'phone' => $request['phone'],
-            'gender' => $request['gender'],
-            'dob' => date('Y-m-d', strtotime($request['dob'])),
-            'address' => $request['address'],
-            'city' => $request['city'],
-            'state' => $request['state'],
-            'zipcode' => $request['zipcode'],
-            'location_id' => $request['location'],
-            'plan_id' => $request['plan'],
-            'primary_id' => $primary_id,
-            'is_child' => null,
-            'secondary_fee' => $secondary_fee,
-            'membership_card_id' => $request['membership_card_id'],
-            'note' => $request['note'],
-            'customerID' => $customer['id'],
-            'status' => $status,
-        ]);
-        if ($request->hasFile('avatar')) {
-            $member['avatar'] = 'uploads/'.$request->file('avatar')->store('avatars');
-        }
-        if ($member['id'] < 10000) {
-            $member['memberID'] = 'PPB'.str_pad($member['id'], 4, '0', STR_PAD_LEFT);
-        } else {
-            $member['memberID'] = 'PPB'.$member['id'];
-        }
-        $member->save();
-        $profile = $member['profile'];
-        self::saveDUPR($profile, $request['dupr_id']);
-        $profile->save();
-        return $member;
-    }
-
-    public static function updateMember(Member $member, Request $request) {
-        if ($member['firstname'] != $request['firstname']
-            || $member['lastname'] != $request['lastname']
-            || $member['email'] != $request['email']
-            || $member['phone'] != $request['phone']
-        ) {
-            $clover = new Clover();
-            $customer = $clover->getCustomer($member['customerID']);
-            if (!empty($customer['id'])) {
-                $customer = $clover->updateCustomer($member['customerID'], [
-                    'firstname' => $request['firstname'],
-                    'lastname' => $request['lastname'],
-                    'email' => [
-                        'id' => $customer['emailAddresses']['elements'][0]['id'] ?? '',
-                        'value' => $request['email'],
-                    ],
-                    'phone' => [
-                        'id' => $customer['phoneNumbers']['elements'][0]['id'] ?? '',
-                        'value' => $request['phone'],
-                    ],
-                ]);
+        $customer = $clover->getCustomer($member['customerID']);
+        if (!empty($customer['id'])) {
+            $customer = $clover->updateCustomer($member['customerID'], [
+                'firstname' => $request['firstname'],
+                'lastname' => $request['lastname'],
+                'email' => [
+                    'id' => $customer['emailAddresses']['elements'][0]['id'] ?? '',
+                    'value' => $request['email'],
+                ],
+                'phone' => [
+                    'id' => $customer['phoneNumbers']['elements'][0]['id'] ?? '',
+                    'value' => $request['phone'],
+                ],
+            ]);
             /*
             } else {
                 $customer = $clover->createCustomer([
@@ -170,15 +119,88 @@ class General
                     'phone' => $request['phone'],
                 ]);
             */
+            if (!empty($customer['id'])) {
+                $clover->updateCustomerLastname($member['customerID'], "{$request['lastname']}-{$member['id']}");
             }
-            if (empty($customer['id'])) return $customer;
-            $member['firstname'] = $request['firstname'];
-            $member['lastname'] = $request['lastname'];
-            $member['email'] = $request['email'];
-            $member['phone'] = $request['phone'];
         }
+        return $customer;
+    }
+
+    public static function createMember(Request $request, string $status) {
+        $clover = new Clover();
+        $customer = $clover->createCustomer([
+            'firstname' => $request['firstname'],
+            'lastname' => $request['lastname'],
+            'email' => $request['email'],
+            'phone' => $request['phone'],
+        ]);
+        if (empty($customer['id'])) return $customer;
+        $primary_id = $is_child = $secondary_fee = null;
+        if ($request['plan'] == Plan::FamilyPlanId
+            && $request['family_type'] == 'secondary'
+        ) {
+            $primary_id = $request['primary_account'];
+            $is_child = $request['is_child'];
+            $secondary_fee = $request['additional_monthly_fee'];
+        }
+        $password = Str::random(8);
+        if ($dob = $request['dob']) {
+            $dob = date('Y-m-d', strtotime($dob));
+        }
+        $member = Member::query()->create([
+            'memberID' => Str::random(),
+            'firstname' => $request['firstname'],
+            'lastname' => $request['lastname'],
+            'email' => $request['email'],
+            'password' => bcrypt($password),
+            'original_pass' => $password,
+            'phone' => $request['phone'],
+            'gender' => $request['gender'],
+            'dob' => $dob,
+            'address' => $request['address'],
+            'city' => $request['city'],
+            'state' => $request['state'],
+            'zipcode' => $request['zipcode'],
+            'location_id' => $request['location'],
+            'plan_id' => $request['plan'],
+            'primary_id' => $primary_id,
+            'is_child' => $is_child,
+            'secondary_fee' => $secondary_fee,
+            'membership_card_id' => $request['membership_card_id'],
+            'note' => $request['note'],
+            'customerID' => $customer['id'],
+            'status' => $status,
+        ]);
+        if ($request->hasFile('avatar')) {
+            $member['avatar'] = 'uploads/'.$request->file('avatar')->store('avatars');
+        }
+        $member['memberID'] = self::generateMemberID($member['id']);
+        $member->save();
+        $profile = $member['profile'];
+        self::saveDUPR($profile, $request['dupr_id']);
+        $profile->save();
+        $clover->updateCustomerLastname($member['customerID'], "{$request['lastname']}-{$member['id']}");
+        return $member;
+    }
+
+    public static function updateMember(Member $member, Request $request) {
+        if ($member['firstname'] != $request['firstname']
+            || $member['lastname'] != $request['lastname']
+            || $member['email'] != $request['email']
+            || $member['phone'] != $request['phone']
+        ) {
+            $customer = self::updateCloverCustomer($member, $request);
+            if (empty($customer['id'])) return $customer;
+        }
+        $member['firstname'] = $request['firstname'];
+        $member['lastname'] = $request['lastname'];
+        $member['email'] = $request['email'];
+        $member['phone'] = $request['phone'];
         $member['gender'] = $request['gender'];
-        $member['dob'] = date('Y-m-d', strtotime($request['dob']));
+        if ($dob = $request['dob']) {
+            $dob = date('Y-m-d', strtotime($dob));
+        }
+        $member['dob'] = $dob;
         $member['address'] = $request['address'];
         $member['city'] = $request['city'];
         $member['state'] = $request['state'];
@@ -188,5 +210,40 @@ class General
             $member['avatar'] = 'uploads/'.$request->file('avatar')->store('avatars');
         }
         return $member;
+    }
+
+    public static function getGenderAge($member) {
+        $profile = $member['profile'];
+        $gender = $member['gender'] ?: $profile['gender'];
+        if (!$gender || $gender == 'prefer_not_to_say') $gender = '';
+        if (!$member['dob']) $age = $profile['age'];
+        else $age = Carbon::parse($member['dob'])->age;
+        $profile['gender'] = $gender;
+        $profile['age'] = $age;
+    }
+
+    public static function sendNewMemberCreatedEmail($member) {
+        try {
+            $default = Setting::DefaultContactEmail;
+            $contact_email = Setting::getSetting('contact_email', $default);
+            Mail::to($contact_email)->send(new NewMemberCreated([
+                'member' => $member,
+            ]));
+        } catch (\Exception $exception) {}
+    }
+
+    public static function sendPlanChangeRequestEmail($member, $newPlan) {
+        try {
+            $default = Setting::DefaultContactEmail;
+            $plan = Plan::query()->find($newPlan);
+            $contact_email = Setting::getSetting('contact_email', $default);
+            Mail::to($contact_email)->send(new PlanChangeRequest([
+                'plan' => $plan['name'] ?? 'Unknown',
+                'member' => $member,
+            ]));
+        } catch (\Exception $exception) {
+            return false;
+        }
+        return true;
     }
 }

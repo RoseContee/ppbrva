@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\InvoicesController;
 use App\Http\Controllers\Api\MembersController;
 use App\Http\Controllers\Api\SettingsController;
+use App\Http\Controllers\Api\PodPlayController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+Route::get('podplay', [PodPlayController::class, 'podplaycreate']);
+Route::get('podplay/plans', [PodPlayController::class, 'podplayplans']);
+Route::get('podplay/sync', [PodPlayController::class, 'podplaysync']);
 
 Route::prefix('app')->group(function() {
     Route::middleware('guest:sanctum')->group(function () {
@@ -35,6 +40,12 @@ Route::prefix('app')->group(function() {
         Route::post('update-billing', [ProfileController::class, 'updateBilling']);
         Route::post('update-password', [ProfileController::class, 'updatePassword']);
         Route::post('plan-change-request', [ProfileController::class, 'planChangeRequest']);
+        Route::get('families', [ProfileController::class, 'families']);
+        Route::post('invite-member', [ProfileController::class, 'inviteMember']);
+        Route::post('add-child', [ProfileController::class, 'addChild']);
+        Route::get('family-member/{memberID}', [ProfileController::class, 'familyMember']);
+        Route::post('family-member/{memberID}', [ProfileController::class, 'updateFamilyMember']);
+        Route::delete('family-member/{memberID}', [ProfileController::class, 'removeFamilyMember']);
 
         Route::get('invoices', [InvoicesController::class, 'invoices']);
         Route::get('invoices/{invoiceID}', [InvoicesController::class, 'invoiceDetail']);
@@ -61,6 +72,6 @@ Route::prefix('app')->group(function() {
         Route::get('logout', function (Request $request) {
             $request->user()->currentAccessToken()->delete();
             return response()->json(null, 204);
-        });
+        })->withoutMiddleware('active');
     });
 });

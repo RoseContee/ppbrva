@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\General;
-use App\Mail\NewMemberCreated;
 use App\Models\Location;
 use App\Models\Member;
 use App\Models\Plan;
@@ -13,7 +12,6 @@ use App\Rules\Family as FamilyRule;
 use App\Rules\State as StateRule;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 
 class MemberController extends Controller
@@ -52,14 +50,7 @@ class MemberController extends Controller
         if (empty($member['id'])) {
             return back()->withInput()->with('error_message', $member);
         }
-        try {
-            $contact_email = Setting::getSetting('contact_email', 'info@divstrong.com');
-            $plan = Plan::query()->find($request['plan']);
-            Mail::to($contact_email)->send(new NewMemberCreated([
-                'plan' => $plan['name'],
-                'member' => $member,
-            ]));
-        } catch (\Exception $exception) {}
+        General::sendNewMemberCreatedEmail($member);
         session(['new_member' => $member['memberID']]);
         return redirect()->route('members.thanks');
     }
@@ -94,17 +85,17 @@ class MemberController extends Controller
         $states = General::getStates();
         $locations = Location::query()->get();
         $plans = Plan::query()->get();
-        $secondary_limit = Setting::getSetting('secondary_limit', 5);
+        $secondary_limit = Setting::getSetting('secondary_limit', Setting::DefaultSecondaryLimit);
         $primary_members = Member::query()
-            ->has('secondaries', '<', $secondary_limit)
-            ->where('plan_id', General::$FamilyPlanId)
+            ->has('families', '<', $secondary_limit)
+            ->where('plan_id', Plan::FamilyPlanId)
             ->whereNull('primary_id')
             ->get();
         return view('members.add', [
             'states' => $states,
             'locations' => $locations,
             'plans' => $plans,
-            'family_plan_id' => General::$FamilyPlanId,
+            'family_plan_id' => Plan::FamilyPlanId,
             'primary_members' => $primary_members,
         ]);
     }
@@ -113,7 +104,7 @@ class MemberController extends Controller
         $request->validate([
             'firstname' => ['required'],
             'lastname' => ['required'],
-            'gender' => ['required', 'in:male,female,prefer_not_to_say'],
+            'gender' => ['nullable', 'in:male,female,prefer_not_to_say'],
             'email' => ['required', 'email', 'unique:members'],
             'dob' => ['nullable', 'dateFormat:m/d/Y'],
             'state' => ['nullable', new StateRule],
@@ -144,13 +135,13 @@ class MemberController extends Controller
         $states = General::getStates();
         $locations = Location::query()->get();
         $plans = Plan::query()->get();
-        $secondary_limit = Setting::getSetting('secondary_limit', 5);
+        $secondary_limit = Setting::getSetting('secondary_limit', Setting::DefaultSecondaryLimit);
         $primary_members = Member::query()
-            ->whereHas('secondaries', function (Builder $query) use ($id) {
+            ->whereHas('families', function (Builder $query) use ($id) {
                 $query->where('id', '<>', $id);
             }, '<', $secondary_limit)
             ->where('id', '<>', $id)
-            ->where('plan_id', General::$FamilyPlanId)
+            ->where('plan_id', Plan::FamilyPlanId)
             ->whereNull('primary_id')
             ->get();
         return view('members.add', [
@@ -158,7 +149,7 @@ class MemberController extends Controller
             'states' => $states,
             'locations' => $locations,
             'plans' => $plans,
-            'family_plan_id' => General::$FamilyPlanId,
+            'family_plan_id' => Plan::FamilyPlanId,
             'primary_members' => $primary_members,
         ]);
     }
@@ -171,7 +162,7 @@ class MemberController extends Controller
         $request->validate([
             'firstname' => ['required'],
             'lastname' => ['required'],
-            'gender' => ['required', 'in:male,female,prefer_not_to_say'],
+            'gender' => ['nullable', 'in:male,female,prefer_not_to_say'],
             'email' => ['required', 'email', Rule::unique('members')->ignore($member['id'])],
             'dob' => ['nullable', 'dateFormat:m/d/Y'],
             'state' => ['nullable', new StateRule],
@@ -198,11 +189,11 @@ class MemberController extends Controller
         $member['location_id'] = $request['location'];
         $member['plan_id'] = $request['plan'];
         $member['primary_id'] = null;
+        $member['is_child'] = null;
         $member['secondary_fee'] = null;
-        if ($request['plan'] == General::$FamilyPlanId) {
-            if ($request['family_type'] == 'secondary') {
-                $member['primary_id'] = $request['primary_account'];
-            }
+        if ($request['plan'] == Plan::FamilyPlanId && $request['family_type'] == 'secondary') {
+            $member['primary_id'] = $request['primary_account'];
+            $member['is_child'] = $request['is_child'];
             $member['secondary_fee'] = $request['additional_monthly_fee'];
         }
         $member['membership_card_id'] = $request['membership_card_id'];

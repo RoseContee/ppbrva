@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('original_pass', 8)->nullable();
             $table->string('phone')->nullable();
-            $table->enum('gender', ['male', 'female', 'prefer_not_to_say'])->default('prefer_not_to_say');
+            $table->enum('gender', ['male', 'female', 'prefer_not_to_say'])->nullable();
             $table->date('dob')->nullable();
             $table->string('address')->nullable();
             $table->string('city', 100)->nullable();
@@ -40,6 +40,7 @@ return new class extends Migration
             $table->enum('status', ['active', 'inactive', 'paused', 'suspended', 'pending'])->default('active');
             $table->date('pause_from')->nullable();
             $table->date('pause_to')->nullable();
+            $table->string('podplay_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

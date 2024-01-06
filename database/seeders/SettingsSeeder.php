@@ -81,5 +81,9 @@ class SettingsSeeder extends Seeder
             'key' => 'secondary_limit',
             'value' => 5,
         ]);
+        Setting::query()->create([
+            'key' => 'last_order_updated',
+            'value' => null,
+        ]);
     }
 }

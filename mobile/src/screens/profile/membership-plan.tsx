@@ -19,6 +19,7 @@ import Title from '../../components/basic/title';
 import Button from '../../components/basic/button';
 import Select from '../../components/basic/select';
 import ProfileImage from '../../components/basic/profile-image';
+import FamilyMembers from '../../components/basic/family-members';
 // import Link from '../../components/basic/link';
 // import IconPDF from '../../assets/img/icons/pdf.svg';
 
@@ -109,6 +110,10 @@ const ProfileMembershipPlan: FC = (): JSX.Element => {
             </Link>
           </View> */}
         </Card>
+        {
+          plan.family &&
+          <FamilyMembers style={[t.mT4]} />
+        }
         <Title style={[t.textXl, t.mT12]}>Update Plan</Title>
       </View>
       <Message style={[t.mT6]} text={message} />

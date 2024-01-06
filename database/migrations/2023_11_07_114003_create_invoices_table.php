@@ -18,8 +18,6 @@ return new class extends Migration
             $table->string('period');
             $table->decimal('amount');
             $table->boolean('paid')->default(false);
-            $table->string('plan_name');
-            $table->decimal('plan_price');
             $table->string('card_type', 11)->nullable();
             $table->string('card_last4', 4)->nullable();
             $table->dateTime('paid_at')->nullable();

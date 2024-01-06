@@ -34,7 +34,7 @@ class GetKitchenBarItems extends Command
             if (!$category || !strcasecmp($category, 'Merchandise')) {
                 continue;
             }
-            KitchenBar::updateOrCreate([
+            KitchenBar::query()->updateOrCreate([
                 'itemID' => $item['itemID'],
             ], [
                 'item' => $item['item'],
@@ -43,6 +43,8 @@ class GetKitchenBarItems extends Command
                 'sortOrder' => $item['sortOrder'],
             ]);
         }
-        KitchenBar::whereNotIn('itemID', array_keys($inventoryItems))->delete();
+        KitchenBar::query()
+            ->whereNotIn('itemID', array_keys($inventoryItems))
+            ->delete();
     }
 }

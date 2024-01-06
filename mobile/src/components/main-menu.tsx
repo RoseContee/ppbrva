@@ -9,9 +9,7 @@ import {
 import { DrawerContentComponentProps, DrawerContentScrollView } from '@react-navigation/drawer';
 import { useFocusEffect } from '@react-navigation/native';
 import { appRoutes, mainRoutes } from '../routes';
-import {
-  fetchLocation, fetchSocial, logout as requestLogout
-} from '../requests';
+import { fetchLocation, fetchSocial, logout } from '../requests';
 import { useAppSelector } from '../store';
 import { getSocial } from '../store/settings';
 import { getLocation } from '../store/user';
@@ -56,9 +54,6 @@ const MainMenu: FC<DrawerContentComponentProps> = (props): JSX.Element => {
   const location = useAppSelector(getLocation);
   const social = useAppSelector(getSocial);
   const { navigation } = props;
-  const social1_link = 'https://twitter.com/PPBRVA/';
-  const social2_link = 'https://www.youtube.com/@ppbrva/';
-  const social3_link = 'https://www.instagram.com/ppbrva/';
 
   useFocusEffect(
     useCallback(() => {
@@ -71,11 +66,11 @@ const MainMenu: FC<DrawerContentComponentProps> = (props): JSX.Element => {
     navigation.navigate(screen);
   }
 
-  const logout = async () => {
-    removeStorage('access_token');
+  const onLogout = async () => {
     navigation.closeDrawer();
     navigation.navigate(appRoutes.AuthScreen);
-    requestLogout();
+    logout();
+    removeStorage('access_token');
   }
 
   return (
@@ -103,22 +98,22 @@ const MainMenu: FC<DrawerContentComponentProps> = (props): JSX.Element => {
           onPress={() => gotoScreen(mainRoutes.KitchenBar)}
         />
         <MenuItem text="Logout" image={imgLogout}
-          onPress={logout}
+          onPress={onLogout}
         />
       </View>
       <View style={[t.pX4]}>
         <View style={[t.flexRow, t.itemsCenter, t.justifyAround, t.pX8, t.mT4]}>
           <ScalableImage source={social.social1_icon ? {uri: social.social1_icon} : imgSocial1}
             height={theme.size.socialIcon}
-            onPress={() => Linking.openURL(social.social1_link || social1_link)}
+            onPress={() => Linking.openURL(social.social1_link || 'https://twitter.com/PPBRVA/')}
           />
           <ScalableImage source={social.social2_icon ? {uri: social.social2_icon} : imgSocial2}
             height={theme.size.socialIcon}
-            onPress={() => Linking.openURL(social.social2_link || social2_link)}
+            onPress={() => Linking.openURL(social.social2_link || 'https://www.youtube.com/@ppbrva/')}
           />
           <ScalableImage source={social.social3_icon ? {uri: social.social3_icon} : imgSocial3}
             height={theme.size.socialIcon}
-            onPress={() => Linking.openURL(social.social3_link || social3_link)}
+            onPress={() => Linking.openURL(social.social3_link || 'https://www.instagram.com/ppbrva/')}
           />
         </View>
         <View style={[t.itemsCenter, t.mY8]}>

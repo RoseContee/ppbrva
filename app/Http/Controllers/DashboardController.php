@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Invoice;
 use App\Models\Member;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -13,32 +15,25 @@ class DashboardController extends Controller
     }
 
     public function index(Request $request) {
-        if (!$request['s']) $request['s'] = date('01/01/Y');
-        if (!$request['e']) $request['e'] = date('12/31/Y');
-        $start_date = date('Y-m-d 00:00:00', strtotime($request['s']));
-        $end_date = date('Y-m-d 23:59:59', strtotime($request['e']));
-        $prev_start_date = date('Y-m-d 00:00:00', strtotime('-1 years', strtotime($request['s'])));
-        $prev_end_date = date('Y-m-d 23:59:59', strtotime('-1 years', strtotime($request['e'])));
-        $period_start = date('Y-m-01 00:00:00', strtotime('-11 months'));
-        $period_end = date('Y-m-31 23:59:59');
-        $users = Member::query()
-            ->whereBetween('created_at', [$start_date, $end_date])
-            ->orWhereBetween('created_at', [$prev_start_date, $prev_end_date])
-            ->get();
-        $invoices = Invoice::query()
-            ->with([
-                'activities' => function ($query) {
-                    $query->whereIn('category', ['Food & Beverage', 'Lessons', 'Rentals', 'Merchandise']);
-                },
-            ])
-            ->where('paid', true)
-            ->where(function ($query) use ($start_date, $end_date, $prev_start_date, $prev_end_date, $period_start, $period_end) {
-                $query->whereBetween('paid_at', [$start_date, $end_date])
-                    ->orWhereBetween('paid_at', [$prev_start_date, $prev_end_date])
-                    ->orWhereBetween('paid_at', [$period_start, $period_end]);
-            })
-            ->orderBy('paid_at')
-            ->get();
+        $s_time = strtotime($s = $request['s'] ?: date('01/01/Y'));
+        $e_time = strtotime($e = $request['e'] ?: date('12/31/Y'));
+
+        $plotting_start = date('Y-m-01 00:00:00', strtotime('-11 months'));
+        $plotting_end = date('Y-m-31 23:59:59');
+        $plotting_period = [$plotting_start, $plotting_end];
+        $plotting_start_time = strtotime($plotting_start);
+        $plotting_payments = [];
+        for ($i = 0; $i < 12; $i++) {
+            $month = date('M y', strtotime("+{$i} months", $plotting_start_time));
+            $plotting_payments[$month] = 0;
+        }
+
+        $period_start = date('Y-m-d 00:00:00', $s_time);
+        $period_end = date('Y-m-d 23:59:59', $e_time);
+        $period = [$period_start, $period_end];
+        $prev_period_start = date('Y-m-d 00:00:00', strtotime('-1 years', $s_time));
+        $prev_period_end = date('Y-m-d 23:59:59', strtotime('-1 years', $e_time));
+        $prev_period = [$prev_period_start, $prev_period_end];
         $members = $prev_members =
         $payments = $prev_payments =
         $dues = $prev_dues =
@@ -46,41 +41,69 @@ class DashboardController extends Controller
         $lessons = $prev_lessons =
         $rentals = $prev_rentals =
         $merchandise = $prev_merchandise = 0;
+
+        $users = Member::query()
+            ->whereBetween('created_at', $period)
+            ->orWhereBetween('created_at', $prev_period)
+            ->get();
         foreach ($users as $user) {
-            if ($start_date <= $user['created_at'] && $user['created_at'] <= $end_date) $members++;
+            $created_at = $user['created_at'];
+            if ($period_start <= $created_at && $created_at <= $period_end) $members++;
             else $prev_members++;
         }
-        $plotting_payments = [];
-        for ($i = 0; $i < 12; $i++) {
-            $plotting_payments[date('M y', strtotime("+{$i} months", strtotime($period_start)))] = 0;
-        }
+
+        $invoices = Invoice::query()
+            ->with([
+                'activities' => function (HasMany $query) {
+                    $query->whereIn('category', ['Food & Beverage', 'Lessons', 'Rentals', 'Merchandise']);
+                },
+            ])
+            ->withSum('plans', 'price')
+            ->where('paid', true)
+            ->where(function (Builder $query) use ($plotting_period, $period, $prev_period) {
+                $query->whereBetween('paid_at', $plotting_period)
+                    ->orWhereBetween('paid_at', $period)
+                    ->orWhereBetween('paid_at', $prev_period);
+            })
+            ->orderBy('paid_at')
+            ->get();
         foreach ($invoices as $invoice) {
-            if ($start_date <= $invoice['paid_at'] && $invoice['paid_at'] <= $end_date) {
-                $payments += $invoice['amount'];
-                $dues += $invoice['plan_price'];
-                foreach ($invoice['activities'] as $activity) {
-                    if ($activity['category'] == 'Food & Beverage') $food_beverage += $activity['price'];
-                    else if ($activity['category'] == 'Lessons') $lessons += $activity['price'];
-                    else if ($activity['category'] == 'Rentals') $rentals += $activity['price'];
-                    else if ($activity['category'] == 'Merchandise') $merchandise += $activity['price'];
-                }
-            } else if ($prev_start_date <= $invoice['paid_at'] && $invoice['paid_at'] <= $prev_end_date) {
-                $prev_payments += $invoice['amount'];
-                $prev_dues += $invoice['plan_price'];
-                foreach ($invoice['activities'] as $activity) {
-                    if ($activity['category'] == 'Food & Beverage') $prev_food_beverage += $activity['price'];
-                    else if ($activity['category'] == 'Lessons') $prev_lessons += $activity['price'];
-                    else if ($activity['category'] == 'Rentals') $prev_rentals += $activity['price'];
-                    else if ($activity['category'] == 'Merchandise') $prev_merchandise += $activity['price'];
-                }
+            $paid_at = $invoice['paid_at'];
+            $invoice_amount = $invoice['amount'];
+            $invoice_plans_price = $invoice['plans_sum_price'];
+            if ($plotting_start <= $paid_at && $paid_at <= $plotting_end) {
+                $month = date('M y', strtotime($paid_at));
+                $plotting_payments[$month] += $invoice_amount;
             }
-            if ($period_start <= $invoice['paid_at'] && $invoice['paid_at'] <= $period_end) {
-                $plotting_payments[date('M y', strtotime($invoice['paid_at']))] += $invoice['amount'];
+            $in_period = $period_start <= $paid_at && $paid_at <= $period_end;
+            $in_prev_period = $prev_period_start <= $paid_at && $paid_at <= $prev_period_end;
+            if ($in_period) {
+                $payments += $invoice_amount;
+                $dues += $invoice_plans_price;
+            } else if ($in_prev_period) {
+                $prev_payments += $invoice_amount;
+                $prev_dues += $invoice_plans_price;
+            }
+            foreach ($invoice['activities'] as $activity) {
+                $activity_price = $activity['price'];
+                if ($activity['category'] == 'Food & Beverage') {
+                    if ($in_period) $food_beverage += $activity_price;
+                    else if ($in_prev_period) $prev_food_beverage += $activity_price;
+                } else if ($activity['category'] == 'Lessons') {
+                    if ($in_period) $lessons += $activity_price;
+                    else if ($in_prev_period) $prev_lessons += $activity_price;
+                } else if ($activity['category'] == 'Rentals') {
+                    if ($in_period) $rentals += $activity_price;
+                    else if ($in_prev_period) $prev_rentals += $activity_price;
+                } else if ($activity['category'] == 'Merchandise') {
+                    if ($in_period) $merchandise += $activity_price;
+                    else if ($in_prev_period) $prev_merchandise += $activity_price;
+                }
             }
         }
         return view('dashboard', [
-            's' => $request['s'],
-            'e' => $request['e'],
+            's' => $s,
+            'e' => $e,
             'members' => $members,
             'members_percent' => $this->getRate($members, $prev_members),
             'payments' => $payments,

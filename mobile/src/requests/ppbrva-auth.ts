@@ -78,6 +78,54 @@ export const postPlanChangeRequest = (data: any) => {
   });
 }
 
+export const fetchFamilies = () => {
+  return new Promise((resolve: (data: {families: MemberProp[], limit: number}) => void, reject) => {
+    axios.get(`/families`)
+      .then(({ data }) => resolve(data))
+      .catch(error => reject(error));
+  });
+}
+
+export const postInviteMember = (data: any) => {
+  return new Promise((resolve, reject) => {
+    axios.post(`/invite-member`, data)
+      .then(() => resolve(true))
+      .catch(error => reject(error));
+  });
+}
+
+export const postAddChildMember = (data: any) => {
+  return new Promise((resolve, reject) => {
+    axios.post(`/add-child`, data)
+      .then(() => resolve(true))
+      .catch(error => reject(error));
+  });
+}
+
+export const fetchFamilyMember = (memberID: string) => {
+  return new Promise((resolve: (member: MeProps) => void, reject) => {
+    axios.get(`/family-member/${memberID}`)
+      .then(({ data: { member } }) => resolve(member))
+      .catch(error => reject(error));
+  });
+}
+
+export const postFamilyMember = (memberID: string, data: any) => {
+  return new Promise((resolve, reject) => {
+    axios.get(`/family-member/${memberID}`, data)
+      .then(({ data: { member } }) => resolve(member))
+      .catch(error => reject(error));
+  })
+}
+
+export const deleteFamilyMember = (memberID: string) => {
+  return new Promise((resolve, reject) => {
+    axios.delete(`/family-member/${memberID}`)
+      .then(() => resolve(true))
+      .catch(error => reject(error));
+  })
+}
+
 export interface InvoiceProp {
   invoiceID: string,
   period: string,
@@ -106,6 +154,10 @@ export interface ActivityProp {
   price: number,
   date: string,
   timestamp: number,
+  member: {
+    name: string,
+    avatar: string,
+  },
   items: {
     name: string,
     price: number,
@@ -134,6 +186,8 @@ export interface MemberProp {
     wins: number,
     losses: number,
   },
+
+  is_child: boolean,
 
   email_share: boolean,
   phone_share: boolean,

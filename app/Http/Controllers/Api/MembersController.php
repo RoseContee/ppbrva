@@ -2,18 +2,37 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\General;
 use App\Http\Controllers\Controller;
 use App\Models\Member;
 use App\Models\MemberFriend;
+use App\Models\Plan;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Request;
 
 class MembersController extends Controller
 {
     public function members() {
         $members = Member::query()
-            ->with(['profile:member_id,share_age_gender,age,gender,rating'])
+            ->with([
+                'profile:member_id,share_age_gender,age,gender,rating,matches,wins,losses'
+            ])
             ->where('id', '<>', auth()->id())
-            ->get(['id', 'memberID', 'firstname', 'lastname', 'avatar']);
+            ->where(function (Builder $query) {
+                $query->where('plan_id', '<>', Plan::FamilyPlanId)
+                    ->orWhere(function (Builder $query) {
+                        $query->whereNull('is_child')
+                            ->orWhere('is_child', '<>', true);
+                    });
+            })
+            ->whereNotIn('status', ['inactive', 'pending'])
+            ->get([
+                'id', 'memberID', 'firstname', 'lastname', 'gender', 'dob', 'avatar'
+            ]);
+        foreach ($members as $member) {
+            General::getGenderAge($member);
+        }
         return response()->json([
             'members' => $members,
         ]);
@@ -23,25 +42,40 @@ class MembersController extends Controller
         $members = []; $pending_requests = 0;
         $user = Member::query()
             ->with([
-                'friends1' => function ($query) {
-                    $query->with(['profile:member_id,share_age_gender,age,gender,rating'])
+                'friends1' => function (BelongsToMany $query) {
+                    $query->with([
+                        'profile:member_id,share_age_gender,age,gender,rating,matches,wins,losses'
+                    ])
+                        ->whereNotIn('members.status', ['inactive', 'pending'])
                         ->wherePivotIn('status', ['pending', 'accepted'])
                         ->withPivot('status')
-                        ->select(['members.id', 'memberID', 'firstname', 'lastname', 'avatar']);
+                        ->select([
+                            'members.id', 'memberID', 'firstname', 'lastname', 'gender', 'dob', 'avatar'
+                        ]);
                 },
-                'friends2' => function ($query) {
-                    $query->with(['profile:member_id,share_age_gender,age,gender,rating'])
+                'friends2' => function (BelongsToMany $query) {
+                    $query->with([
+                        'profile:member_id,share_age_gender,age,gender,rating,matches,wins,losses'
+                    ])
+                        ->whereNotIn('members.status', ['inactive', 'pending'])
                         ->wherePivot('status', 'accepted')
                         ->withPivot('status')
-                        ->select(['members.id', 'memberID', 'firstname', 'lastname', 'avatar']);
+                        ->select([
+                            'members.id', 'memberID', 'firstname', 'lastname', 'gender', 'dob', 'avatar'
+                        ]);
                 },
             ])
-            ->find(auth()->id(), ['id'])
-            ->toArray();
-        foreach (array_merge($user['friends1'], $user['friends2']) as $friend) {
-            $relation = $friend['relation'];
-            if ($relation['status'] === 'accepted') $members[] = $friend;
-            else $pending_requests++;
+            ->find(auth()->id(), ['id']);
+        foreach ($user['friends1'] as $friend) {
+            if ($friend['relation']['status'] == 'pending') $pending_requests++;
+            else $members[] = $friend;
+        }
+        foreach ($user['friends2'] as $friend) {
+            if ($friend['relation']['status'] == 'pending') $pending_requests++;
+            else $members[] = $friend;
+        }
+        foreach ($members as $member) {
+            General::getGenderAge($member);
         }
         return response()->json([
             'members' => $members,
@@ -52,17 +86,25 @@ class MembersController extends Controller
     public function pendingFriends() {
         $user = Member::query()
             ->with([
-                'friends1' => function ($query) {
-                    $query->with(['profile:member_id,share_age_gender,age,gender,rating'])
+                'friends1' => function (BelongsToMany $query) {
+                    $query->with([
+                        'profile:member_id,share_age_gender,age,gender,rating,matches,wins,losses'
+                    ])
+                        ->whereNotIn('members.status', ['inactive', 'pending'])
                         ->wherePivot('status', 'pending')
                         ->withPivot('status')
-                        ->select(['members.id', 'memberID', 'firstname', 'lastname', 'avatar']);
+                        ->select([
+                            'members.id', 'memberID', 'firstname', 'lastname', 'gender', 'dob', 'avatar'
+                        ]);
                 },
             ])
-            ->find(auth()->id(), ['id'])
-            ->toArray();
+            ->find(auth()->id(), ['id']);
+        $members = $user['friends1'];
+        foreach ($members as $member) {
+            General::getGenderAge($member);
+        }
         return response()->json([
-            'members' => $user['friends1'],
+            'members' => $members,
         ]);
     }
 
@@ -71,25 +113,31 @@ class MembersController extends Controller
         $member = Member::query()
             ->with([
                 'profile:member_id,share_age_gender,age,gender,rating,matches,wins,losses',
-                'friends1' => function ($query) use ($user_id) {
+                'friends1' => function (BelongsToMany $query) use ($user_id) {
                     $query->wherePivot('member1_id', $user_id)
-                        ->withPivot(['member1_email', 'member1_phone', 'member2_email', 'member2_phone', 'status'])
+                        ->withPivot([
+                            'member1_email', 'member1_phone', 'member2_email', 'member2_phone', 'status'
+                        ])
                         ->select(['memberID']);
                 },
-                'friends2' => function ($query) use ($user_id) {
+                'friends2' => function (BelongsToMany $query) use ($user_id) {
                     $query->wherePivot('member2_id', $user_id)
-                        ->withPivot(['member1_email', 'member1_phone', 'member2_email', 'member2_phone', 'status'])
+                        ->withPivot([
+                            'member1_email', 'member1_phone', 'member2_email', 'member2_phone', 'status'
+                        ])
                         ->select(['memberID']);
                 },
             ])
             ->where('memberID', $memberID)
             ->where('id', '<>', $user_id)
-            ->first(['id', 'memberID', 'firstname', 'lastname', 'email', 'phone', 'avatar']);
+            ->whereNotIn('status', ['inactive', 'pending'])
+            ->first([
+                'id', 'memberID', 'firstname', 'lastname', 'email', 'phone', 'gender', 'dob', 'avatar'
+            ]);
         if (!$member) {
-            return response()->json([
-                'message' => 'Not found member.',
-            ], 404);
+            return response()->json(['message' => 'Not found member.'], 404);
         }
+        General::getGenderAge($member);
         $friend1 = $member['friends1'][0]['relation'] ?? null;
         $friend2 = $member['friends2'][0]['relation'] ?? null;
         $status = $friend1['status'] ?? $friend2['status'] ?? '';
@@ -120,26 +168,23 @@ class MembersController extends Controller
         $member = Member::query()
             ->where('memberID', $memberID)
             ->where('id', '<>', $user_id)
+            ->whereNotIn('status', ['inactive', 'pending'])
             ->first(['id']);
         if (!$member) {
-            return response()->json([
-                'message' => 'Not found member.',
-            ], 404);
+            return response()->json(['message' => 'Not found member.'], 404);
         }
         $friend = MemberFriend::query()
-            ->where(function ($query) use ($user_id, $member) {
+            ->where(function (Builder $query) use ($user_id, $member) {
                 $query->where('member1_id', $user_id)
                     ->where('member2_id', $member['id']);
             })
-            ->orWhere(function ($query) use ($user_id, $member) {
+            ->orWhere(function (Builder $query) use ($user_id, $member) {
                 $query->where('member1_id', $member['id'])
                     ->where('member2_id', $user_id);
             })
             ->firstOrNew();
         if ($friend['status']) {
-            return response()->json([
-                'message' => 'Cannot request a friend at the moment.'
-            ], 403);
+            return response()->json(['message' => 'Cannot request a friend at the moment.'], 403);
         }
         $friend['member1_id'] = $user_id;
         $friend['member1_email'] = !empty($request['email_share']);
@@ -159,11 +204,10 @@ class MembersController extends Controller
         $member = Member::query()
             ->where('memberID', $memberID)
             ->where('id', '<>', $user_id)
+            ->whereNotIn('status', ['inactive', 'pending'])
             ->first(['id']);
         if (!$member) {
-            return response()->json([
-                'message' => 'Not found member.',
-            ], 404);
+            return response()->json(['message' => 'Not found member.'], 404);
         }
         $friend = MemberFriend::query()
             ->where('member1_id', $member['id'])
@@ -171,9 +215,7 @@ class MembersController extends Controller
             ->where('status', 'pending')
             ->first();
         if (!$friend) {
-            return response()->json([
-                'message' => 'Not found request.'
-            ], 404);
+            return response()->json(['message' => 'Not found request.'], 404);
         }
         $friend['member2_email'] = !empty($request['email_share']);
         $friend['member2_phone'] = !empty($request['phone_share']);
@@ -184,16 +226,15 @@ class MembersController extends Controller
         ]);
     }
 
-    public function decline(Request $request, $memberID) {
+    public function decline($memberID) {
         $user_id = auth()->id();
         $member = Member::query()
             ->where('memberID', $memberID)
             ->where('id', '<>', $user_id)
+            ->whereNotIn('status', ['inactive', 'pending'])
             ->first(['id']);
         if (!$member) {
-            return response()->json([
-                'message' => 'Not found member.',
-            ], 404);
+            return response()->json(['message' => 'Not found member.'], 404);
         }
         $friend = MemberFriend::query()
             ->where('member1_id', $member['id'])
@@ -201,9 +242,7 @@ class MembersController extends Controller
             ->where('status', 'pending')
             ->first();
         if (!$friend) {
-            return response()->json([
-                'message' => 'Not found request.'
-            ], 404);
+            return response()->json(['message' => 'Not found request.'], 404);
         }
         $friend['member1_email'] = false;
         $friend['member1_phone'] = false;
@@ -221,27 +260,24 @@ class MembersController extends Controller
         $member = Member::query()
             ->where('memberID', $memberID)
             ->where('id', '<>', $user_id)
+            ->whereNotIn('status', ['inactive', 'pending'])
             ->first(['id']);
         if (!$member) {
-            return response()->json([
-                'message' => 'Not found member.',
-            ], 404);
+            return response()->json(['message' => 'Not found member.'], 404);
         }
         $friend = MemberFriend::query()
-            ->where(function ($query) use ($user_id, $member) {
+            ->where(function (Builder $query) use ($user_id, $member) {
                 $query->where('member1_id', $user_id)
                     ->where('member2_id', $member['id']);
             })
-            ->orWhere(function ($query) use ($user_id, $member) {
+            ->orWhere(function (Builder $query) use ($user_id, $member) {
                 $query->where('member1_id', $member['id'])
                     ->where('member2_id', $user_id);
             })
             ->where('status', 'accepted')
-            ->firstOrNew();
+            ->first();
         if (!$friend) {
-            return response()->json([
-                'message' => 'Not found request.'
-            ], 404);
+            return response()->json(['message' => 'Not found request.'], 404);
         }
         $email_share = !empty($request['email_share']);
         $phone_share = !empty($request['phone_share']);
@@ -258,32 +294,29 @@ class MembersController extends Controller
         ]);
     }
 
-    public function remove(Request $request, $memberID) {
+    public function remove($memberID) {
         $user_id = auth()->id();
         $member = Member::query()
             ->where('memberID', $memberID)
             ->where('id', '<>', $user_id)
+            ->whereNotIn('status', ['inactive', 'pending'])
             ->first(['id']);
         if (!$member) {
-            return response()->json([
-                'message' => 'Not found member.',
-            ], 404);
+            return response()->json(['message' => 'Not found member.'], 404);
         }
         $friend = MemberFriend::query()
-            ->where(function ($query) use ($user_id, $member) {
+            ->where(function (Builder $query) use ($user_id, $member) {
                 $query->where('member1_id', $user_id)
                     ->where('member2_id', $member['id']);
             })
-            ->orWhere(function ($query) use ($user_id, $member) {
+            ->orWhere(function (Builder $query) use ($user_id, $member) {
                 $query->where('member1_id', $member['id'])
                     ->where('member2_id', $user_id);
             })
             ->where('status', 'accepted')
-            ->firstOrNew();
+            ->first();
         if (!$friend) {
-            return response()->json([
-                'message' => 'Not found request.'
-            ], 404);
+            return response()->json(['message' => 'Not found friend.'], 404);
         }
         $friend['member1_email'] = false;
         $friend['member1_phone'] = false;

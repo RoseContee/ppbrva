@@ -9,20 +9,21 @@
 
                     <x-messages />
 
+                    @php $member = $invoice['member']; @endphp
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg py-4">
                         <div class="flex items-center justify-between p-4 bg-white dark:bg-gray-900">
                             <div class="flex items-center">
-                                @if ($invoice['member'])
+                                @if ($member)
                                     <img class="w-10 h-10 rounded-full"
-                                         src="{{ $invoice['member']['avatar'] }}"
-                                         alt="{{ $invoice['member']['name'] }}">
+                                         src="{{ $member['avatar'] }}"
+                                         alt="{{ $member['name'] }}">
                                 @endif
                                 <div class="pl-3">
-                                    @if ($invoice['member'])
+                                    @if ($member)
                                         <div class="text-base font-semibold">
                                             <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
-                                               href="{{ route('members.edit', $invoice['member']['id']) }}">
-                                                {{ $invoice['member']['name'] }}
+                                               href="{{ route('members.edit', $member['id']) }}">
+                                                {{ $member['name'] }}
                                             </a>
                                         </div>
                                     @endif
@@ -48,6 +49,9 @@
                                     <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                         <th class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white text-base font-semibold">
                                             {{ $activity['category'] }}
+                                            @if ($activity['member_id'] != $invoice['member_id'])
+                                                ({{ $activity['member']['name'] ?? 'SECONDARY ACCOUNT' }})
+                                            @endif
                                         </th>
                                         <td class="px-6 py-4">
                                             {{ ($activity['from'] == 'clover' ? '#' : '').$activity['detail'] }}
@@ -57,17 +61,23 @@
                                         </td>
                                     </tr>
                                 @endforeach
-                                <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                    <th class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white text-base font-semibold">
-                                        Membership Dues
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        {{ $invoice['plan_name'] }}
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        ${{ number_format($invoice['plan_price'], 2) }}
-                                    </td>
-                                </tr>
+                                @foreach ($invoice['plans'] as $plan)
+                                    <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        <th class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white text-base font-semibold">
+                                            Membership Dues
+                                        </th>
+                                        <td class="px-6 py-4">
+                                            @if ($plan['member_id'] == $invoice['member_id'])
+                                                {{ $plan['name'] }}
+                                            @else
+                                                {{ $plan['member']['name'] ?? 'SECONDARY ACCOUNT' }}
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            ${{ number_format($plan['price'], 2) }}
+                                        </td>
+                                    </tr>
+                                @endforeach
                                 <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                     <th class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white text-base font-semibold">
                                         TOTAL
@@ -91,7 +101,7 @@
                                     <b class="mr-1">Unpaid Reason:</b>
                                     {{ $invoice['reason'] ?? 'Unknown' }}
                                 </p>
-                                @if ($invoice['member'])
+                                @if ($member)
                                     <form action="{{ route('invoices.pay', $invoice['id']) }}"
                                           method="POST" enctype="multipart/form-data">
                                         @csrf

@@ -6,8 +6,8 @@ import {
 } from 'react-native';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import DeviceInfo from 'react-native-device-info';
-import { postLogin } from '../../requests';
 import { appRoutes, authRoutes } from '../../routes';
+import { postLogin } from '../../requests';
 import Image from 'react-native-scalable-image';
 import Layouts from '../../components/layouts';
 import Message from '../../components/basic/message';
@@ -31,9 +31,7 @@ const Login: FC = (): JSX.Element => {
 
   useFocusEffect(
     useCallback(() => {
-      setMessage('');
-      setEmail('');
-      setPassword('');
+      initStates();
       const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
         BackHandler.exitApp();
         return true;
@@ -46,13 +44,13 @@ const Login: FC = (): JSX.Element => {
     setMessage(msg);
   }, [msg]);
 
+  const initStates = () => {
+    setMessage('');
+    setEmail('');
+    setPassword('');
+  }
+
   const login = () => {
-    if (!email) {
-      return setMessage('The email field is required.');
-    }
-    if (!password) {
-      return setMessage('The password field is required.');
-    }
     setLoading(true);
     setMessage('');
     const device = DeviceInfo.getDeviceId() + '-' + email;
@@ -85,6 +83,7 @@ const Login: FC = (): JSX.Element => {
           value={password} onChangeText={setPassword}
         />
         <Button style={[s.bgPrimary, s.mT7]}
+          disabled={!email || !password}
           onPress={login}
         >
           Login

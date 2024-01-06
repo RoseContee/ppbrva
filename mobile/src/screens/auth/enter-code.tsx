@@ -4,8 +4,8 @@ import {
   View
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { postVaildateCode } from '../../requests';
 import { authRoutes } from '../../routes';
+import { postVaildateCode } from '../../requests';
 import Layouts from '../../components/layouts';
 import Message from '../../components/basic/message';
 import Button from '../../components/basic/button';
@@ -31,7 +31,7 @@ const EnterCode: FC = (): JSX.Element => {
     if (num) codeRefs.current[i + 1]?.current?.focus();
   }
 
-  const validateCode = () => {
+  const onValidateCode = () => {
     let code = nums.reduce((code, num) => code + num, '');
     if (code.length < 6) {
       return setMessage('Please input code.');
@@ -66,7 +66,7 @@ const EnterCode: FC = (): JSX.Element => {
           ))}
         </View>
         <Button style={[s.bgPrimary, s.mT7]}
-          onPress={validateCode}
+          onPress={onValidateCode}
         >
           Validate
         </Button>

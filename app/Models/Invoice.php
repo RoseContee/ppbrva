@@ -11,7 +11,7 @@ class Invoice extends Model
 
     protected $fillable = [
         'invoiceID', 'member_id', 'period', 'amount', 'paid',
-        'plan_name', 'plan_price', 'card_type', 'card_last4', 'paid_at',
+        'card_type', 'card_last4', 'paid_at',
         'reason',
     ];
 
@@ -31,6 +31,10 @@ class Invoice extends Model
     }
 
     public function activities() {
-        return $this->hasMany(Activity::class, 'invoiceID', 'invoiceID');
+        return $this->hasMany(Activity::class);
+    }
+
+    public function plans() {
+        return $this->hasMany(InvoicePlan::class);
     }
 }

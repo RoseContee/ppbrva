@@ -12,15 +12,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('app:get-clover-orders')
-            ->everyFifteenMinutes();
-        $schedule->command('app:get-kitchen-bar-items')
-            ->daily();
-        $schedule->command('app:get-dupr')
-            ->daily();
         $schedule->command('app:create-invoices')
             ->monthly();
-        $schedule->command('app:update-clover-orders')
+        $schedule->command('app:get-clover-orders')
+            ->everyFifteenMinutes();
+        $schedule->command('app:get-dupr')
+            ->daily();
+        $schedule->command('app:get-kitchen-bar-items')
             ->daily();
         $schedule->command('app:update-member-status')
             ->daily();

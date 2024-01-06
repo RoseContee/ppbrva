@@ -22,14 +22,28 @@ import s from '../../utils/styles';
 
 interface InvoiceItem {
   amount: number,
-  plan_name: string,
-  plan_price: number,
   from: string,
   to: string,
+  member: {
+    id: number,
+    name: string,
+  },
   activities: {
     category: string,
     detail: string,
     price: number,
+    member: {
+      id: number,
+      name: string,
+    },
+  }[],
+  plans: {
+    name: string,
+    price: number,
+    member: {
+      id: number,
+      name: string,
+    },
   }[],
 }
 
@@ -90,9 +104,12 @@ const InvoiceDetail: FC = (): JSX.Element => {
               {invoice.activities.map((activity, index) => {
                 return (
                   <View key={index}
-                    style={[t.flexRow, t.itemsCenter, t.justifyBetween, s.borderT, t.pX2, t.pY5]}>
+                    style={[t.flexRow, t.itemsCenter, t.justifyBetween, s.borderT, t.pX2, t.pY5]}
+                  >
                     <Text style={[t.flexShrink, s.fontBodyLight, t.textBase, t.pR3]}>
-                      { activity.category } - { activity.detail }
+                      { activity.category }
+                      { activity.member.id != invoice.member.id ? ` (${activity.member.name}) ` : '' }
+                      - { activity.detail }
                     </Text>
                     <Text style={[s.fontBodyLight, t.textBase]}>
                       { currencyFormat(activity.price) }
@@ -100,14 +117,21 @@ const InvoiceDetail: FC = (): JSX.Element => {
                   </View>
                 )
               })}
-              <View style={[t.flexRow, t.itemsCenter, t.justifyBetween, s.borderT, t.pX2, t.pY5]}>
-                <Text style={[s.fontBodyLight, t.textBase, t.pR3]}>
-                  { invoice.plan_name }
-                </Text>
-                <Text style={[s.fontBodyLight, t.textBase]}>
-                  { currencyFormat(invoice.plan_price) }
-                </Text>
-              </View>
+              {invoice.plans.map((plan, index) => {
+                return (
+                  <View key={index}
+                    style={[t.flexRow, t.itemsCenter, t.justifyBetween, s.borderT, t.pX2, t.pY5]}
+                  >
+                    <Text style={[t.flexShrink, s.fontBodyLight, t.textBase, t.pR3]}>
+                      { plan.name }
+                      { plan.member.id != invoice.member.id ? ` (${plan.member.name})` : '' }
+                    </Text>
+                    <Text style={[s.fontBodyLight, t.textBase]}>
+                      { currencyFormat(plan.price) }
+                    </Text>
+                  </View>
+                )
+              })}
               <View style={[t.flexRow, t.itemsCenter, t.justifyBetween, s.borderT, t.pX2, t.pT5, t.pB3]}>
                 <Text style={[s.fontBodyBold, t.textBase, t.pR3]}>
                   TOTAL

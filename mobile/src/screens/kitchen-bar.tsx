@@ -5,7 +5,9 @@ import {
   View
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { KitchenBarData, KitchenBarProp, fetchKitchenBars } from '../requests';
+import {
+  KitchenBarData, KitchenBarProp, fetchKitchenBars
+} from '../requests';
 import Layouts from '../components/layouts';
 import Button from '../components/basic/button';
 import Card from '../components/basic/card';

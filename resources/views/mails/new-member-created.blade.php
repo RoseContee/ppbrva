@@ -21,22 +21,27 @@
                             <tr>
                                 <td class="x_content-cell" style="max-width:100vw; padding:32px">
                                     <h1 style="color:#1a2755; font-size:22px; font-weight:bold;">
-                                        {{ $plan }} Plan Application
+                                        {{ $member['plan']['name'] ?? 'Unknown' }} Plan Application
                                     </h1>
                                     <p style="color:#0d77bd; font-size:16px; font-weight:bold; line-height:1.5em; margin:0;">
-                                        {{ $member['name'] }}
+                                        {{ $member['firstname'] || $member['lastname'] ? $member['name'] : 'Invited Member' }}
                                     </p>
                                     <p style="color:#1a2755; font-size:16px; line-height:1.5em; margin:0 0 24px 0;">
                                         {{ in_array($member['gender'], ['male', 'female']) ? ucfirst($member['gender']).',' : '' }}
-                                        {{ Carbon\Carbon::parse($member['dob'])->age }}
+                                        {{ $member['dob'] ? Carbon\Carbon::parse($member['dob'])->age : '' }}
                                     </p>
-                                    <p style="color:#1a2755; font-size:16px; line-height:1.5em; margin:0;">
-                                        {{ $member['address'] }}, {{ $member['city'] }}, {{ $member['state'] }} {{ $member['zip_code'] }}
-                                    </p>
+                                    @if ($member['address'] || $member['city'] || $member['state'] || $member['zip_code'])
+                                        <p style="color:#1a2755; font-size:16px; line-height:1.5em; margin:0;">
+                                            {{ $member['address'] ? $member['address'].',' : '' }}
+                                            {{ $member['city'] ? $member['city'].',' : '' }}
+                                            {{ $member['state'] ? $member['state'].',' : '' }}
+                                            {{ $member['zip_code'] }}
+                                        </p>
+                                    @endif
                                     @if ($member['phone'])
-                                    <p style="color:#1a2755; font-size:16px; line-height:1.5em; margin:0;">
-                                        {{ $member['phone'] }}
-                                    </p>
+                                        <p style="color:#1a2755; font-size:16px; line-height:1.5em; margin:0;">
+                                            {{ $member['phone'] }}
+                                        </p>
                                     @endif
                                     <p style="color:#1a2755; font-size:16px; line-height:1.5em; margin:0 0 24px 0;">
                                         {{ $member['email'] }}

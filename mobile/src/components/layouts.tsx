@@ -6,15 +6,17 @@ import {
   SafeAreaView,
   ScrollView
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useAppSelector } from '../store';
+import { getLoggedIn } from '../store/settings';
+import { removeStorage } from '../utils/storage';
+import { appRoutes } from '../routes';
+import { logout } from '../requests';
 import Loading from './basic/loading';
 
 import imgBG from '../assets/img/auth-bg.png';
 
 import { t } from 'react-native-tailwindcss';
-import { useAppSelector } from '../store';
-import { getLoggedIn } from '../store/settings';
-import { useNavigation } from '@react-navigation/native';
-import { appRoutes } from '../routes';
 
 interface BackgroundProps {
   auth?: boolean,
@@ -54,6 +56,8 @@ const Layouts: FC<IProps> = ({
   useEffect(() => {
     if (!loggedIn) {
       navigation.navigate(appRoutes.AuthScreen as never);
+      logout();
+      removeStorage('access_token');
     }
   }, [loggedIn]);
 

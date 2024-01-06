@@ -5,6 +5,8 @@ export {
   fetchMe, fetchLocation, fetchPlan,
     postProfile, postUpdateBilling,
     postUpdatePassword, postPlanChangeRequest,
+    fetchFamilies, postInviteMember, postAddChildMember,
+    fetchFamilyMember, postFamilyMember, deleteFamilyMember,
   type InvoiceProp, fetchInvoices, fetchInvoiceDetail, type ActivityProp, fetchActivities,
   type MemberProp, fetchMembers, fetchMemberDetail,
     postMemberInvite, postMemberAccept, postMemberDecline,

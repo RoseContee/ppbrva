@@ -16,7 +16,6 @@ class Role extends Model
     public const PERMISSION_INVOICES   = 5;
     public const PERMISSION_USERS      = 6;
     public const PERMISSION_SETTINGS   = 7;
-    public const PERMISSION_SCAN       = 8;
 
     protected $fillable = [
         'name', 'permissions'
@@ -66,11 +65,6 @@ class Role extends Model
                 'label' => 'Settings',
                 'route' => route('settings.index'),
                 'pattern' => 'settings.*',
-            ],
-            self::PERMISSION_SCAN => [
-                'label' => 'Scan',
-                'route' => route('scan.index'),
-                'pattern' => 'scan',
             ],
         ];
     }

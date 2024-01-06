@@ -21,9 +21,12 @@
                     </h2>
                 </div>
 
-                <form id="daterange-picker" class="flex justify-end bg-white dark:bg-gray-900 px-3"
+                <form id="daterange-picker" class="flex items-end justify-end bg-white dark:bg-gray-900 px-3"
                       action="" method="GET">
                     <div class="relative">
+                        <label for="start-date" class="block tracking-wide text-gray-900 text-xs mb-1">
+                            Start Date
+                        </label>
                         <input @class([
                                    "block p-2 text-sm text-gray-900 border rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500",
                                    "border-slate-300" => !$errors->first('start_date'),
@@ -34,6 +37,9 @@
                                placeholder="Start Date...">
                     </div>
                     <div class="relative mx-3">
+                        <label for="end-date" class="block tracking-wide text-gray-900 text-xs mb-1">
+                            End Date
+                        </label>
                         <input @class([
                                        "block p-2 text-sm text-gray-900 border rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500",
                                        "border-slate-300" => !$errors->first('end_date'),
@@ -43,10 +49,13 @@
                                value="{{ old('e', $e) }}"
                                placeholder="End Date...">
                     </div>
-                    <button class="inline-flex items-center px-4 py-2 bg-blue border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
-                            type="submit">
-                        Apply
-                    </button>
+                    <div class="relative">
+                        <label class="block tracking-wide text-gray-900 text-xs mb-1">&nbsp;</label>
+                        <button class="inline-flex items-center px-4 py-2 bg-blue border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                type="submit">
+                            Apply
+                        </button>
+                    </div>
                 </form>
 
                 <div class="w-full px-5 py-5">

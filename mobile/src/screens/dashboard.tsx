@@ -9,8 +9,10 @@ import {
   useWindowDimensions
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { fetchDashboard, fetchLocation, fetchMe, fetchPlan } from '../requests';
 import { mainRoutes } from '../routes';
+import {
+  fetchDashboard, fetchLocation, fetchMe, fetchPlan
+} from '../requests';
 import { useAppSelector } from '../store';
 import { getDashboard } from '../store/settings';
 import { getMe, getPlan } from '../store/user';
@@ -77,10 +79,6 @@ const Dashboard: FC = (): JSX.Element => {
   const padding = 28; //t.p7
   const cardWidth = (width - (padding * 2) - padding) / 2;
   const cardImgSize = cardWidth - (16 * 2); //t.pX4
-  const play_link = 'https://app.pingpod.com/';
-  const improve_link = 'https://app.pingpod.com/';
-  const rent_link = 'https://app.pingpod.com/';
-  const shop_link = 'https://ppbrva.com/shop/';
 
   useFocusEffect(
     useCallback(() => {
@@ -141,19 +139,19 @@ const Dashboard: FC = (): JSX.Element => {
         <View style={[t.flexRow, t.flexWrap, {gap: padding}, t.mT8]}>
           <CardWidget cardWidth={cardWidth} defaultImage={imgPlay}
             image={settings.play_icon} imgSize={cardImgSize} text="Play"
-            onPress={() => openLink(settings.play_link ?? play_link)}
+            onPress={() => openLink(settings.play_link ?? 'https://app.pingpod.com/')}
           />
           <CardWidget cardWidth={cardWidth} defaultImage={imgImprove}
             image={settings.improve_icon} imgSize={cardImgSize} text="Improve"
-            onPress={() => openLink(settings.improve_link ?? improve_link)}
+            onPress={() => openLink(settings.improve_link ?? 'https://app.pingpod.com/')}
           />
           <CardWidget cardWidth={cardWidth} defaultImage={imgRent}
             image={settings.rent_icon} imgSize={cardImgSize} text="Rent"
-            onPress={() => openLink(settings.rent_link ?? rent_link)}
+            onPress={() => openLink(settings.rent_link ?? 'https://app.pingpod.com/')}
           />
           <CardWidget cardWidth={cardWidth} defaultImage={imgShop}
             image={settings.shop_icon} imgSize={cardImgSize} text="Shop"
-            onPress={() => openLink(settings.shop_link ?? shop_link)}
+            onPress={() => openLink(settings.shop_link ?? 'https://ppbrva.com/shop/')}
           />
         </View>
         <View style={[t.mT8]}>

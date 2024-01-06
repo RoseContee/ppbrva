@@ -5,8 +5,8 @@ import {
   View
 } from 'react-native';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
-import { postResetPassword, postUpdatePassword } from '../../requests';
 import { appRoutes, authRoutes } from '../../routes';
+import { postResetPassword, postUpdatePassword } from '../../requests';
 import Layouts from '../../components/layouts';
 import Message from '../../components/basic/message';
 import Button from '../../components/basic/button';
@@ -21,7 +21,7 @@ const ResetPassword: FC = (): JSX.Element => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string>();
   const [password, setPassword] = useState<string>();
-  const [password_confirmation, setPasswordConfirmation] = useState<string>();
+  const [password_confirmation, setConfirmation] = useState<string>();
   const resetPasswordPage = route.name === authRoutes.ResetPassword;
   const email = (route.params as any)?.email;
   const code = (route.params as any)?.code;
@@ -79,9 +79,10 @@ const ResetPassword: FC = (): JSX.Element => {
         <TextInput inputMode="text" style={[s.input, s.mT7]}
           secureTextEntry={true}
           placeholder="Confirm Password..." placeholderTextColor={theme.color.placeholder}
-          value={password_confirmation} onChangeText={setPasswordConfirmation}
+          value={password_confirmation} onChangeText={setConfirmation}
         />
         <Button style={[s.bgPrimary, s.mT7]}
+          disabled={!email || !password || !password_confirmation}
           onPress={savePassword}
         >
           Save password

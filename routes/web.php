@@ -73,6 +73,7 @@ Route::middleware(['auth', 'active', 'role'])->group(function () {
         Route::post('general', [SettingsController::class, 'storeGeneral'])->name('settings.general.store');
     });
     Route::resource('scan', ScanController::class)->only(['index', 'store']);
+    Route::get('missingcc', [ScanController::class, 'missingcc'])->name('missingcc');
 
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');

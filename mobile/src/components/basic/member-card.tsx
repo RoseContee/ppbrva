@@ -34,7 +34,7 @@ const MemberCard: FC<IProps> = ({
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={onPress ? 0.2 : 1}>
       <Card style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.pY4, style]}>
-        <View style={[t.flexShrink, t.pR2]}>
+        <View style={[t.flexGrow, t.pR2]}>
           <Title style={[t.textXl, s.textPrimary]}>
             { member.name }
           </Title>

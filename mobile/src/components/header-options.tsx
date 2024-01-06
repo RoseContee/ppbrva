@@ -37,6 +37,10 @@ const HeaderLeft: FC<IHeaderButtonProps> = ({ route, navigation }): JSX.Element 
     } else if (route.name === invoiceRoutes.Invoices) {
       gotoScreen(mainRoutes.BillingProfile);
     } else if ([
+      mainRoutes.ProfileInviteMember, mainRoutes.FamilyMemberProfile,
+    ].includes(route.name)) {
+      gotoScreen(mainRoutes.MembershipPlan);
+    } else if ([
       mainRoutes.PendingRequests, mainRoutes.AcceptedFriend,
     ].includes(route.name)) {
       gotoScreen(mainRoutes.Friends);

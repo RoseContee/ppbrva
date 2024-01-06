@@ -15,8 +15,8 @@ class Activity extends Model
         'detail', // order ID from clover / Detail from admin
         'price',
         'date',
-        'from', // clover/admin
-        'invoiceID',
+        'from', // clover/admin,
+        'invoice_id',
     ];
 
     protected $casts = [
@@ -31,11 +31,6 @@ class Activity extends Model
         return strtotime($this->attributes['date'] ?? 0);
     }
 
-    public function scopeEditable($query) {
-        $query->where('from', 'admin')
-            ->whereNull('invoiceID');
-    }
-
     public function member() {
         return $this->belongsTo(Member::class)->withDefault([
             'memberID' => '',
@@ -44,10 +39,10 @@ class Activity extends Model
     }
 
     public function invoice() {
-        return $this->belongsTo(Invoice::class, 'invoiceID', 'invoiceID');
+        return $this->belongsTo(Invoice::class);
     }
 
     public function items() {
-        return $this->hasMany(ActivityItem::class, 'orderID', 'detail');
+        return $this->hasMany(ActivityItem::class);
     }
 }

@@ -4,9 +4,12 @@ namespace App\Console\Commands;
 
 use App\Helpers\Clover;
 use App\Models\Invoice;
+use App\Models\InvoicePlan;
 use App\Models\Member;
+use App\Models\Plan;
 use Illuminate\Console\Command;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class CreateInvoices extends Command
@@ -31,55 +34,117 @@ class CreateInvoices extends Command
     public function handle()
     {
         $period = date('F Y', strtotime('-1 days'));
+        $today = date('Y-m-d');
         $clover = new Clover();
         $members = Member::query()
             ->with([
-                'plan',
-                'activities' => function ($q) {
-                    $q->where('date', '<', date('Y-m-d'))
-                        ->whereNull('invoiceID');
-                }
+                'plan:id,name,price',
+                'activities' => function (HasMany $query) use ($today) {
+                    $query->where('date', '<', $today)
+                        ->whereNull('invoice_id')
+                        ->select(['member_id', 'detail', 'price']);
+                },
+                'families:id,primary_id,secondary_fee,status,pause_from,pause_to',
+                'families.activities' => function (HasMany $query) use ($today) {
+                    $query->where('date', '<', $today)
+                        ->whereNull('invoice_id')
+                        ->select(['member_id', 'detail', 'price']);
+                },
             ])
-            ->where('status', 'active')
-            ->orWhere(function (Builder $query) {
-                $query->where('status', 'paused')
-                    ->where(function (Builder $query) {
-                        $today = date('Y-m-d');
-                        $query->where('pause_from', '>', $today)
-                            ->orWhere('pause_to', '<', $today);
+            ->where(function (Builder $query) use ($today) {
+                $query->whereIn('status', ['active', 'suspended'])
+                    ->orWhere(function (Builder $query) use ($today) {
+                        $query->where('status', 'paused')
+                            ->where(function (Builder $query) use ($today) {
+                                $query->where('pause_from', '>', $today)
+                                    ->orWhere('pause_to', '<', $today);
+                            });
                     });
             })
-            ->get();
+            ->where(function (Builder $query) {
+                $query->where('plan_id', '<>', Plan::FamilyPlanId)
+                    ->orWhereNull('primary_id');
+            })
+            ->get([
+                'id', 'firstname', 'lastname', 'plan_id',
+                'customerID', 'card_last4', 'card_type',
+            ]);
         foreach ($members as $member) {
-            $activities = $member['activities'];
+            $plan_name = $member['plan']['name'] ?? 'Unknown';
             $amount = $plan_price = $member['plan']['price'] ?? 0;
+            $activities = $member['activities'];
             foreach ($activities as $activity) {
                 $amount += $activity['price'];
+            }
+            $families = $member['families'];
+            foreach ($families as $family) {
+                if (in_array($family['status'], ['active', 'suspended'])
+                    || ($family['status'] == 'paused'
+                        && ($family['pause_from'] > $today || $family['pause_to'] < $today)
+                    )
+                ) {
+                    $amount += $family['secondary_fee'] ?? 0;
+                }
+                foreach ($family['activities'] as $activity) {
+                    $amount += $activity['price'];
+                }
             }
             $charge = $clover->createCharge([
                 'amount' => $amount,
                 'source' => $member['customerID'],
-                'description' => 'PPBRVA invoice for '.$period,
+                'description' => "PPBRVA {$period} invoice for ".$member['name'],
             ]);
-            $invoiceID = $charge['id'] ?? ('PPB-'.Str::random());
             $paid = !empty($charge['paid']);
-            Invoice::create([
-                'invoiceID' => $invoiceID,
+            $card_type = strtolower($charge['source']['brand'] ?? $member['card_type']);
+            $card_last4 = strtolower($charge['source']['last4'] ?? $member['card_last4']);
+            $invoice = Invoice::query()->create([
+                'invoiceID' => $charge['id'] ?? ('PPB-'.Str::random()),
                 'member_id' => $member['id'],
                 'period' => $period,
                 'amount' => $amount,
                 'paid' => $paid,
-                'plan_name' => $member['plan']['name'],
-                'plan_price' => $plan_price,
-                'card_type' => $charge['source']['brand'] ?? $member['card_type'],
-                'card_last4' => $charge['source']['last4'] ?? $member['card_last4'],
+                'card_type' => $card_type,
+                'card_last4' => $card_last4,
                 'paid_at' => $paid ? gmdate('Y-m-d H:i:s', $charge['created'] / 1000) : null,
                 'reason' => $paid ? null : (empty($charge['id']) ? $charge : '3DSecure transactions'),
             ]);
+            if ($member['card_type'] != $card_type || $member['card_last4'] != $card_last4) {
+                $member->update([
+                    'card_type' => $card_type,
+                    'card_last4' => $card_last4,
+                ]);
+            }
+            InvoicePlan::query()->create([
+                'invoice_id' => $invoice['id'],
+                'member_id' => $member['id'],
+                'name' => $plan_name,
+                'price' => $plan_price,
+            ]);
+            $member->activities()->update([
+                'invoice_id' => $invoice['id'],
+            ]);
             foreach ($activities as $activity) {
-                $activity['invoiceID'] = $invoiceID;
-                $clover->updateOrderStatus($activity['detail']);
-                $activity->save();
+                $clover->updateOrderTotal($activity['detail']);
+            }
+            foreach ($families as $family) {
+                if (in_array($family['status'], ['active', 'suspended'])
+                    || ($family['status'] == 'paused'
+                        && ($family['pause_from'] > $today || $family['pause_to'] < $today)
+                    )
+                ) {
+                    InvoicePlan::query()->create([
+                        'invoice_id' => $invoice['id'],
+                        'member_id' => $family['id'],
+                        'name' => $plan_name,
+                        'price' => $family['secondary_fee'] ?? 0,
+                    ]);
+                }
+                $family->activities()->update([
+                    'invoice_id' => $invoice['id'],
+                ]);
+                foreach ($family['activities'] as $activity) {
+                    $clover->updateOrderTotal($activity['detail']);
+                }
             }
         }
     }

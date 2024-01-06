@@ -64,7 +64,7 @@
                                     <td class="px-6 py-4 text-center">
                                         <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
                                            :href="'{{ route('activity.index') }}/' + activity.id + '/edit'"
-                                           v-if="activity.from === 'admin' && !activity.invoiceID">
+                                           v-if="activity.from === 'admin' && !activity.invoice_id">
                                             Edit
                                         </a>
                                     </td>

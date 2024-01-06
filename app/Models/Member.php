@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
+use App\Helpers\General;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -19,7 +19,7 @@ class Member extends Authenticatable
         'location_id', 'plan_id', 'primary_id', 'is_child', 'secondary_fee',
         'membership_card_id', 'avatar', 'note',
         'customerID', 'card_last4', 'card_type',
-        'status', 'pause_from', 'pause_to',
+        'status', 'pause_from', 'pause_to', 'podplay_id',
     ];
 
     protected $appends = [
@@ -61,7 +61,7 @@ class Member extends Authenticatable
         return $this->hasOne(MemberProfile::class)->withDefault();
     }
 
-    public function secondaries() {
+    public function families() {
         return $this->hasMany(Member::class, 'primary_id', 'id');
     }
 
@@ -96,12 +96,9 @@ class Member extends Authenticatable
                 $status = 'active';
             }
         }
+        General::getGenderAge($this);
         $profile = $this['profile'];
-        if (!($gender = $this['gender'])) $gender = strtolower($profile['gender']);
-        else if ($gender === 'prefer_to_not_say') $gender = '';
-        if ($this['dob']) $age = Carbon::parse($this['dob'])->age;
-        else $age = $profile['age'];
-        $dupr_link = Setting::getSetting('dupr_link', 'https://ppbrva.com/dupr');
+        $dupr_link = Setting::getSetting('dupr_link', Setting::DefaultDuprLink);
         return [
             'id' => $this['id'],
             'memberID' => $this['memberID'],
@@ -121,16 +118,17 @@ class Member extends Authenticatable
             'card_type' => $this['card_type'],
             'card_last4' => $this['card_last4'],
             'status' => $status,
+            'is_child' => !empty($this['is_child']),
             'profile' => [
                 'share_age_gender' => !empty($profile['share_age_gender']),
-                'dupr_id' => $profile['dupr_id'],
-                'dupr_link' => $dupr_link,
-                'gender' => $gender,
-                'age' => $age,
+                'gender' => $profile['gender'],
+                'age' => $profile['age'],
                 'rating' => $profile['rating'],
                 'matches' => $profile['matches'],
                 'wins' => $profile['wins'],
                 'losses' => $profile['losses'],
+                'dupr_id' => $profile['dupr_id'],
+                'dupr_link' => $dupr_link,
             ],
         ];
     }

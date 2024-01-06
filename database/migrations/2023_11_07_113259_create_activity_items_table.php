@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('activity_items', function (Blueprint $table) {
             $table->id();
-            $table->string('orderID')->comment('detail in activities table');
+            $table->bigInteger('activity_id');
             $table->string('name');
             $table->decimal('price');
             $table->timestamps();

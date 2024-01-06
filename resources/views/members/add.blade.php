@@ -101,6 +101,24 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
                                 <div class="flex flex-wrap -mx-3 mb-6"
                                      :class="{'hidden': plan !== '{{ $family_plan_id }}' || family_type !== 'secondary'}">
                                     <div class="w-full px-3">
+                                        <label for="is_child" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                                            Is Child
+                                        </label>
+                                        <select @class([
+                                                       "appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white",
+                                                       "border-slate-300" => !$errors->first('is_child'),
+                                                       "border-red-500" => $errors->first('is_child'),
+                                                   ])
+                                                id="is_child" name="is_child">
+                                            <option value="">No</option>
+                                            <option value="1" @selected(old('is_child', $member['is_child'] ?? ''))>Yes</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap -mx-3 mb-6"
+                                     :class="{'hidden': plan !== '{{ $family_plan_id }}' || family_type !== 'secondary'}">
+                                    <div class="w-full px-3">
                                         <label for="additional_monthly_fee" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                                             Additional Monthly Fee
                                         </label>
@@ -188,7 +206,7 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
                                                    "border-slate-300" => !$errors->first('gender'),
                                                    "border-red-500" => $errors->first('gender'),
                                                 ])
-                                                id="gender" name="gender" required>
+                                                id="gender" name="gender">
                                             @php $old = old('gender', $member['gender'] ?? ''); @endphp
                                             <option value="">Choose...</option>
                                             <option value="male" @selected($old == 'male')>

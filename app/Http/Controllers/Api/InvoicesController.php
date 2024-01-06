@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
-use App\Models\Invoice;
+use App\Models\Member;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -26,14 +26,18 @@ class InvoicesController extends Controller
     public function invoiceDetail(Request $request, $invoiceID) {
         $invoice = $request->user()
             ->invoices()
-            ->with(['activities:invoiceID,category,detail,price'])
+            ->with([
+                'member:id,firstname,lastname',
+                'activities:member_id,invoice_id,category,detail,price',
+                'activities.member:id,firstname,lastname',
+                'plans:invoice_id,member_id,name,price',
+                'plans.member:id,firstname,lastname'
+            ])
             ->where('invoiceID', $invoiceID)
             ->where('paid', true)
-            ->first(['invoiceID', 'amount', 'period', 'plan_name', 'plan_price']);
+            ->first(['id', 'member_id', 'invoiceID', 'amount', 'period']);
         if (!$invoice) {
-            return response()->json([
-                'message' => 'Not found invoice.',
-            ], 404);
+            return response()->json(['message' => 'Not found invoice.'], 404);
         }
         $period = new Carbon($invoice['period']);
         $invoice['from'] = $period->firstOfMonth()->format('n/j/y');
@@ -46,7 +50,9 @@ class InvoicesController extends Controller
     public function invoiceDownload(Request $request, $invoiceID) {
         $invoice = $request->user()
             ->invoices()
-            ->with(['member', 'activities'])
+            ->with([
+                'member', 'activities', 'activities.member', 'plans', 'plans.member'
+            ])
             ->where('invoiceID', $invoiceID)
             ->where('paid', true)
             ->first();
@@ -59,13 +65,22 @@ class InvoicesController extends Controller
     }
 
     public function activities() {
+        $user_id = auth()->id();
+        $members = Member::query()
+            ->where('id', $user_id)
+            ->orWhere('primary_id', $user_id)
+            ->pluck('id')
+            ->toArray();
         $activities = Activity::query()
-            ->with(['items:orderID,name,price'])
-            ->where('member_id', auth()->id())
+            ->with([
+                'member:id,firstname,lastname,avatar',
+                'items:activity_id,name,price',
+            ])
+            ->whereIn('member_id', $members)
             ->orderByDesc('date')
             ->orderBy('category')
             ->orderBy('detail')
-            ->get(['category', 'detail', 'price', 'date']);
+            ->get(['id', 'member_id', 'category', 'detail', 'price', 'date']);
         return response()->json([
             'activities' => $activities,
         ]);

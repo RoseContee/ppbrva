@@ -61,6 +61,14 @@
                                                 Only Unpaid
                                             </a>
                                         </li>
+                                        <li>
+                                            <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                               href="javascript:void(0);"
+                                               :class="{'bg-zinc-100': filter === 'unpaid-non0'}"
+                                               v-on:click="filter = 'unpaid-non0'; showMenu = false;">
+                                                Unpaid, No $0s
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -172,12 +180,14 @@
                             ) && (filter.value === 'all'
                                 || (filter.value === 'paid' && !!invoice.paid)
                                 || (filter.value === 'unpaid' && !invoice.paid)
+                                || (filter.value === 'unpaid-non0' && !invoice.paid && invoice.amount > 0)
                             );
                         });
                     });
                     const per_page = 50;
                     const page = ref(1);
                     watch(keyword, () => page.value = 1);
+                    watch(filter, () => page.value = 1);
                     const pageInvoices = computed(() => {
                         return filteredInvoices.value.filter((invoice, index) => {
                             return (page.value - 1) * per_page <= index
@@ -191,6 +201,7 @@
                     const filterText = computed(() => {
                         if (filter.value === 'paid') return 'Only Paid';
                         if (filter.value === 'unpaid') return 'Only Unpaid';
+                        if (filter.value === 'unpaid-non0') return 'Unpaid, No $0s';
                         return 'All';
                     });
                     const paginationInfo = computed(() => {

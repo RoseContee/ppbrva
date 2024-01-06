@@ -1,5 +1,7 @@
 import React, { FC } from 'react';
-import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  BottomTabNavigationOptions, createBottomTabNavigator
+} from '@react-navigation/bottom-tabs';
 import HeaderOptions, { HideLeftButton } from '../components/header-options';
 import BottomTabs from '../components/bottom-tabs';
 
@@ -7,7 +9,8 @@ import Dashboard from '../screens/dashboard';
 import Activity from '../screens/activity';
 import Events from '../screens/events';
 import {
-  Profile, MemberProfile, BillingProfile, MembershipPlan
+  Profile, MemberProfile, BillingProfile,
+  MembershipPlan, ProfileInviteMember, FamilyMemberProfile
 } from '../screens/profile';
 import ClubInfo from '../screens/club-info';
 import {
@@ -30,6 +33,8 @@ export const mainRoutes = {
   BillingProfile: 'BillingProfile',
   InvoiceScreen: 'InvoiceScreen',
   MembershipPlan: 'MembershipPlan',
+  ProfileInviteMember: 'ProfileInviteMember',
+  FamilyMemberProfile: 'FamilyMemberProfile',
   ClubInfo: 'ClubInfo',
   Members: 'Members',
   MemberInvite: 'MemberInvite',
@@ -84,6 +89,12 @@ const MainScreen: FC = (): JSX.Element => {
       />
       <Tab.Screen name={mainRoutes.MembershipPlan} component={MembershipPlan}
         options={{title: 'Membership Plan'}}
+      />
+      <Tab.Screen name={mainRoutes.ProfileInviteMember} component={ProfileInviteMember}
+        options={{title: 'Invite Member'}}
+      />
+      <Tab.Screen name={mainRoutes.FamilyMemberProfile} component={FamilyMemberProfile}
+        options={{title: 'Member Profile'}}
       />
 
       <Tab.Screen name={mainRoutes.ClubInfo} component={ClubInfo}

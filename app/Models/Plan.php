@@ -10,6 +10,8 @@ class Plan extends Model
 {
     use HasFactory, SoftDeletes;
 
+    public const FamilyPlanId = 8;
+
     protected $fillable = [
         'name', 'price', 'period', 'status',
     ];

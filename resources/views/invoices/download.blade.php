@@ -115,6 +115,9 @@
             <tr class="border-b border-slate-300">
                 <td class="py-3 text-base">
                     {{ $activity['category'] }}
+                    @if ($activity['member_id'] != $invoice['member_id'])
+                        ({{ $activity['member']['name'] ?? 'SECONDARY ACCOUNT' }})
+                    @endif
                 </td>
                 <td class="py-3">
                     {{ ($activity['from'] == 'clover' ? '#' : '').$activity['detail'] }}
@@ -124,17 +127,23 @@
                 </td>
             </tr>
         @endforeach
-        <tr class="border-b border-slate-300">
-            <td class="py-3 text-base">
-                Membership Dues
-            </td>
-            <td class="py-3">
-                {{ $invoice['plan_name'] }}
-            </td>
-            <td class="py-3">
-                ${{ number_format($invoice['plan_price'], 2) }}
-            </td>
-        </tr>
+        @foreach ($invoice['plans'] as $plan)
+            <tr class="border-b border-slate-300">
+                <td class="py-3 text-base">
+                    Membership Dues
+                </td>
+                <td class="py-3">
+                    @if ($plan['member_id'] == $invoice['member_id'])
+                        {{ $plan['name'] }}
+                    @else
+                        {{ $plan['member']['name'] ?? 'SECONDARY ACCOUNT' }}
+                    @endif
+                </td>
+                <td class="py-3">
+                    ${{ number_format($plan['price'], 2) }}
+                </td>
+            </tr>
+        @endforeach
         <tr class="border-b border-slate-300">
             <td class="py-3 text-base font-bold">
                 TOTAL

@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\Setting;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -62,8 +63,10 @@ class Clover
     }
 
     protected function getErrorMessage(array | string $result) {
-        return $result['message'] ?? $result['error']['message'] ?? 'Clover API error.';
-        return $result['message'] ?? $result['error']['message'] ?? $result ?? 'Clover API error.';
+        if (!empty($result['error']['message'])) return $result['error']['message'];
+        if (!empty($result['message'])) return $result['message'];
+        if (gettype($result) === 'string') return $result;
+        return 'Clover API error.';
     }
 
     public function getCustomer(string $customerId) {
@@ -144,6 +147,27 @@ class Clover
                     $this->platform_client->delete("/v3/merchants/{$mId}/customers/{$customerId}/phone_numbers/{$phoneId}");
                 } catch (Exception $exception) {}
             }
+            return json_decode($response->getBody(), true);
+        } catch (RequestException $exception) {
+            $result = json_decode($exception->getResponse()->getBody(), true);
+        } catch (Exception $exception) {
+            $result = $exception->getMessage();
+        }
+        return $this->getErrorMessage($result);
+    }
+
+    public function updateCustomerLastname(string $customerId, string $lastname) {
+        try {
+            $mId = $this->mId;
+            $body = [
+                'lastName' => substr($lastname, 0, 64),
+            ];
+            $response = $this->platform_client->post("/v3/merchants/{$mId}/customers/{$customerId}", [
+                'query' => [
+                    'expand' => 'emailAddresses,phoneNumbers,cards',
+                ],
+                'body' => json_encode($body),
+            ]);
             return json_decode($response->getBody(), true);
         } catch (RequestException $exception) {
             $result = json_decode($exception->getResponse()->getBody(), true);
@@ -255,11 +279,14 @@ class Clover
     public function getOrders() {
         try {
             $mId = $this->mId;
-            $response = $this->platform_client->get("/v3/merchants/{$mId}/orders", [
-                'query' => [
-                    'expand' => 'lineItems,payment.tender'
-                ],
+            $lastTime = Setting::getSetting('last_order_updated') ?: 0;
+            $query = implode('&', [
+                "expand=lineItems,payment.tender",
+                "filter=payType=FULL",
+                "filter=state=locked",
+                "filter=createdTime>{$lastTime}",
             ]);
+            $response = $this->platform_client->get("/v3/merchants/{$mId}/orders?{$query}");
             return json_decode($response->getBody(), true);
         } catch (RequestException $exception) {
             $result = json_decode($exception->getResponse()->getBody(), true);
@@ -269,8 +296,22 @@ class Clover
         return $this->getErrorMessage($result);
     }
 
-    public function updateOrderStatus(string $orderID) {
-        return null;
+    public function updateOrderTotal(string $orderId) {
+        try {
+            $mId = $this->mId;
+            $body = [
+                'total' => 0,
+            ];
+            $response = $this->platform_client->post("/v3/merchants/{$mId}/orders/{$orderId}", [
+                'body' => json_encode($body),
+            ]);
+            return json_decode($response->getBody(), true);
+        } catch (RequestException $exception) {
+            $result = json_decode($exception->getResponse()->getBody(), true);
+        } catch (Exception $exception) {
+            $result = $exception->getMessage();
+        }
+        return $this->getErrorMessage($result);
     }
 
     public function getCharge(string $chargeId) {

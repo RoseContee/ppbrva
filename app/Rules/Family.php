@@ -2,8 +2,8 @@
 
 namespace App\Rules;
 
-use App\Helpers\General;
 use App\Models\Member;
+use App\Models\Plan;
 use App\Models\Setting;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Family implements ValidationRule
 {
-    protected $memberId = null;
+    protected string|null $memberId = null;
 
     public function __construct($memberId = null) {
         $this->memberId = $memberId;
@@ -24,19 +24,18 @@ class Family implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $secondary_limit = Setting::getSetting('secondary_limit', 5);
+        $secondary_limit = Setting::getSetting('secondary_limit', Setting::DefaultSecondaryLimit);
         $query = Member::query();
         if ($this->memberId) {
-            $query = $query->whereHas('secondaries', function (Builder $query) {
+            $query = $query->whereHas('families', function (Builder $query) {
                 $query->where('id', '<>', $this->memberId);
             }, '<', $secondary_limit);
         } else {
-            $query = $query->has('secondaries', '<', $secondary_limit);
+            $query = $query->has('families', '<', $secondary_limit);
         }
-        $member = $query->where('id', $value)
-            ->where('plan_id', General::$FamilyPlanId)
+        $member = $query->where('plan_id', Plan::FamilyPlanId)
             ->whereNull('primary_id')
-            ->first();
+            ->find($value);
         if (!$member) {
             $fail('The :attribute must be primary member.');
         }

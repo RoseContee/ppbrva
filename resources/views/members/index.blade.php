@@ -408,6 +408,11 @@
                     const per_page = 50;
                     const page = ref(1);
                     watch(keyword, () => page.value = 1);
+                    watch(filter, () => {
+                        if (['plan', 'status'].includes(filter.value)) page.value = 1;
+                    });
+                    watch(planFilter, () => page.value = 1);
+                    watch(statusFilter, () => page.value = 1);
                     const pageMembers = computed(() => {
                         return filteredMembers.value.filter((member, index) => {
                             return (page.value - 1) * per_page <= index

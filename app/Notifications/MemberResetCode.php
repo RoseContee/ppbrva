@@ -11,16 +11,14 @@ class MemberResetCode extends Notification
 {
     use Queueable;
 
-    protected string $code;
-    protected int $expiration;
+    protected array $data;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(string $code, $expiration)
+    public function __construct($data)
     {
-        $this->code = $code;
-        $this->expiration = $expiration;
+        $this->data = $data;
     }
 
     /**
@@ -40,10 +38,7 @@ class MemberResetCode extends Notification
     {
         return (new MailMessage)
             ->subject('Reset Password Notification')
-            ->view('mails.member-reset-code', [
-                'code' => $this->code,
-                'expiration' => $this->expiration,
-            ]);
+            ->view('mails.member-reset-code', $this->data);
     }
 
     /**

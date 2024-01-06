@@ -16,6 +16,7 @@ import Card from '../components/basic/card';
 import Text from '../components/basic/text';
 import Title from '../components/basic/title';
 import Message from '../components/basic/message';
+import Image from '../components/basic/profile-image';
 import IconDown from '../assets/img/icons/arrow-down.svg';
 
 import { t } from 'react-native-tailwindcss';
@@ -58,8 +59,8 @@ const HeaderComponent: FC<IHeaderProps> = ({
 const ActivityItem: FC<ActivityProp> = (activity): JSX.Element => {
   return (
     <View style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.mY1]}>
-      <View style={[t.flexShrink, t.flexRow, t.itemsCenter]}>
-        <Text style={[s.fontBodyLight, t.textBase, t.mR3]}>
+      <View style={[t.flexShrink, t.flexRow, t.itemsCenter, t.mR1]}>
+        <Text style={[s.fontBodyLight, t.textBase, t.mR2]}>
           { activity.category } - { activity.detail }
         </Text>
         {
@@ -83,9 +84,19 @@ const ItemComponent: FC<ActivityProp> = (activity): JSX.Element => {
   return (
     <View style={[s.pX7, t.mT4]}>
       <Card style={[t.pX4, t.pY3]}>
-        <Title style={[t.textXl, s.textPrimary, t.mY2]}>
-          { activity.date }
-        </Title>
+        <View style={[t.flexRow, t.itemsCenter, t.justifyBetween, t.mB2]}>
+          <Title style={[t.flexShrink, t.textXl, s.textPrimary, t.mR2]}>
+            { activity.date }
+          </Title>
+          <View style={[t.flexRow, t.itemsCenter, t.justifyBetween]}>
+            <Title style={[t.flexShrink, t.textBase, s.textPrimary, t.mR2]}>
+              { activity.member.name }
+            </Title>
+            <Image image={activity.member.avatar}
+              style={[s.circle, {width: theme.size.settingIcon, height: theme.size.settingIcon}]}
+            />
+          </View>
+        </View>
         <View style={[s.borderT, t.pY2]}>
           {
             !activity.items.length ? (

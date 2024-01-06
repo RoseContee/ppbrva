@@ -143,8 +143,8 @@ const Members: FC = (): JSX.Element => {
     const profile = member.profile;
     return member.name.toLowerCase().includes(q)
       && (['', 'highest', 'lowest', 'oldest', 'youngest'].includes(filter)
-        || (filter === 'men' && profile.share_age_gender && profile.gender.toLocaleLowerCase() === 'male')
-        || (filter === 'women' && profile.share_age_gender && profile.gender.toLocaleLowerCase() === 'female')
+        || (filter === 'men' && profile.share_age_gender && profile.gender === 'male')
+        || (filter === 'women' && profile.share_age_gender && profile.gender === 'female')
         || (filter === '18-30' && 18 <= profile.age && profile.age <= 30)
         || (filter === '31-50' && 31 <= profile.age && profile.age <= 50)
         || (filter === '51-60' && 51 <= profile.age && profile.age <= 60)

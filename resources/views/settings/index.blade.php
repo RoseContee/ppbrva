@@ -45,6 +45,12 @@
                                     General Settings
                                 </a>
                             </li>
+                            <li class="pt-2">
+                                <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
+                                   href="{{ route('scan.index') }}">
+                                    Scan
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>
