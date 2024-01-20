@@ -287,7 +287,7 @@
 
     @push ('scripts')
         <script type="module">
-            const { createApp, ref, computed } = Vue
+            const { createApp, ref, computed } = Vue;
 
             createApp({
                 setup() {

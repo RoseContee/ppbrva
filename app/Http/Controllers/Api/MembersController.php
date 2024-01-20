@@ -7,9 +7,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Member;
 use App\Models\MemberFriend;
 use App\Models\Plan;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class MembersController extends Controller
 {
@@ -164,8 +166,10 @@ class MembersController extends Controller
     }
 
     public function invite(Request $request, $memberID) {
-        $user_id = auth()->id();
+        $user = $request->user();
+        $user_id = $user['id'];
         $member = Member::query()
+            ->with(['devices'])
             ->where('memberID', $memberID)
             ->where('id', '<>', $user_id)
             ->whereNotIn('status', ['inactive', 'pending'])
@@ -185,6 +189,30 @@ class MembersController extends Controller
             ->firstOrNew();
         if ($friend['status']) {
             return response()->json(['message' => 'Cannot request a friend at the moment.'], 403);
+        }
+        try {
+            $devices = [];
+            foreach ($member['devices'] as $device) {
+                $devices[] = $device['token'];
+            }
+            if (!empty($devices)) {
+                $response = Http::withHeaders([
+                    'Authorization' => 'key='.env('FIREBASE_SERVER_KEY'),
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                ])->post('https://fcm.googleapis.com/fcm/send', [
+                    'registration_ids' => $devices,
+                    'notification' => [
+                        'title' => 'New friend request',
+                        'body' => "{$user['name']} wants to be your friend!",
+                    ]
+                ]);
+                $result = json_encode($response->body(), true);
+            }
+        } catch (RequestException $exception) {
+            $result = json_decode($exception->getResponse()->getBody(), true);
+        } catch (\Exception $exception) {
+            $result = $exception->getMessage();
         }
         $friend['member1_id'] = $user_id;
         $friend['member1_email'] = !empty($request['email_share']);

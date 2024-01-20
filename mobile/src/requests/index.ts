@@ -2,7 +2,7 @@ export {
   postLogin, postForgotPassword, postVaildateCode, postResetPassword
 } from './ppbrva-guest';
 export {
-  fetchMe, fetchLocation, fetchPlan,
+  fetchMe, postDeviceToken, fetchLocation, fetchPlan,
     postProfile, postUpdateBilling,
     postUpdatePassword, postPlanChangeRequest,
     fetchFamilies, postInviteMember, postAddChildMember,

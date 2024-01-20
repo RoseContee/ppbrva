@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Http\Controllers\Api\PodPlayController;
 use App\Mail\NewMemberCreated;
 use App\Mail\PlanChangeRequest;
 use App\Models\Member;
@@ -170,6 +171,7 @@ class General
             'note' => $request['note'],
             'customerID' => $customer['id'],
             'status' => $status,
+            'podplay_id' => (new PodPlayController())->podplaynew($request),
         ]);
         if ($request->hasFile('avatar')) {
             $member['avatar'] = 'uploads/'.$request->file('avatar')->store('avatars');
@@ -180,6 +182,69 @@ class General
         self::saveDUPR($profile, $request['dupr_id']);
         $profile->save();
         $clover->updateCustomerLastname($member['customerID'], "{$request['lastname']}-{$member['id']}");
+        return $member;
+    }
+
+    public static function createInvitedMember(Request $request) {
+        $clover = new Clover();
+        $customer = $clover->createCustomer([
+            'firstname' => $request['firstname'],
+            'lastname' => $request['lastname'],
+            'email' => $request['email'],
+        ]);
+        if (empty($customer['id'])) return $customer;
+        $user = $request->user();
+        $password = Str::random(8);
+        $member = Member::query()->create([
+            'memberID' => Str::random(),
+            'firstname' => $request['firstname'],
+            'lastname' => $request['lastname'],
+            'email' => $request['email'],
+            'password' => bcrypt($password),
+            'original_pass' => $password,
+            'location_id' => $user['location_id'],
+            'plan_id' => $user['plan_id'],
+            'customerID' => $customer['id'],
+            'status' => 'pending',
+            'podplay_id' => (new PodPlayController())->podplaynew($request),
+        ]);
+        $member['memberID'] = self::generateMemberID($member['id']);
+        $member->save();
+        $member['profile']->save();
+        $clover->updateCustomerLastname($member['customerID'], "-{$member['id']}");
+        self::sendNewMemberCreatedEmail($member);
+        return $member;
+    }
+
+    public static function createChildMember(Request $request) {
+        $clover = new Clover();
+        $customer = $clover->createCustomer([
+            'firstname' => $request['firstname'],
+            'lastname' => $request['lastname'],
+            'email' => $request['email'],
+        ]);
+        if (empty($customer['id'])) return $customer;
+        $user = $request->user();
+        $member = Member::query()->create([
+            'memberID' => Str::random(),
+            'firstname' => $request['firstname'],
+            'lastname' => $request['lastname'],
+            'email' => $request['email'],
+            'password' => Str::random(),
+            'dob' => date('Y-m-d', strtotime($request['dob'])),
+            'location_id' => $user['location_id'],
+            'plan_id' => $user['plan_id'],
+            'primary_id' => $user['id'],
+            'is_child' => true,
+            'customerID' => $customer['id'],
+            'status' => 'active',
+            'podplay_id' => (new PodPlayController())->podplaynew($request),
+        ]);
+        $member['memberID'] = self::generateMemberID($member['id']);
+        $member->save();
+        $member['profile']->save();
+        $clover->updateCustomerLastname($member['customerID'], "{$request['lastname']}-{$member['id']}");
+        self::sendNewMemberCreatedEmail($member);
         return $member;
     }
 

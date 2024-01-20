@@ -523,7 +523,7 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
 
     @push('scripts')
         <script type="module">
-            const { createApp, ref, computed } = Vue
+            const { createApp, ref, computed } = Vue;
 
             createApp({
                 setup() {

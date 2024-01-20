@@ -7,6 +7,7 @@ use App\Helpers\General;
 use App\Http\Controllers\Controller;
 use App\Models\Location;
 use App\Models\Member;
+use App\Models\MemberDevice;
 use App\Models\Plan;
 use App\Models\Setting;
 use App\Rules\State as StateRule;
@@ -21,6 +22,20 @@ class ProfileController extends Controller
         $user = $request->user();
         return response()->json([
             'user' => $user->getInfo(),
+        ]);
+    }
+
+    public function saveDeviceToken(Request $request) {
+        $request->validate([
+            'device_token' => ['required'],
+        ]);
+        MemberDevice::query()->updateOrCreate([
+            'token' => $request['device_token'],
+        ], [
+            'member_id' => auth()->id(),
+        ]);
+        return response()->json([
+            'status' => 'OK',
         ]);
     }
 
@@ -128,6 +143,7 @@ class ProfileController extends Controller
         $user['card_type'] = strtolower($card['card']['brand'] ?? $brand);
         $user['card_last4'] = substr($card['card']['last4'] ?? $request['number'], -4);
         $user->save();
+        (new PodPlayController)->podplaynewplan($user);
         return response()->json([
             'user' => $user->getInfo(),
         ]);
@@ -190,37 +206,15 @@ class ProfileController extends Controller
     }
 
     public function inviteMember(Request $request) {
-        $user = $request->user();
         $request->validate([
             'email' => ['required', 'email', 'unique:members'],
         ]);
-        $clover = new Clover();
-        $customer = $clover->createCustomer([
-            'firstname' => '',
-            'lastname' => '',
-            'email' => $request['email'],
-        ]);
-        if (empty($customer['id'])) {
-            return response()->json(['message' => $customer], 400);
+        $request['firstname'] = '';
+        $request['lastname'] = '';
+        $member = General::createInvitedMember($request);
+        if (empty($member['id'])) {
+            return response()->json(['message' => $member], 400);
         }
-        $password = Str::random(8);
-        $member = Member::query()->create([
-            'memberID' => Str::random(),
-            'firstname' => '',
-            'lastname' => '',
-            'email' => $request['email'],
-            'password' => bcrypt($password),
-            'original_pass' => $password,
-            'location_id' => $user['location_id'],
-            'plan_id' => $user['plan_id'],
-            'customerID' => $customer['id'],
-            'status' => 'pending',
-        ]);
-        $member['memberID'] = General::generateMemberID($member['id']);
-        $member->save();
-        $member['profile']->save();
-        $clover->updateCustomerLastname($member['customerID'], "-{$member['id']}");
-        General::sendNewMemberCreatedEmail($member);
         return response()->json([
             'status' => 'OK',
         ]);
@@ -240,35 +234,11 @@ class ProfileController extends Controller
             'lastname' => ['required'],
             'dob' => ['required', 'dateFormat:m/d/Y'],
         ]);
-        $email = 'noreply-'.$user['memberID'].'-'.($families + 1).'@ppbrva.com';
-        $clover = new Clover();
-        $customer = $clover->createCustomer([
-            'firstname' => $request['firstname'],
-            'lastname' => $request['lastname'],
-            'email' => $email,
-        ]);
-        if (empty($customer['id'])) {
-            return response()->json(['message' => $customer], 400);
+        $request['email'] = 'noreply-'.$user['memberID'].'-'.($families + 1).'@ppbrva.com';
+        $member = General::createChildMember($request);
+        if (empty($member['id'])) {
+            return response()->json(['message' => $member], 400);
         }
-        $child = Member::query()->create([
-            'memberID' => Str::random(),
-            'firstname' => $request['firstname'],
-            'lastname' => $request['lastname'],
-            'email' => $email,
-            'password' => Str::random(),
-            'dob' => date('Y-m-d', strtotime($request['dob'])),
-            'location_id' => $user['location_id'],
-            'plan_id' => $user['plan_id'],
-            'primary_id' => $user['id'],
-            'is_child' => true,
-            'customerID' => $customer['id'],
-            'status' => 'active',
-        ]);
-        $child['memberID'] = General::generateMemberID($child['id']);
-        $child->save();
-        $child['profile']->save();
-        $clover->updateCustomerLastname($child['customerID'], "{$request['lastname']}-{$child['id']}");
-        General::sendNewMemberCreatedEmail($child);
         return response()->json([
             'status' => 'OK',
         ]);

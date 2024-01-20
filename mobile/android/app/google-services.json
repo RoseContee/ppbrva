@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "343774405997",
+    "project_id": "performancepickleball",
+    "storage_bucket": "performancepickleball.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:343774405997:android:03cb21b5e199416d9c6664",
+        "android_client_info": {
+          "package_name": "com.ppbrva"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzZh7va4yBcZFUlqmA_-IRxUpcsMcCDyo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -11,6 +11,7 @@ use App\Http\Controllers\Settings\PlanController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\CategoryController;
 use App\Http\Controllers\Settings\AppSettingsController;
+use App\Http\Controllers\EmailController;
 use App\Http\Controllers\ScanController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -72,6 +73,18 @@ Route::middleware(['auth', 'active', 'role'])->group(function () {
         Route::get('general', [SettingsController::class, 'general'])->name('settings.general.index');
         Route::post('general', [SettingsController::class, 'storeGeneral'])->name('settings.general.store');
     });
+
+    Route::get('emails/sent', [EmailController::class, 'sent'])->name('emails.sent');
+    Route::get('emails/draft', [EmailController::class, 'draft'])->name('emails.draft');
+    Route::get('emails/trash', [EmailController::class, 'trash'])->name('emails.trash');
+    Route::get('emails/read/{id}', [EmailController::class, 'read'])->name('emails.read');
+    Route::post('emails/send', [EmailController::class, 'send'])->name('emails.send');
+    Route::post('emails/save-as-draft', [EmailController::class, 'saveDraft'])->name('emails.save-as-draft');
+    Route::post('email/discard', [EmailController::class, 'discard'])->name('emails.discard');
+    Route::delete('emails', [EmailController::class, 'destroy'])->name('emails.destroy');
+    Route::delete('emails/attachment', [EmailController::class, 'destroyAttachment'])->name('emails.destroy-attachment');
+    Route::post('emails/restore', [EmailController::class, 'restore'])->name('emails.restore');
+
     Route::resource('scan', ScanController::class)->only(['index', 'store']);
     Route::get('missingcc', [ScanController::class, 'missingcc'])->name('missingcc');
 

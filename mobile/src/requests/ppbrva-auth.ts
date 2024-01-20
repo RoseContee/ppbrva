@@ -14,6 +14,14 @@ export const fetchMe = () => {
   });
 }
 
+export const postDeviceToken = (data: any) => {
+  return new Promise((resolve, reject) => {
+    axios.post(`/device-token`, data)
+      .then(() => resolve(true))
+      .catch(error => reject(error));
+  });
+}
+
 export const fetchLocation = () => {
   return new Promise((resolve, reject) => {
     axios.get(`/location`)

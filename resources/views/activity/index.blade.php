@@ -112,7 +112,7 @@
 
     @push('scripts')
         <script type="module">
-            const { createApp, ref, computed, watch } = Vue
+            const { createApp, ref, computed, watch } = Vue;
 
             createApp({
                 setup() {

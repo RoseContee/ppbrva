@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import {
   BackHandler,
   Image,
@@ -11,10 +11,10 @@ import {
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { mainRoutes } from '../routes';
 import {
-  fetchDashboard, fetchLocation, fetchMe, fetchPlan
+  fetchDashboard, fetchLocation, fetchMe, fetchPlan, postDeviceToken
 } from '../requests';
 import { useAppSelector } from '../store';
-import { getDashboard } from '../store/settings';
+import { getAccessToken, getDashboard, getDeviceToken } from '../store/settings';
 import { getMe, getPlan } from '../store/user';
 import Layouts from '../components/layouts';
 import PageTitle from '../components/basic/page-title';
@@ -69,6 +69,8 @@ const CardWidget: FC<CardProps> = ({
 
 const Dashboard: FC = (): JSX.Element => {
   const navigation = useNavigation();
+  const device_token = useAppSelector(getDeviceToken);
+  const access_token = useAppSelector(getAccessToken);
   const settings = useAppSelector(getDashboard);
   const me = useAppSelector(getMe);
   const plan = useAppSelector(getPlan);
@@ -93,6 +95,12 @@ const Dashboard: FC = (): JSX.Element => {
       return () => subscribe.remove();
     }, [])
   );
+
+  useEffect(() => {
+    if (device_token && access_token) {
+      postDeviceToken({ device_token });
+    }
+  }, [device_token, access_token]);
 
   const gotoScreen = (screen: string) => {
     navigation.navigate(screen as never);
@@ -151,7 +159,7 @@ const Dashboard: FC = (): JSX.Element => {
           />
           <CardWidget cardWidth={cardWidth} defaultImage={imgShop}
             image={settings.shop_icon} imgSize={cardImgSize} text="Shop"
-            onPress={() => openLink(settings.shop_link ?? 'https://ppbrva.com/shop/')}
+            onPress={() => Linking.openURL(settings.shop_link ?? 'https://ppbrva.com/shop/')}
           />
         </View>
         <View style={[t.mT8]}>

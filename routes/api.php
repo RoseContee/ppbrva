@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('podplay', [PodPlayController::class, 'podplaycreate']);
 Route::get('podplay/plans', [PodPlayController::class, 'podplayplans']);
 Route::get('podplay/sync', [PodPlayController::class, 'podplaysync']);
+Route::get('podplay/token', [PodPlayController::class, 'podplaytoken']);
 
 Route::prefix('app')->group(function() {
     Route::middleware('guest:sanctum')->group(function () {
@@ -34,6 +35,7 @@ Route::prefix('app')->group(function() {
 
     Route::middleware(['auth:sanctum', 'active'])->group(function () {
         Route::get('me', [ProfileController::class, 'me']);
+        Route::post('device-token', [ProfileController::class, 'saveDeviceToken']);
         Route::get('location', [ProfileController::class, 'location']);
         Route::get('plan', [ProfileController::class, 'plan']);
         Route::post('profile', [ProfileController::class, 'updateProfile']);

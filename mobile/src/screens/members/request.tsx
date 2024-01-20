@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import {
   BackHandler,
   View
@@ -6,7 +6,7 @@ import {
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { mainRoutes } from '../../routes';
 import {
-  MemberProp, fetchMemberDetail, postMemberAccept, postMemberDecline
+  MemberProp, postMemberAccept, postMemberDecline
 } from '../../requests';
 import Layouts from '../../components/layouts';
 import Message from '../../components/basic/message';
@@ -27,41 +27,13 @@ const FriendRequest: FC = (): JSX.Element => {
   const route = useRoute();
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>();
-  const [member, setMember] = useState<MemberProp>();
   const [email_share, setEmailShare] = useState<boolean>(false);
   const [phone_share, setPhoneShare] = useState<boolean>(false);
   const [disabled, setDisabled] = useState<boolean>(false);
-  const {memberID} = (route.params as any);
+  const { member } = route.params as { member: MemberProp };
 
   useFocusEffect(
     useCallback(() => {
-      setMessage('');
-      setDisabled(false);
-      setLoading(true);
-      fetchMemberDetail(memberID)
-        .then(member => {
-          if (member.friend_status === 'accepted') {
-            navigation.navigate({
-              name: mainRoutes.AcceptedFriend,
-              params: {
-                title: member.name,
-                memberID: member.memberID,
-              },
-            } as never);
-          } else if (member.friend_status !== 'pending') {
-            navigation.navigate({
-              name: mainRoutes.MemberInvite,
-              params: {
-                title: member.name,
-                memberID: member.memberID,
-              },
-            } as never);
-          }
-          setMember(member);
-          setEmailShare(member.my_email_share);
-          setPhoneShare(member.my_phone_share);
-        })
-        .finally(() => setLoading(false));
       const subscribe = BackHandler.addEventListener('hardwareBackPress', () => {
         navigation.navigate(mainRoutes.PendingRequests as never);
         return true;
@@ -70,9 +42,17 @@ const FriendRequest: FC = (): JSX.Element => {
     }, [])
   );
 
+  useEffect(() => {
+    setLoading(false);
+    setMessage('');
+    setEmailShare(!!member.my_email_share);
+    setPhoneShare(!!member.my_phone_share);
+    setDisabled(false);
+  }, [member]);
+
   const onAddFriend = () => {
     setLoading(true);
-    postMemberAccept(memberID, { email_share, phone_share })
+    postMemberAccept(member.memberID, { email_share, phone_share })
       .then(() => {
         setMessage('Member has been added as a friend!');
         setDisabled(true);
@@ -82,7 +62,7 @@ const FriendRequest: FC = (): JSX.Element => {
 
   const onDecline = () => {
     setLoading(true);
-    postMemberDecline(memberID)
+    postMemberDecline(member.memberID)
       .then(() => {
         setMessage('Invitation has been declined!');
         setDisabled(true);
@@ -92,72 +72,62 @@ const FriendRequest: FC = (): JSX.Element => {
 
   return (
     <Layouts loading={loading}>
-      {
-        !member ? (
-          <Message style={[s.mT7]} text={message} />
-        ) : (
+      <View style={[s.pX7]}>
+        <MemberCard style={[t.mT5]} member={member} />
+        <Text style={[s.fontBodyBold, t.textXl, s.textTitle, t.textCenter, t.mT10]}>
+          { member.name } wants to be your friend!
+        </Text>
+        <Text style={[s.fontBodyLight, t.textLg, s.textGray, t.textCenter, t.mT2]}>
+          Choose which contact info you want to share with { member.name }:
+        </Text>
+        <Title style={[t.textXl, s.mT7]}>Sharing Info:</Title>
+      </View>
+      <Message style={[s.mT7]} text={message} />
+      <View style={[s.pX7]}>
+        <Switch style={[t.pX1, s.mT7]}
+          labelStyle={[s.textGray]}
+          Icon={() => (
+            <IconMail fill={theme.color.primary}
+              width={theme.size.headerIcon} height={theme.size.headerIcon}
+            />
+          )}
+          label={ member.email_share ? member.email : 'Not Shared' }
+          value={email_share}
+          onChange={setEmailShare}
+        />
+        <Switch style={[t.pX1, s.mT7]}
+          labelStyle={[s.textGray]}
+          Icon={() => (
+            <IconPhoneCall fill={theme.color.primary}
+              width={theme.size.headerIcon} height={theme.size.headerIcon}
+            />
+          )}
+          label={ member.phone_share ? member.phone : 'Not Shared' }
+          value={phone_share}
+          onChange={setPhoneShare}
+        />
+        {
+          !disabled &&
           <>
-            <View style={[s.pX7]}>
-              <MemberCard style={[t.mT5]} member={member} />
-              <Text style={[s.fontBodyBold, t.textXl, s.textTitle, t.textCenter, t.mT10]}>
-                { member.name } wants to be your friend!
-              </Text>
-              <Text style={[s.fontBodyLight, t.textLg, s.textGray, t.textCenter, t.mT2]}>
-                Choose which contact info you want to share with { member.name }:
-              </Text>
-              <Title style={[t.textXl, s.mT7]}>Sharing Info:</Title>
-            </View>
-            <Message style={[s.mT7]} text={message} />
-            <View style={[s.pX7]}>
-              <Switch style={[t.pX1, s.mT7]}
-                labelStyle={[s.textGray]}
-                Icon={() => (
-                  <IconMail fill={theme.color.primary}
-                    width={theme.size.headerIcon} height={theme.size.headerIcon}
-                  />
-                )}
-                label={ member.email_share ? member.email : 'Not Shared' }
-                value={email_share}
-                onChange={setEmailShare}
-              />
-              <Switch style={[t.pX1, s.mT7]}
-                labelStyle={[s.textGray]}
-                Icon={() => (
-                  <IconPhoneCall fill={theme.color.primary}
-                    width={theme.size.headerIcon} height={theme.size.headerIcon}
-                  />
-                )}
-                label={ member.phone_share ? member.phone : 'Not Shared' }
-                value={phone_share}
-                onChange={setPhoneShare}
-              />
-              {
-                !disabled &&
-                <>
-                  <Button style={[s.bgPrimary, t.mT10]}
-                    disabled={member.friend_status !== 'pending'}
-                    onPress={onAddFriend}
-                  >
-                    Add { member.name }
-                  </Button>
-                  <Button style={[s.border, s.borderPrimary, s.mT7]} titleStyle={[s.textPrimary]}
-                    disabled={member.friend_status !== 'pending'}
-                    onPress={onDecline}
-                  >
-                    Decline
-                  </Button>
-                </>
-              }
-              <View style={[t.mY8]} />
-              <View style={[t.flexRow, t.itemsCenter, t.justifyCenter]}>
-                <View style={[s.dot, t.mX1]} />
-                <View style={[s.dot, s.bgPrimary, t.mX1]} />
-                <View style={[s.dot, t.mX1]} />
-              </View>
-            </View>
+            <Button style={[s.bgPrimary, t.mT10]}
+              onPress={onAddFriend}
+            >
+              Add { member.name }
+            </Button>
+            <Button style={[s.border, s.borderPrimary, s.mT7]} titleStyle={[s.textPrimary]}
+              onPress={onDecline}
+            >
+              Decline
+            </Button>
           </>
-        )
-      }
+        }
+        <View style={[t.mY8]} />
+        <View style={[t.flexRow, t.itemsCenter, t.justifyCenter]}>
+          <View style={[s.dot, t.mX1]} />
+          <View style={[s.dot, s.bgPrimary, t.mX1]} />
+          <View style={[s.dot, t.mX1]} />
+        </View>
+      </View>
     </Layouts>
   );
 }

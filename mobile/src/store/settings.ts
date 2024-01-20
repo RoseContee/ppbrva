@@ -22,6 +22,7 @@ interface SocialProps {
 }
 
 interface StateProps {
+  device_token?: string,
   loggedIn: boolean,
   access_token: string | null,
   dashboard: DashboardProps,
@@ -39,6 +40,9 @@ const settingsSlice = createSlice({
   name: 'settings',
   initialState: initialState,
   reducers: {
+    setDeviceToken(state, action) {
+      state.device_token = action.payload;
+    },
     setLoggedIn(state, action) {
       state.loggedIn = action.payload;
     },
@@ -55,8 +59,10 @@ const settingsSlice = createSlice({
 });
 
 export const {
-  setLoggedIn, saveAccessToken, saveDashboard, saveSocial
+  setDeviceToken, setLoggedIn, saveAccessToken,
+  saveDashboard, saveSocial,
 } = settingsSlice.actions;
+export const getDeviceToken = (state: RootState) => state.settings.device_token;
 export const getLoggedIn = (state: RootState) => state.settings.loggedIn;
 export const getAccessToken = (state: RootState) => state.settings.access_token;
 export const getDashboard = (state: RootState) => state.settings.dashboard;

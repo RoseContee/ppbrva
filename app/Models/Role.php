@@ -9,13 +9,14 @@ class Role extends Model
 {
     use HasFactory;
 
-    public const PERMISSION_DASHBOARD  = 1;
-    public const PERMISSION_LOCATIONS  = 2;
-    public const PERMISSION_MEMBERS    = 3;
-    public const PERMISSION_ACTIVITY   = 4;
-    public const PERMISSION_INVOICES   = 5;
-    public const PERMISSION_USERS      = 6;
-    public const PERMISSION_SETTINGS   = 7;
+    public const PERMISSION_DASHBOARD = 1;
+    public const PERMISSION_LOCATIONS = 2;
+    public const PERMISSION_MEMBERS   = 3;
+    public const PERMISSION_ACTIVITY  = 4;
+    public const PERMISSION_INVOICES  = 5;
+    public const PERMISSION_USERS     = 6;
+    public const PERMISSION_SETTINGS  = 7;
+    public const PERMISSION_EMAILS    = 8;
 
     protected $fillable = [
         'name', 'permissions'
@@ -65,6 +66,11 @@ class Role extends Model
                 'label' => 'Settings',
                 'route' => route('settings.index'),
                 'pattern' => 'settings.*',
+            ],
+            self::PERMISSION_EMAILS => [
+                'label' => 'Email',
+                'route' => route('emails.sent'),
+                'pattern' => 'emails.*',
             ],
         ];
     }

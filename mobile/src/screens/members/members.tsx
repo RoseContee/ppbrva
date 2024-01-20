@@ -5,12 +5,14 @@ import {
   View
 } from 'react-native';
 import {
-  NavigationProp, useFocusEffect, useNavigation, useRoute
+  useFocusEffect, useNavigation, useRoute
 } from '@react-navigation/native';
 import { mainRoutes } from '../../routes';
-import { MemberProp, fetchMembers } from '../../requests';
+import {
+  MemberProp, fetchMemberDetail, fetchMembers
+} from '../../requests';
 import { useAppSelector } from '../../store';
-import { getLocation, getMe } from '../../store/user';
+import { getLocation } from '../../store/user';
 import Layouts from '../../components/layouts';
 import PageTitle from '../../components/basic/page-title';
 import Message from '../../components/basic/message';
@@ -39,7 +41,6 @@ const HeaderComponent: FC<IHeaderProps> = ({
 }): JSX.Element => {
   const navigation = useNavigation();
   const route = useRoute();
-  const me = useAppSelector(getMe);
   const location = useAppSelector(getLocation);
 
   return (
@@ -85,45 +86,15 @@ const HeaderComponent: FC<IHeaderProps> = ({
 }
 
 interface IItemProps {
-  navigation: NavigationProp<ReactNavigation.RootParamList>,
-  route: string,
   member: MemberProp,
+  onPress: () => void,
 }
 
-const ItemComponent: FC<IItemProps> = ({
-  navigation,
-  route,
-  member,
-}): JSX.Element => {
+const ItemComponent: FC<IItemProps> = ({ member, onPress }): JSX.Element => {
   return (
     <View style={[s.pX7, t.mT6]}>
       <MemberCard member={member}
-        onPress={() => {
-          if (route === mainRoutes.Friends) {
-            navigation.navigate({
-              name: mainRoutes.AcceptedFriend,
-              params: {
-                title: member.name,
-                memberID: member.memberID,
-              },
-            } as never);
-          } else if (route === mainRoutes.PendingRequests) {
-            navigation.navigate({
-              name: mainRoutes.FriendRequest,
-              params: {
-                memberID: member.memberID,
-              },
-            } as never);
-          } else if (route === mainRoutes.Members) {
-            navigation.navigate({
-              name: mainRoutes.MemberInvite,
-              params: {
-                title: member.name,
-                memberID: member.memberID,
-              },
-            } as never);
-          }
-        }}
+        onPress={onPress}
       />
     </View>
   );
@@ -194,6 +165,24 @@ const Members: FC = (): JSX.Element => {
     );
   }
 
+  const onMemberPress = (memberID: string) => {
+    setLoading(true);
+    fetchMemberDetail(memberID)
+      .then(member => {
+        navigation.navigate({
+          name: member.friend_status === 'accepted'
+                  ? mainRoutes.AcceptedFriend
+                  : member.friend_status === 'pending'
+                  ? mainRoutes.FriendRequest
+                  : mainRoutes.MemberInvite,
+          params: {
+            member: member,
+          },
+        } as never);
+      })
+      .finally(() => setLoading(false));
+  }
+
   return (
     <Layouts flatlist={true} loading={loading}>
       <FlatList style={[t.hFull]} contentContainerStyle={[t.pB6]}
@@ -209,9 +198,8 @@ const Members: FC = (): JSX.Element => {
           />
         )}
         renderItem={({item}) => (
-          <ItemComponent navigation={navigation}
-            route={route.name}
-            member={item}
+          <ItemComponent member={item}
+            onPress={() => onMemberPress(item.memberID)}
           />
         )}
       />

@@ -61,6 +61,10 @@ class Member extends Authenticatable
         return $this->hasOne(MemberProfile::class)->withDefault();
     }
 
+    public function devices() {
+        return $this->hasMany(MemberDevice::class);
+    }
+
     public function families() {
         return $this->hasMany(Member::class, 'primary_id', 'id');
     }
