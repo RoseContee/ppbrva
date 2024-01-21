@@ -493,6 +493,8 @@ PODS:
     - React-Core
   - RNCAsyncStorage (1.19.5):
     - React-Core
+  - RNCPushNotificationIOS (1.11.0):
+    - React-Core
   - RNDeviceInfo (10.11.0):
     - React-Core
   - RNGestureHandler (2.13.4):
@@ -604,6 +606,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
+  - "RNCPushNotificationIOS (from `../node_modules/@react-native-community/push-notification-ios`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
@@ -714,6 +717,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/rn-fetch-blob"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
+  RNCPushNotificationIOS:
+    :path: "../node_modules/@react-native-community/push-notification-ios"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
   RNGestureHandler:
@@ -782,6 +787,7 @@ SPEC CHECKSUMS:
   ReactCommon: 91ece8350ebb3dd2be9cef662abd78b6948233c0
   rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
   RNCAsyncStorage: f2974eca860c16a3e56eea5771fda8d12e2d2057
+  RNCPushNotificationIOS: 64218f3c776c03d7408284a819b2abfda1834bc8
   RNDeviceInfo: bf8a32acbcb875f568217285d1793b0e8588c974
   RNGestureHandler: 6e46dde1f87e5f018a54fe5d40cd0e0b942b49ee
   RNReanimated: ab2e96c6d5591c3dfbb38a464f54c8d17fb34a87

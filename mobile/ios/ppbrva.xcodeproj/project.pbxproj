@@ -21,6 +21,8 @@
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		8EFDD7764A1F44DCB74B02E0 /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CC3FF2CDAD614B358682DA93 /* OpenSans-Regular.ttf */; };
 		9386B31D614946B4B1604657 /* OpenSansSemiCondensed-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5B5740259FAC4DABA20A3F7B /* OpenSansSemiCondensed-Bold.ttf */; };
+		A18F07722B5DC80D003C3C0B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A18F07712B5DC80D003C3C0B /* GoogleService-Info.plist */; };
+		A18F07752B5DC96D003C3C0B /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = A18F07742B5DC96D003C3C0B /* FirebaseAnalytics */; };
 		A45678809E5B43549A080CD1 /* Grange-DemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA0C3CDC32364EEABE0DF172 /* Grange-DemiBold.ttf */; };
 		B914E0F984C34EB8828622D6 /* OpenSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D8B4DD8CFDF94A9694DE2EC1 /* OpenSans-Bold.ttf */; };
 		F476336C150345DE99183EEF /* Grange-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 49ADFD6D176846FC871CE2DC /* Grange-Light.ttf */; };
@@ -58,6 +60,8 @@
 		71BEA2E24D4540BF8BA5FA88 /* GillSansMT-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "GillSansMT-Bold.ttf"; path = "../src/assets/fonts/GillSansMT-Bold.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = ppbrva/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-ppbrva-ppbrvaTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ppbrva-ppbrvaTests.release.xcconfig"; path = "Target Support Files/Pods-ppbrva-ppbrvaTests/Pods-ppbrva-ppbrvaTests.release.xcconfig"; sourceTree = "<group>"; };
+		A18F076E2B5C3544003C3C0B /* ppbrva.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = ppbrva.entitlements; path = ppbrva/ppbrva.entitlements; sourceTree = "<group>"; };
+		A18F07712B5DC80D003C3C0B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "ppbrva/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B631E4E3D9644488855E95CF /* GillSansMT.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = GillSansMT.ttf; path = ../src/assets/fonts/GillSansMT.ttf; sourceTree = "<group>"; };
 		CC3FF2CDAD614B358682DA93 /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Regular.ttf"; path = "../src/assets/fonts/OpenSans-Regular.ttf"; sourceTree = "<group>"; };
 		D8B4DD8CFDF94A9694DE2EC1 /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Bold.ttf"; path = "../src/assets/fonts/OpenSans-Bold.ttf"; sourceTree = "<group>"; };
@@ -78,6 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A18F07752B5DC96D003C3C0B /* FirebaseAnalytics in Frameworks */,
 				0C80B921A6F3F58F76C31292 /* libPods-ppbrva.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -105,6 +110,8 @@
 		13B07FAE1A68108700A75B9A /* ppbrva */ = {
 			isa = PBXGroup;
 			children = (
+				A18F07712B5DC80D003C3C0B /* GoogleService-Info.plist */,
+				A18F076E2B5C3544003C3C0B /* ppbrva.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -226,6 +233,9 @@
 			dependencies = (
 			);
 			name = ppbrva;
+			packageProductDependencies = (
+				A18F07742B5DC96D003C3C0B /* FirebaseAnalytics */,
+			);
 			productName = ppbrva;
 			productReference = 13B07F961A680F5B00A75B9A /* ppbrva.app */;
 			productType = "com.apple.product-type.application";
@@ -256,6 +266,9 @@
 				Base,
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
+			packageReferences = (
+				A18F07732B5DC96D003C3C0B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -284,6 +297,7 @@
 				2C80B1A8D4164F47818C8ABB /* GillSansMT-Bold.ttf in Resources */,
 				8EFDD7764A1F44DCB74B02E0 /* OpenSans-Regular.ttf in Resources */,
 				67DEEC43B6AF4863BFFC442D /* GillSansMT.ttf in Resources */,
+				A18F07722B5DC80D003C3C0B /* GoogleService-Info.plist in Resources */,
 				791C0A8EC2DD430887862C13 /* OpenSans-Light.ttf in Resources */,
 				B914E0F984C34EB8828622D6 /* OpenSans-Bold.ttf in Resources */,
 				9386B31D614946B4B1604657 /* OpenSansSemiCondensed-Bold.ttf in Resources */,
@@ -479,7 +493,7 @@
 			baseConfigurationReference = 5B7EB9410499542E8C5724F5 /* Pods-ppbrva-ppbrvaTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = G776WNY2VC;
+				DEVELOPMENT_TEAM = 7D34546PKU;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -508,7 +522,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = G776WNY2VC;
+				DEVELOPMENT_TEAM = 7D34546PKU;
 				INFOPLIST_FILE = ppbrvaTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -533,9 +547,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = ppbrva/ppbrva.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = 7D34546PKU;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = ppbrva/Info.plist;
@@ -544,7 +559,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.6;
+				MARKETING_VERSION = 1.0.7;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -565,9 +580,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = ppbrva/ppbrva.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = 7D34546PKU;
 				INFOPLIST_FILE = ppbrva/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
@@ -575,7 +591,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.6;
+				MARKETING_VERSION = 1.0.7;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -662,6 +678,8 @@
 					"$(inherited)",
 					"-Wl",
 					"-ld_classic",
+					"-Wl",
+					"-ld_classic",
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
@@ -737,6 +755,8 @@
 					"$(inherited)",
 					"-Wl",
 					"-ld_classic",
+					"-Wl",
+					"-ld_classic",
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
@@ -775,6 +795,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A18F07732B5DC96D003C3C0B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.20.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A18F07742B5DC96D003C3C0B /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A18F07732B5DC96D003C3C0B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
 }

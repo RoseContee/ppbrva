@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyD6aD2zkBiCbPujpQHRavfpsznsxEfNkCo</string>
+	<key>GCM_SENDER_ID</key>
+	<string>343774405997</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.performancepickleball.app</string>
+	<key>PROJECT_ID</key>
+	<string>performancepickleball</string>
+	<key>STORAGE_BUCKET</key>
+	<string>performancepickleball.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:343774405997:ios:47b2fd9d00ad3d449c6664</string>
+</dict>
+</plist>
