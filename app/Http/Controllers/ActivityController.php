@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Activity;
 use App\Models\Category;
 use App\Models\Member;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\Request;
 
 class ActivityController extends Controller
@@ -12,10 +13,15 @@ class ActivityController extends Controller
     public function index() {
         $activities = Activity::query()
             ->with([
-                'member' => function ($query) {
-                    $query->select(['id', 'memberID', 'firstname', 'lastname', 'avatar']);
+                'member' => function (BelongsTo $query) {
+                    $query->select(['id', 'memberID', 'firstname', 'lastname', 'avatar'])
+                        ->withTrashed();
+                },
+                'invoice' => function (BelongsTo $query) {
+                    $query->select(['id', 'invoiceID', 'paid']);
                 }
             ])
+            ->has('member')
             ->orderByDesc('date')
             ->orderBy('member_id')
             ->orderBy('category')
@@ -51,12 +57,13 @@ class ActivityController extends Controller
             'date' => date('Y-m-d', strtotime($request['date'])),
             'from' => 'admin',
         ]);
-        return redirect()->route('activity.index')
+        return to_route('activity.index')
             ->with('success_message', 'New activity has been added.');
     }
 
     public function edit($id) {
         $activity = Activity::query()
+            ->has('member')
             ->where('from', 'admin')
             ->whereNull('invoice_id')
             ->find($id);
@@ -72,6 +79,7 @@ class ActivityController extends Controller
 
     public function update(Request $request, $id) {
         $activity = Activity::query()
+            ->has('member')
             ->where('from', 'admin')
             ->whereNull('invoice_id')
             ->find($id);
@@ -99,7 +107,7 @@ class ActivityController extends Controller
             ->whereNull('invoice_id')
             ->where('id', $id)
             ->delete();
-        return redirect()->route('activity.index')
+        return to_route('activity.index')
             ->with('error_message', 'Activity has been removed.');
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Clover;
-use App\Models\Activity;
 use App\Models\Invoice;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -14,9 +13,10 @@ class InvoicesController extends Controller
         $invoices = Invoice::query()
             ->with([
                 'member' => function ($query) {
-                    $query->select(['id', 'memberID', 'firstname', 'lastname', 'avatar']);
+                    $query->select(['id', 'memberID', 'firstname', 'lastname', 'avatar', 'card_last4']);
                 }
             ])
+            ->has('member')
             ->orderByDesc('paid_at')
             ->latest()
             ->get(['id', 'invoiceID', 'member_id', 'period', 'amount', 'paid']);
@@ -31,6 +31,7 @@ class InvoicesController extends Controller
                 'member', 'activities', 'activities.member:id,firstname,lastname',
                 'plans', 'plans.member:id,firstname,lastname'
             ])
+            ->has('member')
             ->find($id);
         if (!$invoice) return back();
         return view('invoices.show', [
@@ -44,6 +45,7 @@ class InvoicesController extends Controller
                 'member', 'activities', 'activities.member:id,firstname,lastname',
                 'plans', 'plans.member:id,firstname,lastname'
             ])
+            ->has('member')
             ->find($id);
         if (!$invoice) return back();
         /*return view('invoices.download', [
@@ -64,20 +66,20 @@ class InvoicesController extends Controller
         $member = $invoice['member'];
         $clover = new Clover();
         $charge = $clover->getCharge($invoice['invoiceID']);
-        if (empty($charge['paid'])) {
+        $reason = 'The member does not have a Card.';
+        if (empty($charge['paid']) && $member['card_last4']) {
             $charge = $clover->createCharge([
                 'amount' => $invoice['amount'],
                 'source' => $member['customerID'],
-                'description' => "PPBRVA {$invoice['period']} invoice for ".$member['name'],
+                'description' => "PPBRVA {$invoice['period']} invoice for {$member['name']}",
             ]);
+            $reason = empty($charge['id']) ? $charge : '3DSecure transactions';
         }
         if (!empty($charge['paid'])) {
-            $card_type = strtolower($charge['source']['brand'] ?? $member['card_type']);
-            $card_last4 = strtolower($charge['source']['last4'] ?? $member['card_last4']);
             $invoice['invoiceID'] = $charge['id'];
             $invoice['paid'] = true;
-            $invoice['card_type'] = $card_type;
-            $invoice['card_last4'] = $card_last4;
+            $invoice['card_type'] = $card_type = strtolower($charge['source']['brand']);
+            $invoice['card_last4'] = $card_last4 = strtolower($charge['source']['last4']);
             $invoice['paid_at'] = gmdate('Y-m-d H:i:s', $charge['created'] / 1000);
             $invoice['reason'] = null;
             $invoice->save();
@@ -89,7 +91,7 @@ class InvoicesController extends Controller
             }
             return back()->with('success_message', 'Invoice has been created successfully.');
         }
-        $invoice['reason'] = empty($charge['id']) ? $charge : '3DSecure transactions';
+        $invoice['reason'] = $reason;
         $invoice->save();
         return back()->with('error_message', $invoice['reason']);
     }

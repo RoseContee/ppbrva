@@ -2,19 +2,43 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\General;
 use App\Models\Invoice;
 use App\Models\Member;
+use App\Models\Plan;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    protected function getRate($current, $prev) {
+    private function getRate($current, $prev) {
         return number_format(($current - $prev) / ($prev ?: 1) * 100, 1);
     }
 
     public function index(Request $request) {
+        $plans = Plan::query()
+            ->withCount('members')
+            ->has('members')
+            ->where('price', '>', 0)
+            ->get(['id', 'name', 'price']);
+        $today = date('Y-m-d');
+        $active_members = $paused_members = $suspended_members =
+        $inactive_members = $pending_members = 0;
+        $members = Member::query()
+            ->get(['status', 'pause_from', 'pause_to']);
+        foreach ($members as $member) {
+            if ($member['status'] == 'inactive') $inactive_members++;
+            else if ($member['status'] == 'pending') $pending_members++;
+            else if ($member['status'] == 'suspended') $suspended_members++;
+            else if ($member['status'] == 'paused'
+                && $member['pause_from'] <= $today
+                && $today <= $member['pause_to']) {
+                $paused_members++;
+            } else $active_members++;
+        }
+
+
         $s_time = strtotime($s = $request['s'] ?: date('01/01/Y'));
         $e_time = strtotime($e = $request['e'] ?: date('12/31/Y'));
 
@@ -34,23 +58,11 @@ class DashboardController extends Controller
         $prev_period_start = date('Y-m-d 00:00:00', strtotime('-1 years', $s_time));
         $prev_period_end = date('Y-m-d 23:59:59', strtotime('-1 years', $e_time));
         $prev_period = [$prev_period_start, $prev_period_end];
-        $members = $prev_members =
-        $payments = $prev_payments =
         $dues = $prev_dues =
         $food_beverage = $prev_food_beverage =
         $lessons = $prev_lessons =
         $rentals = $prev_rentals =
         $merchandise = $prev_merchandise = 0;
-
-        $users = Member::query()
-            ->whereBetween('created_at', $period)
-            ->orWhereBetween('created_at', $prev_period)
-            ->get();
-        foreach ($users as $user) {
-            $created_at = $user['created_at'];
-            if ($period_start <= $created_at && $created_at <= $period_end) $members++;
-            else $prev_members++;
-        }
 
         $invoices = Invoice::query()
             ->with([
@@ -77,13 +89,8 @@ class DashboardController extends Controller
             }
             $in_period = $period_start <= $paid_at && $paid_at <= $period_end;
             $in_prev_period = $prev_period_start <= $paid_at && $paid_at <= $prev_period_end;
-            if ($in_period) {
-                $payments += $invoice_amount;
-                $dues += $invoice_plans_price;
-            } else if ($in_prev_period) {
-                $prev_payments += $invoice_amount;
-                $prev_dues += $invoice_plans_price;
-            }
+            if ($in_period) $dues += $invoice_plans_price;
+            else if ($in_prev_period) $prev_dues += $invoice_plans_price;
             foreach ($invoice['activities'] as $activity) {
                 $activity_price = $activity['price'];
                 if ($activity['category'] == 'Food & Beverage') {
@@ -102,12 +109,14 @@ class DashboardController extends Controller
             }
         }
         return view('dashboard', [
+            'plans' => $plans,
+            'active_members' => $active_members,
+            'paused_members' => $paused_members,
+            'suspended_members' => $suspended_members,
+            'inactive_members' => $inactive_members,
+            'pending_members' => $pending_members,
             's' => $s,
             'e' => $e,
-            'members' => $members,
-            'members_percent' => $this->getRate($members, $prev_members),
-            'payments' => $payments,
-            'payments_percent' => $this->getRate($payments, $prev_payments),
             'dues' => $dues,
             'dues_percent' => $this->getRate($dues, $prev_dues),
             'food_beverage' => $food_beverage,
@@ -119,6 +128,7 @@ class DashboardController extends Controller
             'merchandise' => $merchandise,
             'merchandise_percent' => $this->getRate($merchandise, $prev_merchandise),
             'plotting_payments' => $plotting_payments,
+            'colors' => General::$colors,
         ]);
     }
 }

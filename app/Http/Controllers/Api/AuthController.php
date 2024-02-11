@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\General;
 use App\Http\Controllers\Controller;
 use App\Models\Member;
 use App\Notifications\MemberResetCode;
@@ -12,8 +13,6 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    protected int $code_expiration = 60;
-
     /**
      * @throws ValidationException
      */
@@ -48,52 +47,22 @@ class AuthController extends Controller
      * @throws ValidationException
      */
     public function forgotPassword(Request $request) {
-        $request->validate([
-            'email' => ['required', 'email'],
-        ]);
-        $user = Member::query()
-            ->where('email', $request['email'])
-            ->where('status', 'active')
-            ->first();
-        if (!$user) {
-            throw ValidationException::withMessages([
-                'email' => ['The email does not exist.'],
-            ]);
-        }
-        try {
-            $reset = DB::table('member_password_reset_codes')
-                ->where('email', $request['email'])
-                ->first();
-            $expiration = date('Y-m-d H:i:s', strtotime("-{$this->code_expiration} minutes"));
-            if (!$reset || $reset->created_at < $expiration) {
-                $code = random_int(100000, 999999);
-                DB::table('member_password_reset_codes')->updateOrInsert([
-                    'email' => $request['email'],
-                ], [
-                    'code' => $code,
-                    'created_at' => now(),
-                ]);
-            }
-            $user->notify(new MemberResetCode([
-                'code' => $code ?? $reset->code,
-                'expiration' => $this->code_expiration,
-            ]));
-        } catch (\Exception $exception) {
-            throw ValidationException::withMessages([
-                'email' => [$exception->getMessage()],
-            ]);
-        }
+        General::memberForgotPassword($request);
         return response()->json([
             'status' => 'OK',
         ]);
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function validateCode(Request $request) {
         $request->validate([
             'email' => ['required', 'email'],
             'code' => ['required', 'digits:6']
         ]);
-        $expiration = date('Y-m-d H:i:s', strtotime("-{$this->code_expiration} minutes"));
+        $code_expiration = General::$reset_code_expiration;
+        $expiration = date('Y-m-d H:i:s', strtotime("-{$code_expiration} minutes"));
         $reset = DB::table('member_password_reset_codes')
             ->where('email', $request['email'])
             ->where('code', $request['code'])
@@ -118,33 +87,7 @@ class AuthController extends Controller
             'code' => ['required', 'digits:6'],
             'password' => ['required', 'min:8', 'confirmed'],
         ]);
-        $expiration = date('Y-m-d H:i:s', strtotime("-{$this->code_expiration} minutes"));
-        $reset = DB::table('member_password_reset_codes')
-            ->where('email', $request['email'])
-            ->where('code', $request['code'])
-            ->where('created_at', '>=', $expiration)
-            ->first();
-        if (!$reset) {
-            throw ValidationException::withMessages([
-                'code' => 'Reset code is expired.',
-            ]);
-        }
-        $user = Member::query()
-            ->where('email', $request['email'])
-            ->where('status', 'active')
-            ->first();
-        if (!$user) {
-            throw ValidationException::withMessages([
-                'email' => ['The email does not exist.'],
-            ]);
-        }
-        $user['password'] = bcrypt($request['password']);
-        $user['original_pass'] = null;
-        $user->save();
-        DB::table('member_password_reset_codes')
-            ->where('email', $request['email'])
-            ->where('code', $request['code'])
-            ->delete();
+        General::memberResetPassword($request);
         return response()->json([
             'status' => 'OK',
         ]);

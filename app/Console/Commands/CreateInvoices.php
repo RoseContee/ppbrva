@@ -33,7 +33,8 @@ class CreateInvoices extends Command
      */
     public function handle()
     {
-        $period = date('F Y', strtotime('-1 days'));
+        logger('Creating Invoices');
+        $period = date('F Y');
         $today = date('Y-m-d');
         $clover = new Clover();
         $members = Member::query()
@@ -42,15 +43,18 @@ class CreateInvoices extends Command
                 'activities' => function (HasMany $query) use ($today) {
                     $query->where('date', '<', $today)
                         ->whereNull('invoice_id')
-                        ->select(['member_id', 'detail', 'price']);
+                        ->select(['id', 'member_id', 'detail', 'price']);
                 },
                 'families:id,primary_id,secondary_fee,status,pause_from,pause_to',
                 'families.activities' => function (HasMany $query) use ($today) {
                     $query->where('date', '<', $today)
                         ->whereNull('invoice_id')
-                        ->select(['member_id', 'detail', 'price']);
+                        ->select(['id', 'member_id', 'detail', 'price']);
                 },
             ])
+            ->whereDoesntHave('invoices', function (Builder $query) use ($period) {
+                $query->where('period', $period);
+            })
             ->where(function (Builder $query) use ($today) {
                 $query->whereIn('status', ['active', 'suspended'])
                     ->orWhere(function (Builder $query) use ($today) {
@@ -89,14 +93,28 @@ class CreateInvoices extends Command
                     $amount += $activity['price'];
                 }
             }
-            $charge = $clover->createCharge([
-                'amount' => $amount,
-                'source' => $member['customerID'],
-                'description' => "PPBRVA {$period} invoice for ".$member['name'],
-            ]);
-            $paid = !empty($charge['paid']);
-            $card_type = strtolower($charge['source']['brand'] ?? $member['card_type']);
-            $card_last4 = strtolower($charge['source']['last4'] ?? $member['card_last4']);
+            $charge = $card_type = $card_last4 = $paid_at = null;
+            $reason = 'The member does not have a Card.';
+            if ($member['card_last4']) {
+                $charge = $clover->createCharge([
+                    'amount' => $amount,
+                    'source' => $member['customerID'],
+                    'description' => "PPBRVA {$period} invoice for {$member['name']}",
+                ]);
+                $reason = empty($charge['id']) ? $charge : '3DSecure transactions';
+            }
+            if ($paid = !empty($charge['paid'])) {
+                $card_type = strtolower($charge['source']['brand']);
+                $card_last4 = strtolower($charge['source']['last4']);
+                $paid_at = gmdate('Y-m-d H:i:s', $charge['created'] / 1000);
+                $reason = null;
+                if ($member['card_type'] != $card_type || $member['card_last4'] != $card_last4) {
+                    $member->update([
+                        'card_type' => $card_type,
+                        'card_last4' => $card_last4,
+                    ]);
+                }
+            }
             $invoice = Invoice::query()->create([
                 'invoiceID' => $charge['id'] ?? ('PPB-'.Str::random()),
                 'member_id' => $member['id'],
@@ -105,26 +123,20 @@ class CreateInvoices extends Command
                 'paid' => $paid,
                 'card_type' => $card_type,
                 'card_last4' => $card_last4,
-                'paid_at' => $paid ? gmdate('Y-m-d H:i:s', $charge['created'] / 1000) : null,
-                'reason' => $paid ? null : (empty($charge['id']) ? $charge : '3DSecure transactions'),
+                'paid_at' => $paid_at,
+                'reason' => $reason,
             ]);
-            if ($member['card_type'] != $card_type || $member['card_last4'] != $card_last4) {
-                $member->update([
-                    'card_type' => $card_type,
-                    'card_last4' => $card_last4,
-                ]);
-            }
             InvoicePlan::query()->create([
                 'invoice_id' => $invoice['id'],
                 'member_id' => $member['id'],
                 'name' => $plan_name,
                 'price' => $plan_price,
             ]);
-            $member->activities()->update([
-                'invoice_id' => $invoice['id'],
-            ]);
             foreach ($activities as $activity) {
                 $clover->updateOrderTotal($activity['detail']);
+                $activity->update([
+                    'invoice_id' => $invoice['id'],
+                ]);
             }
             foreach ($families as $family) {
                 if (in_array($family['status'], ['active', 'suspended'])
@@ -139,13 +151,14 @@ class CreateInvoices extends Command
                         'price' => $family['secondary_fee'] ?? 0,
                     ]);
                 }
-                $family->activities()->update([
-                    'invoice_id' => $invoice['id'],
-                ]);
                 foreach ($family['activities'] as $activity) {
                     $clover->updateOrderTotal($activity['detail']);
+                    $activity->update([
+                        'invoice_id' => $invoice['id'],
+                    ]);
                 }
             }
         }
+        logger('Created Invoices');
     }
 }

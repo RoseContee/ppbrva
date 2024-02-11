@@ -41,6 +41,10 @@ return [
             //'provider' => 'users',
             'provider' => 'extend_users',
         ],
+        'member' => [
+            'driver' => 'session',
+            'provider' => 'members',
+        ],
         'app' => [
             'driver' => 'session',
             'provider' => 'members',

@@ -1,3 +1,19 @@
+@media (min-width: 768px) {
+    .md\:w-70 {
+        width: 70%;
+    }
+    .md\:w-30 {
+        width: 30%;
+    }
+    .md\:mx-3 {
+        margin-left: 0.75rem;
+        margin-right: 0.75rem;
+    }
+    .md\:mt-0 {
+        margin-top: 0;
+    }
+}
+
 .capitalize {
     text-transform: capitalize;
 }

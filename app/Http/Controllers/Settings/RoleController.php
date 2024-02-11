@@ -47,7 +47,7 @@ class RoleController extends Controller
             'name' => $request['name'],
             'permissions' => implode(',', $request['permissions']),
         ]);
-        return redirect()->route('settings.roles.index')
+        return to_route('settings.roles.index')
             ->with('success_message', 'New role has been added.');
     }
 

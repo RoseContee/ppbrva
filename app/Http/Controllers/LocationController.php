@@ -43,7 +43,7 @@ class LocationController extends Controller
                 'website' => $request['website'],
                 'image' => 'uploads/'.$request->file('image')->store('locations'),
             ]);
-            return redirect()->route('locations.index')
+            return to_route('locations.index')
                 ->with('success_message', 'New location has been added.');
         }
         return back()->withInput()->with('error_message', 'Please upload location image.');

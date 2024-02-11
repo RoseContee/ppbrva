@@ -9,6 +9,7 @@ use App\Models\Plan;
 use App\Models\Setting;
 use App\Notifications\MemberInvite;
 use App\Rules\Family as FamilyRule;
+use App\Rules\Phone as PhoneRule;
 use App\Rules\State as StateRule;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -37,7 +38,7 @@ class MemberController extends Controller
             'lastname' => ['required'],
             'gender' => ['required', 'in:male,female,prefer_not_to_say'],
             'email' => ['required', 'unique:members,email'],
-            'phone' => ['required'],
+            'phone' => ['required', new PhoneRule],
             'dob' => ['required', 'dateFormat:m/d/Y'],
             'address' => ['required'],
             'city' => ['required'],
@@ -52,12 +53,12 @@ class MemberController extends Controller
         }
         General::sendNewMemberCreatedEmail($member);
         session(['new_member' => $member['memberID']]);
-        return redirect()->route('members.thanks');
+        return to_route('members.thanks');
     }
 
     public function thanks() {
         if (!session('new_member')) {
-            return redirect()->route('members.join');
+            return to_route('members.join');
         }
         session()->forget('new_member');
         return view('members.thanks');
@@ -73,7 +74,7 @@ class MemberController extends Controller
             ])
             ->get([
                 'id', 'avatar', 'memberID', 'firstname', 'lastname',
-                'email', 'phone', 'status', 'plan_id',
+                'email', 'phone', 'plan_id', 'card_last4', 'status',
             ]);
         return view('members.index', [
             'plans' => $plans,
@@ -106,6 +107,7 @@ class MemberController extends Controller
             'lastname' => ['required'],
             'gender' => ['nullable', 'in:male,female,prefer_not_to_say'],
             'email' => ['required', 'email', 'unique:members'],
+            'phone' => ['nullable', new PhoneRule],
             'dob' => ['nullable', 'dateFormat:m/d/Y'],
             'state' => ['nullable', new StateRule],
             'location' => ['required', 'exists:locations,id'],
@@ -122,10 +124,10 @@ class MemberController extends Controller
             return back()->withInput()->with('error_message', $member);
         }
         if ($this->notifyInvite($member)) {
-            return redirect()->route('members.index')
+            return to_route('members.index')
                 ->with('success_message', 'Invitation has been sent.');
         }
-        return redirect()->route('members.index')
+        return to_route('members.index')
             ->with('error_message', 'Invitation has not been sent.');
     }
 
@@ -164,6 +166,7 @@ class MemberController extends Controller
             'lastname' => ['required'],
             'gender' => ['nullable', 'in:male,female,prefer_not_to_say'],
             'email' => ['required', 'email', Rule::unique('members')->ignore($member['id'])],
+            'phone' => ['nullable', new PhoneRule],
             'dob' => ['nullable', 'dateFormat:m/d/Y'],
             'state' => ['nullable', new StateRule],
             'location' => ['required', 'exists:locations,id'],
@@ -231,10 +234,10 @@ class MemberController extends Controller
             return back()->with('error_message', 'Member does not exist.');
         }
         if ($this->notifyInvite($member)) {
-            return redirect()->route('members.index')
+            return to_route('members.index')
                 ->with('success_message', 'Invitation has been sent.');
         }
-        return redirect()->route('members.index')
+        return to_route('members.index')
             ->with('error_message', 'Invitation has not been sent.');
     }
 
@@ -248,10 +251,10 @@ class MemberController extends Controller
         $member['status'] = 'active';
         $member->save();
         if ($this->notifyInvite($member)) {
-            return redirect()->route('members.index')
+            return to_route('members.index')
                 ->with('success_message', 'Invitation has been sent.');
         }
-        return redirect()->route('members.index')
+        return to_route('members.index')
             ->with('error_message', 'Invitation has not been sent.');
     }
 

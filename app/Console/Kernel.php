@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command('app:create-invoices')
-            ->monthly();
+            ->monthlyOn(1, '07:00');
         $schedule->command('app:get-clover-orders')
             ->everyFifteenMinutes();
         $schedule->command('app:get-dupr')

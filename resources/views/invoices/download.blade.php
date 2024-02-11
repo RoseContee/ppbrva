@@ -54,7 +54,7 @@
                     {{ $invoice['period'] }}
                 </h2>
                 <p class="text-xs text-gray">
-                    @php $period = \Carbon\Carbon::parse($invoice['period']); @endphp
+                    @php $period = \Carbon\Carbon::parse($invoice['period'])->subMonth(); @endphp
                     {{ $period->firstofMonth()->format('n/j/y') }} - {{ $period->endOfMonth()->format('n/j/y') }}
                 </p>
             </td>

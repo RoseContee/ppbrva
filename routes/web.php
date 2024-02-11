@@ -14,6 +14,11 @@ use App\Http\Controllers\Settings\AppSettingsController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\ScanController;
 use App\Http\Controllers\ProfileController;
+
+use App\Http\Controllers\Member\AuthController as MemberAuth;
+use App\Http\Controllers\Member\DashboardController as MemberDashboard;
+use App\Http\Controllers\Member\InvoiceController as MemberInvoice;
+use App\Http\Controllers\Member\ProfileController as MemberProfile;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,7 +38,7 @@ Route::get('thanks', [MemberController::class, 'thanks'])->name('members.thanks'
 
 Route::middleware(['auth', 'active', 'role'])->group(function () {
     Route::get('/', function() {
-        return redirect()->route('dashboard');
+        return to_route('dashboard');
     });
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware(['verified']);
 
@@ -91,6 +96,36 @@ Route::middleware(['auth', 'active', 'role'])->group(function () {
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::prefix('member')->name('member.')->group(function () {
+    Route::middleware(['guest:member'])->group(function () {
+        Route::get('login', [MemberAuth::class, 'login'])->name('login');
+        Route::post('login', [MemberAuth::class, 'postLogin']);
+        Route::get('forgot-password', [MemberAuth::class, 'forgot'])->name('password.forgot');
+        Route::post('forgot-password', [MemberAuth::class, 'postForgot']);
+        Route::get('reset-password', [MemberAuth::class, 'reset'])->name('password.reset');
+        Route::post('reset-password', [MemberAuth::class, 'postReset']);
+    });
+
+    Route::middleware(['auth:member', 'active:member'])->group(function () {
+        Route::get('/', function() {
+            return to_route('member.dashboard');
+        });
+        Route::get('dashboard', [MemberDashboard::class, 'index'])->name('dashboard');
+
+        Route::get('invoices', [MemberInvoice::class, 'index'])->name('invoices.index');
+        Route::get('invoices/{id}', [MemberInvoice::class, 'show'])->name('invoices.show');
+        Route::get('invoices/{id}/download', [MemberInvoice::class, 'download'])->name('invoices.download');
+
+        Route::get('profile', [MemberProfile::class, 'index'])->name('profile');
+        Route::post('profile', [MemberProfile::class, 'store']);
+
+        Route::get('logout', function () {
+            auth('member')->logout();
+            return to_route('member.login');
+        })->name('logout');
+    });
 });
 
 require __DIR__.'/auth.php';

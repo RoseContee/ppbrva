@@ -26,7 +26,7 @@ class Role
             || ($request->routeIs('users.*') && !$user->canAccess(RoleModel::PERMISSION_USERS))
             || ($request->routeIs('settings.*') && !$user->canAccess(RoleModel::PERMISSION_SETTINGS)))
         ) {
-            return redirect()->route('profile.edit');
+            return to_route('profile.edit');
         }
         return $next($request);
     }

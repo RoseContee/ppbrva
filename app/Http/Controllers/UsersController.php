@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Rules\Phone as PhoneRule;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -34,6 +35,7 @@ class UsersController extends Controller
             'name' => ['required'],
             'email' => ['required', 'email', 'unique:users'],
             'password' => ['required', 'min:8', 'confirmed'],
+            'phone' => ['nullable', new PhoneRule],
             'role' => ['required', 'exists:roles,id'],
             'status' => ['required', 'in:active,inactive'],
         ]);
@@ -45,7 +47,7 @@ class UsersController extends Controller
             'role_id' => $request['role'],
             'status' => $request['status'],
         ]);
-        return redirect()->route('users.index')
+        return to_route('users.index')
             ->with('success_message', 'New user has been added.');
     }
 
@@ -66,6 +68,7 @@ class UsersController extends Controller
             'name' => ['required'],
             'email' => ['required', 'email', Rule::unique('users')->ignore($user['id'])],
             'password' => ['nullable', 'min:8', 'confirmed'],
+            'phone' => ['nullable', new PhoneRule],
             'role' => ['required', 'exists:roles,id'],
             'status' => ['required', 'in:active,inactive'],
         ]);

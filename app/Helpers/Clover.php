@@ -2,7 +2,6 @@
 
 namespace App\Helpers;
 
-use App\Models\Setting;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -83,6 +82,8 @@ class Clover
         } catch (Exception $exception) {
             $result = $exception->getMessage();
         }
+        logger("!!!Clover Error!!! getCustomer({$customerId})");
+        logger($result);
         return $this->getErrorMessage($result);
     }
 
@@ -177,7 +178,7 @@ class Clover
         return $this->getErrorMessage($result);
     }
 
-    public function cardType(string $cardnumber) {
+    public function cardType(string $cardnumber): string {
         $cardTypes = [
             'VISA'        => [4],
             'MC'          => [51, 52, 53, 54, 55, 22, 23, 24, 25, 26, 27],
@@ -220,7 +221,7 @@ class Clover
         } catch (Exception $exception) {
             $result = $exception->getMessage();
         }
-        logger('Card Error!');
+        logger("!!!Clover Error!!! createCardToken");
         logger($result);
         return $this->getErrorMessage($result);
     }
@@ -242,6 +243,9 @@ class Clover
         } catch (Exception $exception) {
             $result = $exception->getMessage();
         }
+        $data = json_encode($data);
+        logger("!!!Clover Error!!! createCustomerCard({$data})");
+        logger($result);
         return $this->getErrorMessage($result);
     }
 
@@ -261,6 +265,9 @@ class Clover
         } catch (Exception $exception) {
             $result = $exception->getMessage();
         }
+        $data = json_encode($data);
+        logger("!!!Clover Error!!! updateCustomerCard({$customerId}, {$data})");
+        logger($result);
         return $this->getErrorMessage($result);
     }
 
@@ -276,31 +283,101 @@ class Clover
         return $this->getErrorMessage($result);
     }
 
-    public function getOrders() {
-        try {
-            $mId = $this->mId;
-            $lastTime = Setting::getSetting('last_order_updated') ?: 0;
-            $query = implode('&', [
-                "expand=lineItems,payment.tender",
-                "filter=payType=FULL",
-                "filter=state=locked",
-                "filter=createdTime>{$lastTime}",
-            ]);
-            $response = $this->platform_client->get("/v3/merchants/{$mId}/orders?{$query}");
-            return json_decode($response->getBody(), true);
-        } catch (RequestException $exception) {
-            $result = json_decode($exception->getResponse()->getBody(), true);
-        } catch (Exception $exception) {
-            $result = $exception->getMessage();
+    public function getTenders() {
+        $mId = $this->mId;
+        $offset = 0; $limit = 1000;
+        $tenders = [];
+        do {
+            try {
+                $response = $this->platform_client->get("/v3/merchants/{$mId}/tenders", [
+                    'query' => [
+                        'offset' => $offset,
+                        'limit' => $limit,
+                    ],
+                ]);
+                $result = json_decode($response->getBody(), true);
+                $items = $result['elements'] ?? [];
+                foreach ($items as $item) {
+                    $tenders[] = [
+                        'id' => $item['id'],
+                        'labelKey' => $item['labelKey'] ?? '',
+                        'label' => $item['label'] ?? '',
+                    ];
+                }
+            } catch (Exception $exception) {
+                $items = [];
+            }
+            $offset += $limit;
+        } while (count($items) >= $limit);
+        return $tenders;
+    }
+
+    public function getOrderIds(array $customerIds) {
+        $mId = $this->mId;
+        $orderIds = [];
+        foreach ($customerIds as $customerId) {
+            for ($i = 0; $i < 60; $i++) {
+                try {
+                    $response = $this->platform_client->get("v3/merchants/{$mId}/customers/{$customerId}", [
+                        'query' => [
+                            'expand' => 'orders',
+                        ],
+                    ]);
+                    $result = json_decode($response->getBody(), true);
+                    foreach ($result['orders']['elements'] ?? [] as $item) {
+                        $orderIds[] = $item['id'];
+                    }
+                } catch (RequestException $exception) {
+                    if ($exception->getResponse()->getStatusCode() == 429) {
+                        sleep($i + 1);
+                        continue;
+                    }
+                } catch (Exception $exception) {
+                }
+                break;
+            }
         }
+        return $orderIds;
+    }
+
+    public function getOrder(string $orderId) {
+        for ($i = 0; $i < 60; $i++) {
+            try {
+                $mId = $this->mId;
+                $response = $this->platform_client->get("/v3/merchants/{$mId}/orders/{$orderId}", [
+                    'query' => [
+                        'expand' => 'lineItems,payments',
+                    ],
+                ]);
+                return json_decode($response->getBody(), true);
+            } catch (RequestException $exception) {
+                $response = $exception->getResponse();
+                $statusCode = $response->getStatusCode();
+                $result = json_decode($response->getBody(), true);
+                if ($statusCode == 404) {
+                    logger("!!!Clover Error!!! getOrder({$orderId})");
+                    logger($result);
+                    return ['id' => $orderId];
+                }
+                if ($statusCode == 429) {
+                    sleep($i + 1);
+                    continue;
+                }
+            } catch (Exception $exception) {
+                $result = $exception->getMessage();
+            }
+            break;
+        }
+        logger("!!!Clover Error!!! getOrder({$orderId})");
+        logger($result);
         return $this->getErrorMessage($result);
     }
 
-    public function updateOrderTotal(string $orderId) {
+    public function updateOrderTotal(string $orderId, int $total = 0) {
         try {
             $mId = $this->mId;
             $body = [
-                'total' => 0,
+                'total' => $total,
             ];
             $response = $this->platform_client->post("/v3/merchants/{$mId}/orders/{$orderId}", [
                 'body' => json_encode($body),
@@ -345,6 +422,9 @@ class Clover
         } catch (Exception $exception) {
             $result = $exception->getMessage();
         }
+        $data = json_encode($data);
+        logger("!!!Clover Error!!! createCharge($data)");
+        logger($result);
         return $this->getErrorMessage($result);
     }
 
@@ -361,8 +441,9 @@ class Clover
                         'limit' => $limit,
                     ],
                 ]);
-                $items = json_decode($response->getBody(), true);
-                foreach (($items['elements'] ?? []) as $item) {
+                $result = json_decode($response->getBody(), true);
+                $items = $result['elements'] ?? [];
+                foreach ($items as $item) {
                     $inventoryItems[$item['id']] = [
                         'itemID' => $item['id'],
                         'item' => $item['name'],
@@ -371,9 +452,11 @@ class Clover
                         'sortOrder' => $item['categories']['elements'][0]['sortOrder'] ?? 0,
                     ];
                 }
-            } catch (Exception $exception) {}
+            } catch (Exception $exception) {
+                $items = [];
+            }
             $offset += $limit;
-        } while (!empty($elements));
+        } while (count($items) >= $limit);
         return $inventoryItems;
     }
 }

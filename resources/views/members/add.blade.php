@@ -556,9 +556,6 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
                     }
                 },
                 mounted() {
-                    new Datepicker(document.getElementById('dob'), {
-                        autohide: true,
-                    });
                     new Choices(document.querySelector('#primary_account'), {
                         allowHTML: true,
                         placeholder: true,
@@ -572,6 +569,10 @@ $route = $add ? route('members.store') : route('members.update', $member['id']);
                                 + '@if(!$errors->first('primary_account')) border-slate-300 @else border-red-500 @endif',
                             listSingle: '',
                         }
+                    });
+                    Inputmask({"mask": "(999) 999-9999"}).mask(document.querySelector('#phone'));
+                    new Datepicker(document.getElementById('dob'), {
+                        autohide: true,
                     });
                     @if (!$pending_member)
                         new Datepicker(document.getElementById('pause_from'), {

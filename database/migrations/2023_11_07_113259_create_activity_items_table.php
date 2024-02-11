@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('activity_items', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('activity_id');
+            $table->string('itemID');
             $table->string('name');
             $table->decimal('price');
             $table->timestamps();

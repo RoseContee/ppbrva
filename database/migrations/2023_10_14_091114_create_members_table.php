@@ -36,7 +36,7 @@ return new class extends Migration
             $table->text('note')->nullable();
             $table->string('customerID');
             $table->string('card_last4', 4)->nullable();
-            $table->enum('card_type', ['visa', 'mc', 'amex', 'discover', 'diners_club', 'jcb', 'unknown'])->default('unknown');
+            $table->enum('card_type', ['visa', 'mc', 'amex', 'discover', 'diners_club', 'jcb', 'unknown'])->nullable();
             $table->enum('status', ['active', 'inactive', 'paused', 'suspended', 'pending'])->default('active');
             $table->date('pause_from')->nullable();
             $table->date('pause_to')->nullable();

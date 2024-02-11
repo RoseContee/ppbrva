@@ -104,7 +104,7 @@ class EmailController extends Controller
     public function send(Request $request) {
         $email = $this->saveEmailAsDraft($request);
         if (gettype($email) == 'string') {
-            return redirect()->route('emails.draft')
+            return to_route('emails.draft')
                 ->with('error_message', $email);
         }
         try {
@@ -141,7 +141,7 @@ class EmailController extends Controller
             $email->save();
         } catch (\Exception $exception) {
             logger($exception->getMessage());
-            return redirect()->route('emails.draft')
+            return to_route('emails.draft')
                 ->with('warning_message', 'Email has not been sent.');
         }
         return back()->with('success_message', 'Email has been sent successfully.');
@@ -150,10 +150,10 @@ class EmailController extends Controller
     public function saveDraft(Request $request) {
         $email = $this->saveEmailAsDraft($request);
         if (gettype($email) == 'string') {
-            return redirect()->route('emails.draft')
+            return to_route('emails.draft')
                 ->with('error_message', $email);
         }
-        return redirect()->route('emails.draft')
+        return to_route('emails.draft')
             ->with('info_message', 'Email has been saved in draft.');
     }
 

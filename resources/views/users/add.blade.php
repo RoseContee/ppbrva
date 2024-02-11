@@ -177,4 +177,10 @@ $user_id = $user['id'] ?? '';
             </div>
         </div>
     </div>
+
+    @push('scripts')
+        <script type="module">
+            Inputmask({"mask": "(999) 999-9999"}).mask(document.querySelector('#phone'));
+        </script>
+    @endpush
 </x-app-layout>

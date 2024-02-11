@@ -48,7 +48,7 @@
                                 @foreach ($invoice['activities'] as $activity)
                                     <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                         <th class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white text-base font-semibold">
-                                            {{ $activity['category'] }}
+                                            {{ $activity['category'] . ' ' . date('n/j', strtotime($activity['date'])) }}
                                             @if ($activity['member_id'] != $invoice['member_id'])
                                                 ({{ $activity['member']['name'] ?? 'SECONDARY ACCOUNT' }})
                                             @endif

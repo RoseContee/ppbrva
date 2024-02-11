@@ -11,17 +11,59 @@
 
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg py-4">
                         <div class="flex items-center justify-between p-4 bg-white dark:bg-gray-900">
-                            <label for="table-search" class="sr-only">Search</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                                    </svg>
+                            <div class="flex items-center">
+                                <div class="relative mr-2">
+                                    <button class="inline-flex items-center text-gray-500 bg-white border border-slate-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                                            v-on:click="toggleMenu">
+                                        <span v-text="'Filter: ' + filterText"></span>
+                                        <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                        </svg>
+                                    </button>
+                                    <div class="absolute hidden z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
+                                         :style="{display: showMenu ? 'block' : 'none'}">
+                                        <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
+                                            <li>
+                                                <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                   href="javascript:void(0);"
+                                                   :class="{'bg-zinc-100': filter === 'all'}"
+                                                   v-on:click="filter = 'all'; showMenu = false;">
+                                                    All
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                   href="javascript:void(0);"
+                                                   :class="{'bg-zinc-100': filter === 'paid'}"
+                                                   v-on:click="filter = 'paid'; showMenu = false;">
+                                                    Only Paid
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                   href="javascript:void(0);"
+                                                   :class="{'bg-zinc-100': filter === 'unpaid'}"
+                                                   v-on:click="filter = 'unpaid'; showMenu = false;">
+                                                    Only Unpaid
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-                                <input class="block p-2 pl-10 text-sm text-gray-900 border border-slate-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                       type="text"
-                                       placeholder="Search by keyword..."
-                                       v-model="keyword">
+                                <div class="flex items-center">
+                                    <label for="table-search" class="sr-only">Search</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                                            </svg>
+                                        </div>
+                                        <input class="block p-2 pl-10 text-sm text-gray-900 border border-slate-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                               type="text"
+                                               placeholder="Search by keyword..."
+                                               v-model="keyword">
+                                    </div>
+                                </div>
                             </div>
 
                             <a class="inline-flex items-center px-4 py-2 bg-blue border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
@@ -37,6 +79,7 @@
                                     <th scope="col" class="px-6 py-3">Detail</th>
                                     <th scope="col" class="px-6 py-3">Amount</th>
                                     <th scope="col" class="px-6 py-3">Date</th>
+                                    <th scope="col" class="px-6 py-3">Paid</th>
                                     <th scope="col" class="px-6 py-3 items-center"></th>
                                 </tr>
                             </thead>
@@ -61,6 +104,17 @@
                                     <td class="px-6 py-4" v-text="(activity.from === 'clover' ? '#' : '') + activity.detail"></td>
                                     <td class="px-6 py-4" v-text="currencyFormat(activity.price)"></td>
                                     <td class="px-6 py-4" v-text="activity.date"></td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            <div class="h-2.5 w-2.5 rounded-full mr-2"
+                                                 :class="{'bg-green-500': (activity.invoice || {}).paid, 'bg-red-500': !(activity.invoice || {}).paid}"></div>
+                                            <span v-text="(activity.invoice || {}).paid ? 'Yes' : 'No'"></span>
+                                            <a v-if="activity.invoice"
+                                               class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray ml-2"
+                                               :href="'{{ route('invoices.index') }}/' + activity.invoice.id"
+                                               v-text="'(#' + activity.invoice.invoiceID + ')'"></a>
+                                        </div>
+                                    </td>
                                     <td class="px-6 py-4 text-center">
                                         <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
                                            :href="'{{ route('activity.index') }}/' + activity.id + '/edit'"
@@ -71,7 +125,7 @@
                                 </tr>
                                 <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                                     v-if="!pageActivities.length">
-                                    <td class="px-6 py-4 italic" colspan="5">
+                                    <td class="px-6 py-4 italic" colspan="6">
                                         No activities found.
                                     </td>
                                 </tr>
@@ -118,26 +172,41 @@
                 setup() {
                     const activities = ref({!! $activities !!});
                     const keyword = ref('');
+                    const filter = ref('all');
                     const filteredActivities = computed(() => {
                         return activities.value.filter(activity => {
                             const q = keyword.value.toLowerCase();
-                            return activity.member.name.toLowerCase().includes(q)
+                            return (activity.member.name.toLowerCase().includes(q)
                                 || activity.member.memberID.toLowerCase().includes(q)
                                 || activity.category.toLowerCase().includes(q)
                                 || activity.detail.toLowerCase().includes(q)
                                 || ('$' + activity.price).toLowerCase().includes(q)
-                                || activity.date.toLowerCase().includes(q);
+                                || activity.date.toLowerCase().includes(q)
+                            ) && (filter.value === 'all'
+                                || (filter.value === 'paid' && (activity.invoice || {}).paid)
+                                || (filter.value === 'unpaid' && !(activity.invoice || {}).paid)
+                            );
                         });
                     });
                     const per_page = 50;
                     const page = ref(1);
                     watch(keyword, () => page.value = 1);
+                    watch(filter, () => page.value = 1);
                     const pageActivities = computed(() => {
                         return filteredActivities.value.filter((activity, index) => {
                             return (page.value - 1) * per_page <= index
                                 && index < Math.min(page.value * per_page, filteredActivities.value.length);
                         });
                     });
+                    const showMenu = ref(false);
+                    const toggleMenu = () => {
+                        showMenu.value = !showMenu.value;
+                    }
+                    const filterText = computed(() => {
+                        if (filter.value === 'paid') return 'Only Paid';
+                        if (filter.value === 'unpaid') return 'Only Unpaid';
+                        return 'All';
+                    })
                     const paginationInfo = computed(() => {
                         const total = filteredActivities.value.length;
                         const from = (page.value - 1) * per_page + 1;
@@ -159,7 +228,8 @@
                     const currencyFormat = window.currencyFormat;
 
                     return {
-                        keyword, filteredActivities, pageActivities,
+                        keyword, filter, filteredActivities, pageActivities,
+                        showMenu, toggleMenu, filterText,
                         paginationInfo, isFirstPage, prevPage, isLastPage, nextPage,
                         currencyFormat,
                     }

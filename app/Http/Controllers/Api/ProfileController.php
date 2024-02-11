@@ -10,10 +10,10 @@ use App\Models\Member;
 use App\Models\MemberDevice;
 use App\Models\Plan;
 use App\Models\Setting;
+use App\Rules\Phone as PhoneRule;
 use App\Rules\State as StateRule;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
@@ -76,6 +76,7 @@ class ProfileController extends Controller
             'lastname' => ['required'],
             'gender' => ['required', 'in:male,female,prefer_not_to_say'],
             'email' => ['required', 'email', Rule::unique('members')->ignore($user['id'])],
+            'phone' => ['nullable', new PhoneRule],
             'dob' => ['required', 'dateFormat:m/d/Y'],
             'address' => ['required'],
             'city' => ['required'],
@@ -130,8 +131,10 @@ class ProfileController extends Controller
         if (empty($customer['id'])) {
             return response()->json(['message' => 'Customer ID not found'], 400);
         }
-        if ($cardId = ($customer['cards']['elements'][0]['id'] ?? '')) {
-            $clover->revokeCustomerCard($user['customerID'], $cardId);
+        foreach ($customer['cards']['elements'] ?? [] as $item) {
+            if ($cardId = $item['id'] ?? '') {
+                $clover->revokeCustomerCard($user['customerID'], $cardId);
+            }
         }
         $customer = $clover->updateCustomerCard($user['customerID'], [
             'email' => $user['email'],

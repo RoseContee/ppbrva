@@ -298,6 +298,7 @@
                     }
                 },
                 mounted() {
+                    Inputmask({"mask": "(999) 999-9999"}).mask(document.querySelector('#phone'));
                     new Datepicker(document.getElementById('dob'), {
                         autohide: true,
                     });

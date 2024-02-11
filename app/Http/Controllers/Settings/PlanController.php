@@ -32,7 +32,7 @@ class PlanController extends Controller
             'period' => $request['frequency'],
             'status' => $request['status'],
         ]);
-        return redirect()->route('settings.plans.index')
+        return to_route('settings.plans.index')
             ->with('success_message', 'New membership plan has been added.');
     }
 

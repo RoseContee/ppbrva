@@ -9,13 +9,22 @@ use App\Models\Member;
 use App\Models\MemberProfile;
 use App\Models\Plan;
 use App\Models\Setting;
+use App\Notifications\MemberResetCode;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class General
 {
+    public static int $reset_code_expiration = 60;
+
+    public static array $colors = [
+        '#4bc0c0', '#36a2eb', '#ff6384', '#ff9f40', '#ffcd56',
+        '#9966ff', '#0358b6', '#44de28', '#d60000', '#c9cbcf',
+    ];
 
     public static function removeImage(string $image = null) {
         $image = public_path($image);
@@ -310,5 +319,81 @@ class General
             return false;
         }
         return true;
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    public static function memberForgotPassword(Request $request) {
+        $request->validate([
+            'email' => ['required', 'email'],
+        ]);
+        $user = Member::query()
+            ->where('email', $request['email'])
+            ->whereIn('status', ['active', 'paused', 'suspended'])
+            ->first();
+        if (!$user) {
+            throw ValidationException::withMessages([
+                'email' => ['The email does not exist.'],
+            ]);
+        }
+        try {
+            $reset = DB::table('member_password_reset_codes')
+                ->where('email', $request['email'])
+                ->first();
+            $code_expiration = General::$reset_code_expiration;
+            $expiration = date('Y-m-d H:i:s', strtotime("-{$code_expiration} minutes"));
+            if (!$reset || $reset->created_at < $expiration) {
+                $code = random_int(100000, 999999);
+                DB::table('member_password_reset_codes')->updateOrInsert([
+                    'email' => $request['email'],
+                ], [
+                    'code' => $code,
+                    'created_at' => now(),
+                ]);
+            }
+            $user->notify(new MemberResetCode([
+                'code' => $code ?? $reset->code,
+                'expiration' => $code_expiration,
+            ]));
+        } catch (\Exception $exception) {
+            throw ValidationException::withMessages([
+                'email' => [$exception->getMessage()],
+            ]);
+        }
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    public static function memberResetPassword(Request $request) {
+        $code_expiration = General::$reset_code_expiration;
+        $expiration = date('Y-m-d H:i:s', strtotime("-{$code_expiration} minutes"));
+        $reset = DB::table('member_password_reset_codes')
+            ->where('email', $request['email'])
+            ->where('code', $request['code'])
+            ->where('created_at', '>=', $expiration)
+            ->first();
+        if (!$reset) {
+            throw ValidationException::withMessages([
+                'code' => 'Reset code is expired.',
+            ]);
+        }
+        $user = Member::query()
+            ->where('email', $request['email'])
+            ->whereIn('status', ['active', 'paused', 'suspended'])
+            ->first();
+        if (!$user) {
+            throw ValidationException::withMessages([
+                'email' => ['The email does not exist.'],
+            ]);
+        }
+        $user['password'] = bcrypt($request['password']);
+        $user['original_pass'] = null;
+        $user->save();
+        DB::table('member_password_reset_codes')
+            ->where('email', $request['email'])
+            ->where('code', $request['code'])
+            ->delete();
     }
 }

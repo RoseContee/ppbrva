@@ -10,9 +10,7 @@ class ActivityItem extends Model
     use HasFactory;
 
     protected $fillable = [
-        'activity_id',
-        'name',
-        'price',
+        'activity_id', 'itemID', 'name', 'price',
     ];
 
     public function activity() {

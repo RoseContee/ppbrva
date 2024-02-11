@@ -20,7 +20,7 @@ class Invoice extends Model
     ];
 
     public function getPeriodTimeStampAttribute() {
-        return strtotime($this->attributes['period']);
+        return strtotime($this->attributes['period'] ?? null);
     }
 
     public function member() {

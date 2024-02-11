@@ -6,8 +6,8 @@ use App\Helpers\Clover;
 use App\Models\Activity;
 use App\Models\ActivityItem;
 use App\Models\Member;
-use App\Models\Setting;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class GetCloverOrders extends Command
 {
@@ -25,54 +25,71 @@ class GetCloverOrders extends Command
      */
     protected $description = 'Get orders from clover.';
 
-    protected const TenderKey = 'com.clover.tender.check';
+    protected const TenderLabel = 'Check';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $lastTime = 0;
-        $members = [];
         $clover = new Clover();
-        $orders = $clover->getOrders();
-        foreach (($orders['elements'] ?? []) as $order) {
-            $createdTime = $order['createdTime'] ?? 0;
-            if ($createdTime > $lastTime) $lastTime = $createdTime;
-            $orderTender = $order['payments']['elements'][0]['tender']['labelKey'] ?? '';
-            if (strtolower($orderTender) != self::TenderKey
-                || strtoupper($order['paymentState'] ?? '') != 'PAID'
-                || !($price = $order['total'] ?? 0)
+        $tenderId = null;
+        $tenders = $clover->getTenders();
+        foreach ($tenders as $tender) {
+            if (!strcasecmp($tender['label'] ?? '', self::TenderLabel)) {
+                $tenderId = $tender['id'] ?? null;
+                break;
+            }
+        }
+        if (!$tenderId) {
+            logger("Cannot find Tender ID!");
+            return;
+        }
+        $now = now();
+        $members = [];
+        $fetchedOrders = DB::table('activity_fetched')
+            ->pluck('orderID')
+            ->toArray();
+        $customerIds = Member::withTrashed()
+            ->pluck('customerID')
+            ->toArray();
+        $orderIds = $clover->getOrderIds($customerIds);
+        foreach ($orderIds as $orderId) {
+            if (in_array($orderId, $fetchedOrders)) continue;
+            $order = $clover->getOrder($orderId);
+            if (empty($order['id'])) continue;
+            DB::table('activity_fetched')->insert([
+                'orderID' => $order['id'],
+                'created_at' => $now,
+            ]);
+            if (($order['payments']['elements'][0]['tender']['id'] ?? '') != $tenderId
                 || !($customerID = $order['customers']['elements'][0]['id'] ?? '')
             ) continue;
             if (empty($members[$customerID])) {
                 $members[$customerID] = Member::withTrashed()
-                    ->with(['location'])
                     ->where('customerID', $customerID)
-                    ->first(['id', 'location_id']);
+                    ->first(['id']);
             }
             if (!($member = $members[$customerID] ?? null)) continue;
+            $price = $order['payments']['elements'][0]['amount'] ?? 0;
             $activity = Activity::query()->updateOrCreate([
-                'detail' => $order['id'] ?? $order['title'] ?? 'Clover Order',
+                'detail' => $order['id'],
             ], [
                 'member_id' => $member['id'],
-                'category' => ($member['location']['name'] ?? 'Unknown').' POS',
+                'category' => 'Food/Beverage/Merch',
                 'price' => $price / 100,
-                'date' => gmdate('Y-m-d', $createdTime / 1000),
+                'date' => gmdate('Y-m-d', $order['createdTime'] / 1000),
                 'from' => 'clover',
             ]);
-            if ($activity['invoice_id']) {
-                $clover->updateOrderTotal($order['id']);
-            }
-            foreach (($order['lineItems']['elements'] ?? []) as $item) {
+            foreach (($order['lineItems']['elements'] ?? []) as $i => $item) {
                 ActivityItem::query()->updateOrCreate([
                     'activity_id' => $activity['id'],
+                    'itemID' => $item['id'] ?? "Unknown-{$i}",
                 ], [
                     'name' => $item['name'] ?? 'Order Item',
                     'price' => ($item['price'] ?? 0) / 100,
                 ]);
             }
         }
-        if ($lastTime) Setting::saveSetting('last_order_updated', $lastTime);
     }
 }

@@ -28,7 +28,7 @@ class Activity extends Model
     ];
 
     public function getTimestampAttribute() {
-        return strtotime($this->attributes['date'] ?? 0);
+        return strtotime($this->attributes['date'] ?? null);
     }
 
     public function member() {

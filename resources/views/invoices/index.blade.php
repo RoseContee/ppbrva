@@ -10,23 +10,8 @@
                     <x-messages />
 
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg py-4">
-                        <div class="flex items-center justify-between p-4 bg-white dark:bg-gray-900">
-                            <div class="flex items-center">
-                                <label for="table-search" class="sr-only">Search</label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                                        </svg>
-                                    </div>
-                                    <input class="block p-2 pl-10 text-sm text-gray-900 border border-slate-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                           type="text"
-                                           placeholder="Search by keyword..."
-                                           v-model="keyword">
-                                </div>
-                            </div>
-
-                            <div class="relative">
+                        <div class="flex items-center p-4 bg-white dark:bg-gray-900">
+                            <div class="relative mr-2">
                                 <button class="inline-flex items-center text-gray-500 bg-white border border-slate-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                                         v-on:click="toggleMenu">
                                     <span v-text="'Filter: ' + filterText"></span>
@@ -34,7 +19,7 @@
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                                     </svg>
                                 </button>
-                                <div class="absolute right-0 hidden z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
+                                <div class="absolute hidden z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
                                      :style="{display: showMenu ? 'block' : 'none'}">
                                     <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
                                         <li>
@@ -72,6 +57,20 @@
                                     </ul>
                                 </div>
                             </div>
+                            <div class="flex items-center">
+                                <label for="table-search" class="sr-only">Search</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                                        </svg>
+                                    </div>
+                                    <input class="block p-2 pl-10 text-sm text-gray-900 border border-slate-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                           type="text"
+                                           placeholder="Search by keyword..."
+                                           v-model="keyword">
+                                </div>
+                            </div>
                         </div>
 
                         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-2">
@@ -82,6 +81,7 @@
                                     <th scope="col" class="px-6 py-3">Period</th>
                                     <th scope="col" class="px-6 py-3">Amount</th>
                                     <th scope="col" class="px-6 py-3">Paid</th>
+                                    <th scope="col" class="px-6 py-3">CC</th>
                                     <th scope="col" class="px-6 py-3 items-center"></th>
                                 </tr>
                             </thead>
@@ -102,7 +102,11 @@
                                                  v-text="'#' + invoice.member.memberID"></div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4" v-text="'#' + invoice.invoiceID"></td>
+                                    <td class="px-6 py-4">
+                                        <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
+                                           :href="'{{ route('invoices.index') }}/' + invoice.id"
+                                           v-text="'#' + invoice.invoiceID"></a>
+                                    </td>
                                     <td class="px-6 py-4" v-text="invoice.period"></td>
                                     <td class="px-6 py-4" v-text="currencyFormat(invoice.amount)"></td>
                                     <td class="px-6 py-4">
@@ -113,6 +117,16 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">
+                                        <svg class="w-6 h-6" v-if="invoice.member.card_last4"
+                                             fill="#22c55e" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 117.72 117.72">
+                                            <g><path class="st0" d="M58.86,0c9.13,0,17.77,2.08,25.49,5.79c-3.16,2.5-6.09,4.9-8.82,7.21c-5.2-1.89-10.81-2.92-16.66-2.92 c-13.47,0-25.67,5.46-34.49,14.29c-8.83,8.83-14.29,21.02-14.29,34.49c0,13.47,5.46,25.66,14.29,34.49 c8.83,8.83,21.02,14.29,34.49,14.29s25.67-5.46,34.49-14.29c8.83-8.83,14.29-21.02,14.29-34.49c0-3.2-0.31-6.34-0.9-9.37 c2.53-3.3,5.12-6.59,7.77-9.85c2.08,6.02,3.21,12.49,3.21,19.22c0,16.25-6.59,30.97-17.24,41.62 c-10.65,10.65-25.37,17.24-41.62,17.24c-16.25,0-30.97-6.59-41.62-17.24C6.59,89.83,0,75.11,0,58.86 c0-16.25,6.59-30.97,17.24-41.62S42.61,0,58.86,0L58.86,0z M31.44,49.19L45.8,49l1.07,0.28c2.9,1.67,5.63,3.58,8.18,5.74 c1.84,1.56,3.6,3.26,5.27,5.1c5.15-8.29,10.64-15.9,16.44-22.9c6.35-7.67,13.09-14.63,20.17-20.98l1.4-0.54H114l-3.16,3.51 C101.13,30,92.32,41.15,84.36,52.65C76.4,64.16,69.28,76.04,62.95,88.27l-1.97,3.8l-1.81-3.87c-3.34-7.17-7.34-13.75-12.11-19.63 c-4.77-5.88-10.32-11.1-16.79-15.54L31.44,49.19L31.44,49.19z"/></g>
+                                        </svg>
+                                        <svg class="w-5 h-5" v-else
+                                             fill="#ef4444" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 122.878 122.88">
+                                            <g><path d="M1.426,8.313c-1.901-1.901-1.901-4.984,0-6.886c1.901-1.902,4.984-1.902,6.886,0l53.127,53.127l53.127-53.127 c1.901-1.902,4.984-1.902,6.887,0c1.901,1.901,1.901,4.985,0,6.886L68.324,61.439l53.128,53.128c1.901,1.901,1.901,4.984,0,6.886 c-1.902,1.902-4.985,1.902-6.887,0L61.438,68.326L8.312,121.453c-1.901,1.902-4.984,1.902-6.886,0 c-1.901-1.901-1.901-4.984,0-6.886l53.127-53.128L1.426,8.313L1.426,8.313z"/></g>
+                                        </svg>
+                                    </td>
+                                    <td class="px-6 py-4">
                                         <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
                                            :href="'{{ route('invoices.index') }}/' + invoice.id">
                                             View
@@ -121,7 +135,7 @@
                                 </tr>
                                 <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                                     v-if="!pageInvoices.length">
-                                    <td class="px-6 py-4 italic" colspan="6">
+                                    <td class="px-6 py-4 italic" colspan="7">
                                         No invoices found.
                                     </td>
                                 </tr>

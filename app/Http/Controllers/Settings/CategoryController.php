@@ -27,7 +27,7 @@ class CategoryController extends Controller
         Category::query()->create([
             'name' => $request['name'],
         ]);
-        return redirect()->route('settings.categories.index')
+        return to_route('settings.categories.index')
             ->with('success_message', 'New category has been added.');
     }
 
