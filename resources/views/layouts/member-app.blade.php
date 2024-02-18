@@ -9,15 +9,13 @@
 
         <title>{{ config('app.name', 'Performance Pickleball RVA') }}</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link href="{{ asset('assets/css/member.css') }}" rel="stylesheet" />
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @stack('styles')
     </head>
-    <body class="font-sans antialiased">
+    <body class="font-open-sans-regular">
         <div class="min-h-screen bg-gray-100">
             <nav x-data="{ open: false }" class="bg-white shadow-md">
                 <!-- Primary Navigation Menu -->

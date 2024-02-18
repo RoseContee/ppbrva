@@ -45,7 +45,7 @@ const BillingProfile: FC = (): JSX.Element => {
             {
               me.first_payment?.alert.split('\n').map((text, index) => (
                 <Text key={index} style={[t.textBase]}>
-                  { text }
+                  { text.trim() }
                 </Text>
               ))
             }

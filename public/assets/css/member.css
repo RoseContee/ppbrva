@@ -1,0 +1,111 @@
+@font-face {
+    font-family: "GillSansMT";
+    font-style: normal;
+    font-weight: 400;
+    src: url("fonts/GillSansMT.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "GillSansMT-Bold";
+    font-style: normal;
+    font-weight: 700;
+    src: url("fonts/GillSansMT-Bold.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Grange-DemiBold";
+    font-style: normal;
+    font-weight: 700;
+    src: url("fonts/Grange-DemiBold.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Grange-DemiBoldCond";
+    font-style: normal;
+    font-weight: 700;
+    src: url("fonts/Grange-DemiBoldCond.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Grange-Light";
+    font-style: normal;
+    font-weight: 300;
+    src: url("fonts/Grange-Light.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "OpenSans-Bold";
+    font-style: normal;
+    font-weight: 700;
+    src: url("fonts/OpenSans-Bold.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "OpenSans-Light";
+    font-style: normal;
+    font-weight: 300;
+    src: url("fonts/OpenSans-Light.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "OpenSans-Regular";
+    font-style: normal;
+    font-weight: 400;
+    src: url("fonts/OpenSans-Regular.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "OpenSansSemiCondensed-Bold";
+    font-style: normal;
+    font-weight: 700;
+    src: url("fonts/OpenSansSemiCondensed-Bold.ttf") format("truetype");
+}
+
+.font-gill-sans-mt {
+    font-family: GillSansMT, sans-serif;
+}
+
+.font-gill-sans-mt-bold {
+    font-family: GillSansMT-Bold, sans-serif;
+}
+
+.font-grange-demi-bold {
+    font-family: Grange-DemiBold, sans-serif;
+}
+
+.font-grange-demi-bold-cond {
+    font-family: Grange-DemiBoldCond, sans-serif;
+}
+
+.font-grange-light {
+    font-family: Grange-Light, sans-serif;
+}
+
+.font-open-sans-bold {
+    font-family: OpenSans-Bold, sans-serif;
+}
+
+.font-open-sans-light {
+    font-family: OpenSans-Light, sans-serif;
+}
+
+.font-open-sans-regular {
+    font-family: OpenSans-Regular, sans-serif;
+}
+
+.font-open-sans-semi-condensed-bold {
+    font-family: OpenSansSemiCondensed-Bold, sans-serif;
+}
+
+.text-title {
+    color: #1a2755;
+}
+
+.text-primary {
+    color: #0d77bd;
+}
+
+.message {
+    background: #e4ff80;
+    border-radius: .5rem;
+}
