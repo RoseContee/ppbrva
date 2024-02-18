@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('activity_fetched', function (Blueprint $table) {
+        Schema::create('employee_payments', function (Blueprint $table) {
             $table->id();
-            $table->string('orderID')->unique();
+            $table->string('paymentID');
+            $table->decimal('price');
+            $table->string('note');
             $table->dateTime('created_at');
         });
     }
@@ -23,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('activity_fetched');
+        Schema::dropIfExists('employee_payments');
     }
 };

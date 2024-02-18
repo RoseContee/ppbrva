@@ -10,7 +10,7 @@ class MemberDevice extends Model
     use HasFactory;
 
     protected $fillable = [
-        'member_id', 'token',
+        'member_id', 'token', 'device',
     ];
 
     public function member() {

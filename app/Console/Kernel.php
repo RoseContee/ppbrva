@@ -12,9 +12,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('app:create-invoices')
-            ->monthlyOn(1, '07:00');
-        $schedule->command('app:get-clover-orders')
+        $schedule->command('app:get-orders')
             ->everyFifteenMinutes();
         $schedule->command('app:get-dupr')
             ->daily();
@@ -22,6 +20,10 @@ class Kernel extends ConsoleKernel
             ->daily();
         $schedule->command('app:update-member-status')
             ->daily();
+        $schedule->command('app:get-employee-payments')
+            ->daily();
+        $schedule->command('app:create-invoices')
+            ->monthlyOn(1, '07:00');
     }
 
     /**

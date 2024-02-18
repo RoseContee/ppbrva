@@ -60,8 +60,19 @@ export const postProfile = (data: any) => {
 }
 
 export const postUpdateBilling = (data: any) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve: (user: MeProps) => void, reject) => {
     axios.post(`/update-billing`, data)
+      .then(({ data: { user } }) => {
+        dispatch(saveMe(user));
+        resolve(user);
+      })
+      .catch(error => reject(error));
+  });
+}
+
+export const postFirstPayment = () => {
+  return new Promise((resolve, reject) => {
+    axios.post('/first-payment')
       .then(({ data: { user } }) => {
         dispatch(saveMe(user));
         resolve(user);

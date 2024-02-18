@@ -9,7 +9,7 @@ import Dashboard from '../screens/dashboard';
 import Activity from '../screens/activity';
 import Events from '../screens/events';
 import {
-  Profile, MemberProfile, BillingProfile,
+  Profile, MemberProfile, BillingProfile, FirstPayment,
   MembershipPlan, ProfileInviteMember, FamilyMemberProfile
 } from '../screens/profile';
 import ClubInfo from '../screens/club-info';
@@ -31,6 +31,7 @@ export const mainRoutes = {
   Profile: 'Profile',
   MemberProfile: 'MemberProfile',
   BillingProfile: 'BillingProfile',
+  FirstPayment: 'FirstPayment',
   InvoiceScreen: 'InvoiceScreen',
   MembershipPlan: 'MembershipPlan',
   ProfileInviteMember: 'ProfileInviteMember',
@@ -83,6 +84,9 @@ const MainScreen: FC = (): JSX.Element => {
       />
       <Tab.Screen name={mainRoutes.BillingProfile} component={BillingProfile}
         options={{title: 'Billing Profile'}}
+      />
+      <Tab.Screen name={mainRoutes.FirstPayment} component={FirstPayment}
+        options={{title: 'First Payment'}}
       />
       <Tab.Screen name={mainRoutes.InvoiceScreen} component={InvoiceScreen}
         options={{headerShown: false}}

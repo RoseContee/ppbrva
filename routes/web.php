@@ -77,6 +77,9 @@ Route::middleware(['auth', 'active', 'role'])->group(function () {
 
         Route::get('general', [SettingsController::class, 'general'])->name('settings.general.index');
         Route::post('general', [SettingsController::class, 'storeGeneral'])->name('settings.general.store');
+
+        Route::get('general-content', [SettingsController::class, 'generalContent'])->name('settings.general-content.index');
+        Route::post('general-content', [SettingsController::class, 'storeGeneralContent'])->name('settings.general-content.store');
     });
 
     Route::get('emails/sent', [EmailController::class, 'sent'])->name('emails.sent');
@@ -91,6 +94,7 @@ Route::middleware(['auth', 'active', 'role'])->group(function () {
     Route::post('emails/restore', [EmailController::class, 'restore'])->name('emails.restore');
 
     Route::resource('scan', ScanController::class)->only(['index', 'store']);
+    Route::get('scan/history', [ScanController::class, 'history'])->name('scan.history');
     Route::get('missingcc', [ScanController::class, 'missingcc'])->name('missingcc');
 
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -119,7 +123,12 @@ Route::prefix('member')->name('member.')->group(function () {
         Route::get('invoices/{id}/download', [MemberInvoice::class, 'download'])->name('invoices.download');
 
         Route::get('profile', [MemberProfile::class, 'index'])->name('profile');
-        Route::post('profile', [MemberProfile::class, 'store']);
+        Route::get('profile/member', [MemberProfile::class, 'member'])->name('profile.member');
+        Route::post('profile/member', [MemberProfile::class, 'saveMember']);
+        Route::get('profile/billing', [MemberProfile::class, 'billing'])->name('profile.billing');
+        Route::post('profile/billing', [MemberProfile::class, 'saveBilling']);
+        Route::get('profile/membership-plan', [MemberProfile::class, 'membershipPlan'])->name('profile.membership-plan');
+        Route::post('profile/membership-plan', [MemberProfile::class, 'saveMembershipPlan']);
 
         Route::get('logout', function () {
             auth('member')->logout();

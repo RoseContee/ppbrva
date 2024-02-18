@@ -16,7 +16,7 @@ import Message from '../../components/basic/message';
 import Button from '../../components/basic/button';
 import Text from '../../components/basic/text';
 import Title from '../../components/basic/title';
-import Brand from '../../components/basic/card-brand';
+import CardBrand from '../../components/basic/card-brand';
 
 import { t } from 'react-native-tailwindcss';
 import s from '../../utils/styles';
@@ -57,9 +57,12 @@ const BillingProfile: FC = (): JSX.Element => {
     setLoading(true);
     setMessage('');
     postUpdateBilling({ number, expires, cvv, address, zipcode })
-      .then(() => {
+      .then(user => {
         setMessage('New card added successfully');
         initStates();
+        if (user.first_payment) {
+          navigation.navigate(mainRoutes.FirstPayment as never);
+        }
       })
       .catch(setMessage)
       .finally(() => setLoading(false));
@@ -78,10 +81,7 @@ const BillingProfile: FC = (): JSX.Element => {
           <Title style={[t.textXl, t.pB1]}>Add New Card</Title>
           {
             me.card_last4 &&
-            <View style={[t.flexRow, t.itemsCenter]}>
-              <Brand brand={me.card_type} />
-              <Text style={[s.textGray, t.textXl, t.pL2]}>**** { me.card_last4 }</Text>
-            </View>
+            <CardBrand brand={me.card_type} last4={me.card_last4} />
           }
         </View>
         <MaskInput inputMode="numeric" style={[s.input, s.mT7]}

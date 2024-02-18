@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC } from 'react';
 import {
   Image,
   ImageSourcePropType,
@@ -7,9 +7,8 @@ import {
   View
 } from 'react-native';
 import { DrawerContentComponentProps, DrawerContentScrollView } from '@react-navigation/drawer';
-import { useFocusEffect } from '@react-navigation/native';
 import { appRoutes, mainRoutes } from '../routes';
-import { fetchLocation, fetchSocial, logout } from '../requests';
+import { logout } from '../requests';
 import { useAppSelector } from '../store';
 import { getSocial } from '../store/settings';
 import { getLocation } from '../store/user';
@@ -54,13 +53,6 @@ const MainMenu: FC<DrawerContentComponentProps> = (props): JSX.Element => {
   const location = useAppSelector(getLocation);
   const social = useAppSelector(getSocial);
   const { navigation } = props;
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchLocation();
-      fetchSocial();
-    }, [])
-  );
 
   const gotoScreen = (screen: string) => {
     navigation.navigate(screen);

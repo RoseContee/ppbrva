@@ -16,17 +16,30 @@
                         <div class="md:w-1/3 px-2">
                             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-2">
                                 <tbody>
-                                    @foreach ($plans as $i => $plan)
-                                        <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                            <td class="p-2">
-                                                <div class="w-4 h-4" style="background: {{ $colors[$i % count($colors)] }};"></div>
-                                            </td>
-                                            <td class="p-2">{{ $plan['name'] }}</td>
-                                            <td class="p-2">{{ $plan['members_count'] }}</td>
-                                            <td class="p-2">${{ number_format($plan['members_count'] * $plan['price'], 2) }}</td>
-                                        </tr>
-                                    @endforeach
+                                @php $total_members = $total_price = 0; @endphp
+                                @foreach ($plans as $i => $plan)
+                                    <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        <td class="p-2">
+                                            <div class="w-4 h-4" style="background: {{ $colors[$i % count($colors)] }};"></div>
+                                        </td>
+                                        <td class="p-2">{{ $plan['name'] }}</td>
+                                        <td class="p-2">{{ $plan['members_count'] }}</td>
+                                        <td class="p-2">${{ number_format($plan['members_count'] * $plan['price'], 2) }}</td>
+                                    </tr>
+                                    @php
+                                        $total_members += $plan['members_count'];
+                                        $total_price += $plan['members_count'] * $plan['price'];
+                                    @endphp
+                                @endforeach
                                 </tbody>
+                                <tfoot>
+                                    <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 font-semibold">
+                                        <th class="p-2"></th>
+                                        <td class="p-2">Total</td>
+                                        <td class="p-2">{{ $total_members }}</td>
+                                        <td class="p-2">${{ number_format($total_price, 2) }}</td>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                         <div class="md:w-1/3 px-2">
@@ -41,14 +54,22 @@
                                 </div>
                                 <div class="w-full px-2">
                                     <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 py-5 mb-4 text-center">
+                                        <h4 class="text-sm uppercase text-gray-500 leading-tight">With CC</h4>
+                                        <h3 class="text-3xl text-gray-700 font-semibold leading-tight mt-3 mb-0">
+                                            {{ $with_cc }}
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="md:flex">
+                                <div class="w-full px-2">
+                                    <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 py-5 mb-4 text-center">
                                         <h4 class="text-sm uppercase text-gray-500 leading-tight">Paused</h4>
                                         <h3 class="text-3xl text-gray-700 font-semibold leading-tight mt-3 mb-0">
                                             {{ $paused_members }}
                                         </h3>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="md:flex">
                                 <div class="w-full px-2">
                                     <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 py-5 mb-4 text-center">
                                         <h4 class="text-sm uppercase text-gray-500 leading-tight">Suspended</h4>
@@ -57,6 +78,8 @@
                                         </h3>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="md:flex">
                                 <div class="w-full px-2">
                                     <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 py-5 mb-4 text-center">
                                         <h4 class="text-sm uppercase text-gray-500 leading-tight">Inactive</h4>
@@ -65,8 +88,6 @@
                                         </h3>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="md:flex">
                                 <div class="w-full px-2">
                                     <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 py-5 mb-4 text-center">
                                         <h4 class="text-sm uppercase text-gray-500 leading-tight">Pending</h4>
@@ -75,7 +96,6 @@
                                         </h3>
                                     </div>
                                 </div>
-                                <div class="w-full"></div>
                             </div>
                         </div>
                     </div>
@@ -120,89 +140,22 @@
 
                 <div class="w-full px-5 py-5">
                     <div class="-mx-2 md:flex">
-                        <div class="w-full px-2">
-                            <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 pt-8 pb-10 mb-4 text-center">
-                                <h4 class="text-sm uppercase text-gray-500 leading-tight">Dues</h4>
-                                <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
-                                    ${{ number_format($dues) }}
-                                </h3>
-                                <p @class([
-                                        "text-xs leading-tight",
-                                        "text-green-500" => $dues_percent >= 0,
-                                        "text-red-500" => $dues_percent < 0,
-                                   ])>
-                                    {{ $dues_percent >= 0 ? '▲' : '▼' }} {{ $dues_percent }}%
-                                </p>
+                        @foreach ($boxes as $label => $box)
+                            <div class="w-full px-2">
+                                <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 pt-8 pb-10 mb-4 text-center">
+                                    <h4 class="text-sm uppercase text-gray-500 leading-tight font-semibold"
+                                        style="color: {{ $colors[$loop->index % count($colors)] }}">
+                                        {!! $label !!}
+                                    </h4>
+                                    <h3 class="text-3xl text-gray-700 font-semibold leading-tight mt-3">
+                                        ${{ number_format($box, 2) }}
+                                    </h3>
+                                </div>
                             </div>
-                        </div>
-                        <div class="w-full px-2">
-                            <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 pt-8 pb-10 mb-4 text-center">
-                                <h4 class="text-sm uppercase text-gray-500 leading-tight">Food & Beverage</h4>
-                                <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
-                                    ${{ number_format($food_beverage) }}
-                                </h3>
-                                <p @class([
-                                        "text-xs leading-tight",
-                                        "text-green-500" => $food_beverage_percent >= 0,
-                                        "text-red-500" => $food_beverage_percent < 0,
-                                   ])>
-                                    {{ $food_beverage_percent >= 0 ? '▲' : '▼' }} {{ $food_beverage_percent }}%
-                                </p>
-                            </div>
-                        </div>
-                        <div class="w-full px-2">
-                            <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 pt-8 pb-10 mb-4 text-center">
-                                <h4 class="text-sm uppercase text-gray-500 leading-tight">Lessons</h4>
-                                <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
-                                    ${{ number_format($lessons) }}
-                                </h3>
-                                <p @class([
-                                        "text-xs leading-tight",
-                                        "text-green-500" => $lessons_percent >= 0,
-                                        "text-red-500" => $lessons_percent < 0,
-                                   ])>
-                                    {{ $lessons_percent >= 0 ? '▲' : '▼' }} {{ $lessons_percent }}%
-                                </p>
-                            </div>
-                        </div>
-                        <div class="w-full px-2">
-                            <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 pt-8 pb-10 mb-4 text-center">
-                                <h4 class="text-sm uppercase text-gray-500 leading-tight">Rentals</h4>
-                                <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
-                                    ${{ number_format($rentals) }}
-                                </h3>
-                                <p @class([
-                                        "text-xs leading-tight",
-                                        "text-green-500" => $rentals_percent >= 0,
-                                        "text-red-500" => $rentals_percent < 0,
-                                   ])>
-                                    {{ $rentals_percent >= 0 ? '▲' : '▼' }} {{ $rentals_percent }}%
-                                </p>
-                            </div>
-                        </div>
-                        <div class="w-full px-2">
-                            <div class="rounded-lg bg-white shadow-lg md:shadow-xl px-3 pt-8 pb-10 mb-4 text-center">
-                                <h4 class="text-sm uppercase text-gray-500 leading-tight">Merchandise</h4>
-                                <h3 class="text-3xl text-gray-700 font-semibold leading-tight my-3">
-                                    ${{ number_format($merchandise) }}
-                                </h3>
-                                <p @class([
-                                        "text-xs leading-tight",
-                                        "text-green-500" => $merchandise_percent >= 0,
-                                        "text-red-500" => $merchandise_percent < 0,
-                                   ])>
-                                    {{ $merchandise_percent >= 0 ? '▲' : '▼' }} {{ $merchandise_percent }}%
-                                </p>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
-                    <div class="md:flex">
-                        <div class="mt-8 px-4 md:w-70">
-                            <canvas id="payment-chart"></canvas>
-                        </div>
-                        <div class="mt-8 px-4 md:w-30">
-                            <canvas id="pie-chart"></canvas>
-                        </div>
+                    <div class="mt-8 px-4 w-full">
+                        <canvas id="revenue-chart"></canvas>
                     </div>
                 </div>
             </div>
@@ -243,19 +196,28 @@
 
             new DateRangePicker(document.getElementById('daterange-picker'));
 
-            new Chart(document.getElementById('payment-chart'), {
+            new Chart(document.getElementById('revenue-chart'), {
                 type: 'bar',
                 data: {
-                    labels: [@foreach ($plotting_payments as $label => $value)'{{ $label }}',@endforeach],
-                    datasets: [{
-                        label: 'Payments',
-                        data: [@foreach ($plotting_payments as $value){{ $value }},@endforeach],
-                        borderWidth: 1
-                    }]
+                    labels: [@foreach ($revenues as $label => $v) '{{ $label }}', @endforeach],
+                    datasets: [
+                        @foreach ($labels as $label)
+                        {
+                            label: '{!! $label !!}',
+                            data: [@foreach ($revenues as $r) {{ $r[$label] }}, @endforeach],
+                            backgroundColor: '{{ $colors[$loop->index % count($colors)]}}',
+                        },
+                        @endforeach
+                    ]
                 },
                 options: {
+                    responsive: true,
                     scales: {
+                        x: {
+                            stacked: true,
+                        },
                         y: {
+                            stacked: true,
                             beginAtZero: true,
                             ticks: {
                                 callback: value => `$${value}`,
@@ -263,6 +225,9 @@
                         }
                     },
                     plugins: {
+                        legend: {
+                            display: false,
+                        },
                         tooltip: {
                             callbacks: {
                                 label: context => `${context.dataset.label}: $${context.formattedValue}`,
@@ -270,27 +235,6 @@
                         }
                     }
                 }
-            });
-
-            new Chart(document.getElementById('pie-chart'), {
-                type: 'pie',
-                data: {
-                    labels: ['Dues', 'Food & Beverage', 'Lessons', 'Rentals', 'Merchandise'],
-                    datasets: [{
-                        data: [{{ $dues }}, {{ $food_beverage }}, {{ $lessons }}, {{ $rentals }}, {{ $merchandise }}],
-                        backgroundColor: [@for ($i = 0; $i < 5; $i++) '{{ $colors[$i % count($colors)] }}', @endfor],
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: context => `$${context.formattedValue}`,
-                            }
-                        }
-                    }
-                },
             });
         </script>
     @endpush

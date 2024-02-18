@@ -102,7 +102,32 @@ class Member extends Authenticatable
         }
         General::getGenderAge($this);
         $profile = $this['profile'];
-        $dupr_link = Setting::getSetting('dupr_link', Setting::DefaultDuprLink);
+        $setting = Setting::getSetting(['dupr_link', 'first_payment'], [
+            'dupr_link' => Setting::DefaultDuprLink,
+            'first_payment' => Setting::DefaultFirstPayment,
+        ]);
+        $first_payment = null;
+        if ($this['card_last4'] && !$this->invoices()->count()) {
+            $now = now();
+            $year = $now->format('Y');
+            $month = $now->format('F');
+            $days = $now->daysInMonth;
+            $days_left = $days - $now->day;
+            $plan = $this['plan'];
+            $rate = number_format(($plan['price'] ?? 0) / $days, 2);
+            $amount = number_format($rate * $days_left, 2);
+
+            $alert = str_replace('$$YEAR', $year, $setting['first_payment']);
+            $alert = str_replace('$$MONTH', $month, $alert);
+            $alert = str_replace('$$PLAN', $plan['name'] ?? 'Unknown', $alert);
+            $alert = str_replace('$$RATE', "\${$rate}", $alert);
+            $alert = str_replace('$$DAYS', $days_left, $alert);
+            $alert = str_replace('$$TOTAL', "\${$amount}", $alert);
+            $first_payment = [
+                'alert' => $alert,
+                'amount' => $amount,
+            ];
+        }
         return [
             'id' => $this['id'],
             'memberID' => $this['memberID'],
@@ -132,8 +157,9 @@ class Member extends Authenticatable
                 'wins' => $profile['wins'],
                 'losses' => $profile['losses'],
                 'dupr_id' => $profile['dupr_id'],
-                'dupr_link' => $dupr_link,
+                'dupr_link' => $setting['dupr_link'],
             ],
+            'first_payment' => $first_payment,
         ];
     }
 }

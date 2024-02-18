@@ -32,4 +32,19 @@ class IndexController extends Controller
         ]));
         return back()->with('success_message', 'Settings have been updated.');
     }
+
+    public function generalContent() {
+        $settings = Setting::getSetting(['first_payment']);
+        return view('settings.general-content', [
+            'settings' => $settings,
+        ]);
+    }
+
+    public function storeGeneralContent(Request $request) {
+        $request->validate([
+            'first_payment' => ['required'],
+        ]);
+        Setting::saveSetting($request->only(['first_payment']));
+        return back()->with('success_message', 'Settings have been updated.');
+    }
 }

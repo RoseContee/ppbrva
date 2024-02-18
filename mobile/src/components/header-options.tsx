@@ -14,6 +14,9 @@ import { t } from 'react-native-tailwindcss';
 import s from '../utils/styles';
 import theme from '../utils/theme';
 import { appRoutes, authRoutes, invoiceRoutes, mainRoutes } from '../routes';
+import { useAppSelector } from '../store';
+import { getFirstPayment } from '../store/user';
+import { fetchLocation, fetchSocial } from '../requests';
 
 interface IHeaderButtonProps {
   route: RouteProp<ParamListBase, string>,
@@ -65,9 +68,21 @@ const HeaderLeft: FC<IHeaderButtonProps> = ({ route, navigation }): JSX.Element 
 }
 
 const HeaderRight: FC<IHeaderButtonProps> = ({ navigation }): JSX.Element => {
+  const first_payment = useAppSelector(getFirstPayment);
+
+  const onMenuOpen = () => {
+    if (first_payment) {
+      navigation.navigate(mainRoutes.FirstPayment);
+    } else {
+      navigation.dispatch(DrawerActions.openDrawer());
+      fetchLocation();
+      fetchSocial();
+    }
+  }
+
   return (
     <View style={[t.mR4]}>
-      <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
+      <TouchableOpacity onPress={onMenuOpen}>
         <IconMenu fill={theme.color.primary}
           width={theme.size.headerIcon} height={theme.size.headerIcon}
         />

@@ -12,6 +12,13 @@ class Setting extends Model
     public const DefaultContactEmail = 'info@ppbrva.com';
     public const DefaultDuprLink = 'https://ppbrva.com/dupr';
     public const DefaultSecondaryLimit = 5;
+    public const DefaultFirstPayment = 'To activate your account please make a payment for the month of $$MONTH which has $$DAYS days left.
+
+Your $$PLAN equates to a rate of $$RATE/day so the total due for $$MONTH $$YEAR is $$TOTAL.
+
+This payment will be made using the card on file and your account will immediately become active following a successful transaction.';
+    public const KEY_LastPulledOrderTime = 'last_pulled_order_time';
+    public const KEY_LastPulledPaymentTime = 'last_pulled_payment_time';
 
     protected $fillable = [
         'key', 'value',

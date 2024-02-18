@@ -157,6 +157,7 @@ class General
         if ($dob = $request['dob']) {
             $dob = date('Y-m-d', strtotime($dob));
         }
+        $podplay = new PodPlay();
         $member = Member::query()->create([
             'memberID' => Str::random(),
             'firstname' => $request['firstname'],
@@ -180,7 +181,7 @@ class General
             'note' => $request['note'],
             'customerID' => $customer['id'],
             'status' => $status,
-            'podplay_id' => (new PodPlayController())->podplaynew($request),
+            'podplay_id' => $podplay->createUser($request->only(['firstname', 'lastname', 'email'])),
         ]);
         if ($request->hasFile('avatar')) {
             $member['avatar'] = 'uploads/'.$request->file('avatar')->store('avatars');
@@ -204,6 +205,7 @@ class General
         if (empty($customer['id'])) return $customer;
         $user = $request->user();
         $password = Str::random(8);
+        $podplay = new PodPlay();
         $member = Member::query()->create([
             'memberID' => Str::random(),
             'firstname' => $request['firstname'],
@@ -215,7 +217,7 @@ class General
             'plan_id' => $user['plan_id'],
             'customerID' => $customer['id'],
             'status' => 'pending',
-            'podplay_id' => (new PodPlayController())->podplaynew($request),
+            'podplay_id' => $podplay->createUser($request->only(['firstname', 'lastname', 'email'])),
         ]);
         $member['memberID'] = self::generateMemberID($member['id']);
         $member->save();
@@ -234,6 +236,7 @@ class General
         ]);
         if (empty($customer['id'])) return $customer;
         $user = $request->user();
+        $podplay = new PodPlay();
         $member = Member::query()->create([
             'memberID' => Str::random(),
             'firstname' => $request['firstname'],
@@ -247,7 +250,7 @@ class General
             'is_child' => true,
             'customerID' => $customer['id'],
             'status' => 'active',
-            'podplay_id' => (new PodPlayController())->podplaynew($request),
+            'podplay_id' => $podplay->createUser($request->only(['firstname', 'lastname', 'email'])),
         ]);
         $member['memberID'] = self::generateMemberID($member['id']);
         $member->save();

@@ -3,7 +3,7 @@ export {
 } from './ppbrva-guest';
 export {
   fetchMe, postDeviceToken, fetchLocation, fetchPlan,
-    postProfile, postUpdateBilling,
+    postProfile, postUpdateBilling, postFirstPayment,
     postUpdatePassword, postPlanChangeRequest,
     fetchFamilies, postInviteMember, postAddChildMember,
     fetchFamilyMember, postFamilyMember, deleteFamilyMember,

@@ -20,10 +20,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('podplay', [PodPlayController::class, 'podplaycreate']);
-Route::get('podplay/plans', [PodPlayController::class, 'podplayplans']);
-Route::get('podplay/sync', [PodPlayController::class, 'podplaysync']);
-Route::get('podplay/token', [PodPlayController::class, 'podplaytoken']);
+Route::get('podplay/token', [PodPlayController::class, 'token']);
+Route::get('podplay', [PodPlayController::class, 'create']);
+Route::get('podplay/plans', [PodPlayController::class, 'plans']);
+Route::get('podplay/sync', [PodPlayController::class, 'sync']);
 
 Route::prefix('app')->group(function() {
     Route::middleware('guest:sanctum')->group(function () {
@@ -33,13 +33,14 @@ Route::prefix('app')->group(function() {
         Route::post('reset-password', [AuthController::class, 'resetPassword']);
     });
 
-    Route::middleware(['auth:sanctum', 'active'])->group(function () {
+    Route::middleware(['auth:sanctum', 'active:member'])->group(function () {
         Route::get('me', [ProfileController::class, 'me']);
         Route::post('device-token', [ProfileController::class, 'saveDeviceToken']);
         Route::get('location', [ProfileController::class, 'location']);
         Route::get('plan', [ProfileController::class, 'plan']);
         Route::post('profile', [ProfileController::class, 'updateProfile']);
         Route::post('update-billing', [ProfileController::class, 'updateBilling']);
+        Route::post('first-payment', [ProfileController::class, 'firstPayment']);
         Route::post('update-password', [ProfileController::class, 'updatePassword']);
         Route::post('plan-change-request', [ProfileController::class, 'planChangeRequest']);
         Route::get('families', [ProfileController::class, 'families']);

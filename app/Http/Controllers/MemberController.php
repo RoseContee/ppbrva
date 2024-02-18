@@ -37,7 +37,7 @@ class MemberController extends Controller
             'firstname' => ['required'],
             'lastname' => ['required'],
             'gender' => ['required', 'in:male,female,prefer_not_to_say'],
-            'email' => ['required', 'unique:members,email'],
+            'email' => ['required', 'unique:members'],
             'phone' => ['required', new PhoneRule],
             'dob' => ['required', 'dateFormat:m/d/Y'],
             'address' => ['required'],

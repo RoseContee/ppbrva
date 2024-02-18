@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\Clover;
 use App\Helpers\General;
+use App\Helpers\PodPlay;
 use App\Http\Controllers\Controller;
+use App\Models\Invoice;
 use App\Models\Location;
 use App\Models\Member;
 use App\Models\MemberDevice;
@@ -33,6 +35,7 @@ class ProfileController extends Controller
             'token' => $request['device_token'],
         ], [
             'member_id' => auth()->id(),
+            'device' => $request['device'],
         ]);
         return response()->json([
             'status' => 'OK',
@@ -146,10 +149,58 @@ class ProfileController extends Controller
         $user['card_type'] = strtolower($card['card']['brand'] ?? $brand);
         $user['card_last4'] = substr($card['card']['last4'] ?? $request['number'], -4);
         $user->save();
-        (new PodPlayController)->podplaynewplan($user);
+        $podplay = new PodPlay();
+        $podplay->createMembership($user);
         return response()->json([
             'user' => $user->getInfo(),
         ]);
+    }
+
+    public function firstPayment(Request $request) {
+        $user = $request->user();
+        $message = 'The member does not have a Card.';
+        if ($user['card_last4']) {
+            $period = date('F Y');
+            $now = now();
+            $days = $now->daysInMonth;
+            $rate = (float)number_format(($user['plan']['price'] ?? 0) / $days, 2);
+            $amount = (float)number_format($rate * ($days - $now->day), 2);
+            $clover = new Clover();
+            $charge = $clover->createCharge([
+                'amount' => $amount,
+                'source' => $user['customerID'],
+                'description' => "PPBRVA {$period} first payment for {$user['name']}",
+            ]);
+            if (!empty($charge['paid'])) {
+                $card_type = strtolower($charge['source']['brand']);
+                $card_last4 = strtolower($charge['source']['last4']);
+                $paid_at = gmdate('Y-m-d H:i:s', $charge['created'] / 1000);
+                if ($user['card_type'] != $card_type || $user['card_last4'] != $card_last4) {
+                    $user->update([
+                        'card_type' => $card_type,
+                        'card_last4' => $card_last4,
+                    ]);
+                }
+                Invoice::query()->create([
+                    'invoiceID' => $charge['id'],
+                    'member_id' => $user['id'],
+                    'period' => $period,
+                    'amount' => $amount,
+                    'paid' => true,
+                    'card_type' => $card_type,
+                    'card_last4' => $card_last4,
+                    'paid_at' => $paid_at,
+                    'reason' => null,
+                ]);
+                return response()->json([
+                    'user' => $user->getInfo(),
+                ]);
+            }
+            $message = empty($charge['id']) ? $charge : '3DSecure transactions';
+        }
+        return response()->json([
+            'message' => $message,
+        ], 422);
     }
 
     public function updatePassword(Request $request) {

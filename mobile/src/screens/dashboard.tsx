@@ -4,6 +4,7 @@ import {
   Image,
   ImageSourcePropType,
   Linking,
+  Platform,
   TouchableOpacity,
   View,
   useWindowDimensions
@@ -15,7 +16,7 @@ import {
 } from '../requests';
 import { useAppSelector } from '../store';
 import { getAccessToken, getDashboard, getDeviceToken } from '../store/settings';
-import { getMe, getPlan } from '../store/user';
+import { getFirstPayment, getMe, getPlan } from '../store/user';
 import Layouts from '../components/layouts';
 import PageTitle from '../components/basic/page-title';
 import Modal from '../components/basic/modal';
@@ -73,6 +74,7 @@ const Dashboard: FC = (): JSX.Element => {
   const access_token = useAppSelector(getAccessToken);
   const settings = useAppSelector(getDashboard);
   const me = useAppSelector(getMe);
+  const first_payment = useAppSelector(getFirstPayment);
   const plan = useAppSelector(getPlan);
   const { width } = useWindowDimensions();
   const [showModal, setShowModal] = useState(false);
@@ -98,7 +100,7 @@ const Dashboard: FC = (): JSX.Element => {
 
   useEffect(() => {
     if (device_token && access_token) {
-      postDeviceToken({ device_token });
+      postDeviceToken({ device_token, device: Platform.OS });
     }
   }, [device_token, access_token]);
 
@@ -111,6 +113,10 @@ const Dashboard: FC = (): JSX.Element => {
   }
 
   const openLink = (link: string) => {
+    if (first_payment) {
+      gotoScreen(mainRoutes.FirstPayment);
+      return;
+    }
     if (status === 'paused') {
       setMessage('Your account is in Paused status and cannot reserve courts at this time.');
       setShowModal(true);

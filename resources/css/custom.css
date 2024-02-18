@@ -47,3 +47,7 @@
 .choices .is-selected {
     background-color: #ebebeb !important;
 }
+
+.message {
+    background: #e4ff80;
+}

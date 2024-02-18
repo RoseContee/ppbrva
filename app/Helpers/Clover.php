@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\Setting;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -160,14 +161,13 @@ class Clover
     public function updateCustomerLastname(string $customerId, string $lastname) {
         try {
             $mId = $this->mId;
-            $body = [
-                'lastName' => substr($lastname, 0, 64),
-            ];
             $response = $this->platform_client->post("/v3/merchants/{$mId}/customers/{$customerId}", [
                 'query' => [
                     'expand' => 'emailAddresses,phoneNumbers,cards',
                 ],
-                'body' => json_encode($body),
+                'body' => json_encode([
+                    'lastName' => substr($lastname, 0, 64),
+                ]),
             ]);
             return json_decode($response->getBody(), true);
         } catch (RequestException $exception) {
@@ -199,21 +199,20 @@ class Clover
 
     public function createCardToken(array $data) {
         try {
-            $body = [
-                'card' => [
-                    'number' => $data['number'],
-                    'exp_month' => $data['exp_month'],
-                    'exp_year' => $data['exp_year'],
-                    'cvv' => $data['cvv'],
-                    'last4' => substr($data['number'], -4),
-                    'first6' => substr($data['number'], -6),
-                    'brand' => $data['brand'],
-                    'address_line1' => $data['address'],
-                    'address_zip' => $data['zipcode'],
-                ],
-            ];
             $response = $this->tokenization_client->post("/v1/tokens", [
-                'body' => json_encode($body),
+                'body' => json_encode([
+                    'card' => [
+                        'number' => $data['number'],
+                        'exp_month' => $data['exp_month'],
+                        'exp_year' => $data['exp_year'],
+                        'cvv' => $data['cvv'],
+                        'last4' => substr($data['number'], -4),
+                        'first6' => substr($data['number'], -6),
+                        'brand' => $data['brand'],
+                        'address_line1' => $data['address'],
+                        'address_zip' => $data['zipcode'],
+                    ],
+                ]),
             ]);
             return json_decode($response->getBody(), true);
         } catch (RequestException $exception) {
@@ -228,14 +227,13 @@ class Clover
 
     public function createCustomerCard(array $data) {
         try {
-            $body = [
-                'ecomind' => $this->ecomind,
-                'email' => $data['email'],
-                'name' => $data['name'],
-                'source' => $data['card'],
-            ];
             $response = $this->ecommerce_client->post("/v1/customers", [
-                'body' => json_encode($body),
+                'body' => json_encode([
+                    'ecomind' => $this->ecomind,
+                    'email' => $data['email'],
+                    'name' => $data['name'],
+                    'source' => $data['card'],
+                ]),
             ]);
             return json_decode($response->getBody(), true);
         } catch (RequestException $exception) {
@@ -251,13 +249,12 @@ class Clover
 
     public function updateCustomerCard(string $customerId, array $data) {
         try {
-            $body = [
-                'ecomind' => $this->ecomind,
-                'email' => $data['email'],
-                'source' => $data['card'],
-            ];
             $response = $this->ecommerce_client->put("/v1/customers/{$customerId}", [
-                'body' => json_encode($body),
+                'body' => json_encode([
+                    'ecomind' => $this->ecomind,
+                    'email' => $data['email'],
+                    'source' => $data['card'],
+                ]),
             ]);
             return json_decode($response->getBody(), true);
         } catch (RequestException $exception) {
@@ -312,75 +309,60 @@ class Clover
         return $tenders;
     }
 
-    public function getOrderIds(array $customerIds) {
+    public function getOrders() {
         $mId = $this->mId;
-        $orderIds = [];
-        foreach ($customerIds as $customerId) {
+        $offset = 0; $limit = 1000;
+        $createdTime = $newCreatedTime = Setting::getSetting(Setting::KEY_LastPulledOrderTime, 0) ?: 0;
+        $orders = [];
+        do {
+            $items = [];
             for ($i = 0; $i < 60; $i++) {
                 try {
-                    $response = $this->platform_client->get("v3/merchants/{$mId}/customers/{$customerId}", [
+                    $response = $this->platform_client->get("/v3/merchants/{$mId}/orders", [
                         'query' => [
-                            'expand' => 'orders',
+                            'expand' => 'lineItems,payment.tender',
+                            'filter' => "createdTime>{$createdTime}",
+                            'offset' => $offset,
+                            'limit' => $limit,
                         ],
                     ]);
                     $result = json_decode($response->getBody(), true);
-                    foreach ($result['orders']['elements'] ?? [] as $item) {
-                        $orderIds[] = $item['id'];
-                    }
+                    $items = $result['elements'] ?? [];
                 } catch (RequestException $exception) {
                     if ($exception->getResponse()->getStatusCode() == 429) {
                         sleep($i + 1);
                         continue;
                     }
+                    $result = json_decode($exception->getResponse()->getBody(), true);
+                    logger("!!!Clover Error!!! getOrders()");
+                    logger($result);
                 } catch (Exception $exception) {
+                    $result = $exception->getMessage();
+                    logger("!!!Clover Error!!! getOrders()");
+                    logger($result);
                 }
                 break;
             }
-        }
-        return $orderIds;
-    }
-
-    public function getOrder(string $orderId) {
-        for ($i = 0; $i < 60; $i++) {
-            try {
-                $mId = $this->mId;
-                $response = $this->platform_client->get("/v3/merchants/{$mId}/orders/{$orderId}", [
-                    'query' => [
-                        'expand' => 'lineItems,payments',
-                    ],
-                ]);
-                return json_decode($response->getBody(), true);
-            } catch (RequestException $exception) {
-                $response = $exception->getResponse();
-                $statusCode = $response->getStatusCode();
-                $result = json_decode($response->getBody(), true);
-                if ($statusCode == 404) {
-                    logger("!!!Clover Error!!! getOrder({$orderId})");
-                    logger($result);
-                    return ['id' => $orderId];
-                }
-                if ($statusCode == 429) {
-                    sleep($i + 1);
-                    continue;
-                }
-            } catch (Exception $exception) {
-                $result = $exception->getMessage();
+            foreach ($items as $item) {
+                $time = $item['createdTime'] ?? 0;
+                if ($newCreatedTime < $time) $newCreatedTime = $time;
             }
-            break;
+            $orders = array_merge($orders, $items);
+            $offset += $limit;
+        } while (count($items) >= $limit);
+        if ($newCreatedTime > $createdTime) {
+            Setting::saveSetting(Setting::KEY_LastPulledOrderTime, $newCreatedTime);
         }
-        logger("!!!Clover Error!!! getOrder({$orderId})");
-        logger($result);
-        return $this->getErrorMessage($result);
+        return $orders;
     }
 
     public function updateOrderTotal(string $orderId, int $total = 0) {
         try {
             $mId = $this->mId;
-            $body = [
-                'total' => $total,
-            ];
             $response = $this->platform_client->post("/v3/merchants/{$mId}/orders/{$orderId}", [
-                'body' => json_encode($body),
+                'body' => json_encode([
+                    'total' => $total,
+                ]),
             ]);
             return json_decode($response->getBody(), true);
         } catch (RequestException $exception) {
@@ -405,16 +387,15 @@ class Clover
 
     public function createCharge(array $data) {
         try {
-            $body = [
-                'ecomind' => $this->ecomind,
-                'amount' => $data['amount'] * 100,
-                'currency' => 'USD',
-                'source' => $data['source'],
-                'capture' => true,
-                'description' => $data['description'],
-            ];
             $response = $this->ecommerce_client->post("/v1/charges", [
-                'body' => json_encode($body),
+                'body' => json_encode([
+                    'ecomind' => $this->ecomind,
+                    'amount' => $data['amount'] * 100,
+                    'currency' => 'USD',
+                    'source' => $data['source'],
+                    'capture' => true,
+                    'description' => $data['description'],
+                ]),
             ]);
             return json_decode($response->getBody(), true);
         } catch (RequestException $exception) {
@@ -458,5 +439,53 @@ class Clover
             $offset += $limit;
         } while (count($items) >= $limit);
         return $inventoryItems;
+    }
+
+    public function getPayments() {
+        $mId = $this->mId;
+        $offset = 0; $limit = 1000;
+        $createdTime = $newCreatedTime = Setting::getSetting(Setting::KEY_LastPulledPaymentTime, 0) ?: 0;
+        $payments = [];
+        do {
+            $items = [];
+            for ($i = 0; $i < 60; $i++) {
+                try {
+                    $response = $this->platform_client->get("/v3/merchants/{$mId}/payments", [
+                        'query' => [
+                            'filter' => "createdTime>{$createdTime}",
+                            'offset' => $offset,
+                            'limit' => $limit,
+                        ],
+                    ]);
+                    $result = json_decode($response->getBody(), true);
+                    $items = $result['elements'] ?? [];
+                } catch (RequestException $exception) {
+                    if ($exception->getResponse()->getStatusCode() == 429) {
+                        sleep($i + 1);
+                        continue;
+                    }
+                    $result = json_decode($exception->getResponse()->getBody(), true);
+                    logger("!!!Clover Error!!! getPayments()");
+                    logger($result);
+                } catch (Exception $exception) {
+                    $result = $exception->getMessage();
+                    logger("!!!Clover Error!!! getPayments()");
+                    logger($result);
+                }
+                break;
+            }
+            foreach ($items as $item) {
+                $time = $item['createdTime'] ?? 0;
+                if ($newCreatedTime < $time) $newCreatedTime = $time;
+                if (in_array($item['note'] ?? '', ['Tourney Fee', 'League Fee', 'Event Payment'])) {
+                    $payments[] = $item;
+                }
+            }
+            $offset += $limit;
+        } while (count($items) >= $limit);
+        if ($newCreatedTime > $createdTime) {
+            //Setting::saveSetting(Setting::KEY_LastPulledPaymentTime, $newCreatedTime);
+        }
+        return $payments;
     }
 }

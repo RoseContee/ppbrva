@@ -32,6 +32,10 @@ export interface MeProps {
     wins: number,
     losses: number,
   },
+  first_payment: null | {
+    alert: string,
+    amount: number,
+  },
 }
 
 interface LocationProps {
@@ -81,6 +85,7 @@ const userSlice = createSlice({
 
 export const { saveMe, saveLocation, savePlan } = userSlice.actions;
 export const getMe = (state: RootState) => state.user.me;
+export const getFirstPayment = (state: RootState) => state.user.me.first_payment;
 export const getLocation = (state: RootState) => state.user.location;
 export const getPlan = (state: RootState) => state.user.plan;
 

@@ -18,7 +18,10 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function store(Request $request) {
+    public function member() {
+    }
+
+    public function saveMember(Request $request) {
         $member = auth('member')->user();
         $request->validate([
             'firstname' => ['required'],
@@ -41,5 +44,17 @@ class ProfileController extends Controller
             $profile->save();
         }
         return back()->with('info_message', 'Profile has been updated.');
+    }
+
+    public function billing() {
+    }
+
+    public function saveBilling(Request $request) {
+    }
+
+    public function membershipPlan() {
+    }
+
+    public function saveMembershipPlan(Request $request) {
     }
 }

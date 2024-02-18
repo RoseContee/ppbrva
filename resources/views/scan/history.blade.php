@@ -4,7 +4,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">
-                        Invoices
+                        Scans
                     </h2>
 
                     <x-messages />
@@ -13,50 +13,77 @@
                         <div class="flex items-center p-4 bg-white dark:bg-gray-900">
                             <div class="relative mr-2">
                                 <button class="inline-flex items-center text-gray-500 bg-white border border-slate-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-                                        v-on:click="toggleMenu">
+                                        v-on:click="toggleFilter">
                                     <span v-text="'Filter: ' + filterText"></span>
                                     <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                                     </svg>
                                 </button>
                                 <div class="absolute hidden z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
-                                     :style="{display: showMenu ? 'block' : 'none'}">
+                                     :style="{display: showFilter ? 'block' : 'none'}">
                                     <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
                                         <li>
                                             <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                                href="javascript:void(0);"
                                                :class="{'bg-zinc-100': filter === 'all'}"
-                                               v-on:click="filter = 'all'; showMenu = false;">
+                                               v-on:click="filter = 'all'; showFilter = false;">
                                                 All
                                             </a>
                                         </li>
                                         <li>
                                             <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                                href="javascript:void(0);"
-                                               :class="{'bg-zinc-100': filter === 'paid'}"
-                                               v-on:click="filter = 'paid'; showMenu = false;">
-                                                Only Paid
+                                               :class="{'bg-zinc-100': filter === 'newest'}"
+                                               v-on:click="filter = 'newest'; showFilter = false;">
+                                                Newest First
                                             </a>
                                         </li>
                                         <li>
                                             <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                                href="javascript:void(0);"
-                                               :class="{'bg-zinc-100': filter === 'unpaid'}"
-                                               v-on:click="filter = 'unpaid'; showMenu = false;">
-                                                Only Unpaid
+                                               :class="{'bg-zinc-100': filter === 'oldest'}"
+                                               v-on:click="filter = 'oldest'; showFilter = false;">
+                                                Oldest First
                                             </a>
                                         </li>
                                         <li>
                                             <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                                href="javascript:void(0);"
-                                               :class="{'bg-zinc-100': filter === 'unpaid-non0'}"
-                                               v-on:click="filter = 'unpaid-non0'; showMenu = false;">
-                                                Unpaid, No $0s
+                                               :class="{'bg-zinc-100': filter === 'location'}"
+                                               v-on:click="filter = 'location'; showFilter = false;">
+                                                Location
                                             </a>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
+
+                            <div class="relative hidden mr-2"
+                                 :style="{display: filter === 'location' ? 'block' : 'none'}">
+                                <button class="inline-flex items-center text-gray-500 bg-white border border-slate-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                                        v-on:click="toggleLocationFilter">
+                                    <span v-text="'Location: ' + locationFilterText"></span>
+                                    <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                                    </svg>
+                                </button>
+                                <div class="absolute hidden z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
+                                     :style="{display: showLocationFilter ? 'block' : 'none'}">
+                                    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
+                                        @foreach ($locations as $location)
+                                            <li>
+                                                <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                   href="javascript:void(0);"
+                                                   :class="{'bg-zinc-100': locationFilter === '{{ $location['id'] }}'}"
+                                                   v-on:click="locationFilter = '{{ $location['id'] }}'; showLocationFilter = false;">
+                                                    {{ $location['name'] }}
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+
                             <div class="flex items-center">
                                 <label for="table-search" class="sr-only">Search</label>
                                 <div class="relative">
@@ -77,70 +104,38 @@
                             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr class="bg-zinc-100 text-navy">
                                     <th scope="col" class="px-6 py-3">Member</th>
-                                    <th scope="col" class="px-6 py-3">Invoice</th>
-                                    <th scope="col" class="px-6 py-3">Period</th>
-                                    <th scope="col" class="px-6 py-3">Amount</th>
-                                    <th scope="col" class="px-6 py-3">Paid</th>
-                                    <th scope="col" class="px-6 py-3">CC</th>
-                                    <th scope="col" class="px-6 py-3 items-center"></th>
+                                    <th scope="col" class="px-6 py-3">Timestamp</th>
+                                    <th scope="col" class="px-6 py-3">Location</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                                    v-for="(invoice, index) in pageInvoices" key="index">
+                                    v-for="(scan, index) in pageScans" key="index">
                                     <td scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                                        <img class="w-10 h-10 rounded-full" :src="invoice.member.avatar" :alt="invoice.member.name">
+                                        <img class="w-10 h-10 rounded-full" :src="scan.member.avatar" :alt="scan.member.name">
                                         <div class="pl-3">
                                             <div class="text-base font-semibold">
                                                 <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
-                                                   :href="'{{ route('members.index') }}/' + invoice.member.id + '/edit'"
-                                                   v-text="invoice.member.name"></a>
+                                                   :href="'{{ route('members.index') }}/' + scan.member.id + '/edit'"
+                                                   v-text="scan.member.name"></a>
                                             </div>
-                                            <div class="font-normal text-gray-500" v-text="'#' + invoice.member.memberID"></div>
+                                            <div class="font-normal text-gray-500" v-text="'#' + scan.member.memberID"></div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4">
-                                        <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
-                                           :href="'{{ route('invoices.index') }}/' + invoice.id"
-                                           v-text="'#' + invoice.invoiceID"></a>
-                                    </td>
-                                    <td class="px-6 py-4" v-text="invoice.period"></td>
-                                    <td class="px-6 py-4" v-text="currencyFormat(invoice.amount)"></td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center">
-                                            <div class="h-2.5 w-2.5 rounded-full mr-2"
-                                                 :class="{'bg-green-500': invoice.paid, 'bg-red-500': !invoice.paid}"></div>
-                                            <span v-text="invoice.paid ? 'Yes' : 'No'"></span>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <svg class="w-6 h-6" v-if="invoice.member.card_last4"
-                                             fill="#22c55e" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 117.72 117.72">
-                                            <g><path class="st0" d="M58.86,0c9.13,0,17.77,2.08,25.49,5.79c-3.16,2.5-6.09,4.9-8.82,7.21c-5.2-1.89-10.81-2.92-16.66-2.92 c-13.47,0-25.67,5.46-34.49,14.29c-8.83,8.83-14.29,21.02-14.29,34.49c0,13.47,5.46,25.66,14.29,34.49 c8.83,8.83,21.02,14.29,34.49,14.29s25.67-5.46,34.49-14.29c8.83-8.83,14.29-21.02,14.29-34.49c0-3.2-0.31-6.34-0.9-9.37 c2.53-3.3,5.12-6.59,7.77-9.85c2.08,6.02,3.21,12.49,3.21,19.22c0,16.25-6.59,30.97-17.24,41.62 c-10.65,10.65-25.37,17.24-41.62,17.24c-16.25,0-30.97-6.59-41.62-17.24C6.59,89.83,0,75.11,0,58.86 c0-16.25,6.59-30.97,17.24-41.62S42.61,0,58.86,0L58.86,0z M31.44,49.19L45.8,49l1.07,0.28c2.9,1.67,5.63,3.58,8.18,5.74 c1.84,1.56,3.6,3.26,5.27,5.1c5.15-8.29,10.64-15.9,16.44-22.9c6.35-7.67,13.09-14.63,20.17-20.98l1.4-0.54H114l-3.16,3.51 C101.13,30,92.32,41.15,84.36,52.65C76.4,64.16,69.28,76.04,62.95,88.27l-1.97,3.8l-1.81-3.87c-3.34-7.17-7.34-13.75-12.11-19.63 c-4.77-5.88-10.32-11.1-16.79-15.54L31.44,49.19L31.44,49.19z"/></g>
-                                        </svg>
-                                        <svg class="w-5 h-5" v-else
-                                             fill="#ef4444" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 122.878 122.88">
-                                            <g><path d="M1.426,8.313c-1.901-1.901-1.901-4.984,0-6.886c1.901-1.902,4.984-1.902,6.886,0l53.127,53.127l53.127-53.127 c1.901-1.902,4.984-1.902,6.887,0c1.901,1.901,1.901,4.985,0,6.886L68.324,61.439l53.128,53.128c1.901,1.901,1.901,4.984,0,6.886 c-1.902,1.902-4.985,1.902-6.887,0L61.438,68.326L8.312,121.453c-1.901,1.902-4.984,1.902-6.886,0 c-1.901-1.901-1.901-4.984,0-6.886l53.127-53.128L1.426,8.313L1.426,8.313z"/></g>
-                                        </svg>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <a class="font-medium text-blue underline dark:text-blue-500 hover:no-underline hover:text-gray"
-                                           :href="'{{ route('invoices.index') }}/' + invoice.id">
-                                            View
-                                        </a>
-                                    </td>
+                                    <td class="px-6 py-4" v-text="scan.timestamp"></td>
+                                    <td class="px-6 py-4" v-text="scan.location.name"></td>
                                 </tr>
                                 <tr class="bg-white border-b border-slate-300 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                                    v-if="!pageInvoices.length">
-                                    <td class="px-6 py-4 italic" colspan="7">
-                                        No invoices found.
+                                    v-if="!pageScans.length">
+                                    <td class="px-6 py-4 italic" colspan="3">
+                                        No scans found.
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
 
                         <nav class="flex items-center justify-between text-sm p-4"
-                             v-if="filteredInvoices.length">
+                             v-if="filteredScans.length">
                             <span v-text="paginationInfo"></span>
                             <ul class="flex -space-x-px h-8">
                                 <li>
@@ -177,46 +172,63 @@
 
             createApp({
                 setup() {
-                    const invoices = ref({!! $invoices !!});
+                    const scans = ref({!! $scans !!});
                     const keyword = ref('');
                     const filter = ref('all');
-                    const filteredInvoices = computed(() => {
-                        return invoices.value.filter(invoice => {
+                    const locationFilter = ref('{{ $locations[0]['id'] ?? '' }}');
+                    const filteredScans = computed(() => {
+                        return scans.value.filter(scan => {
                             const q = keyword.value.toLowerCase();
-                            return (invoice.member.name.toLowerCase().includes(q)
-                                || invoice.member.memberID.toLowerCase().includes(q)
-                                || invoice.invoiceID.toLowerCase().includes(q)
-                                || invoice.period.toLowerCase().includes(q)
-                                || ('$' + invoice.amount).toLowerCase().includes(q)
-                            ) && (filter.value === 'all'
-                                || (filter.value === 'paid' && !!invoice.paid)
-                                || (filter.value === 'unpaid' && !invoice.paid)
-                                || (filter.value === 'unpaid-non0' && !invoice.paid && invoice.amount > 0)
+                            return (scan.member.name.toLowerCase().includes(q)
+                                || scan.member.memberID.toLowerCase().includes(q)
+                                || scan.timestamp.toLowerCase().includes(q)
+                                || scan.location.name.toLowerCase().includes(q)
+                            ) && (['all', 'newest', 'oldest'].includes(filter.value)
+                                || (filter.value === 'location' && scan.location_id == locationFilter.value)
                             );
+                        }).sort((a, b) => {
+                            if (filter.value === 'newest') {
+                                return b.created_at.localeCompare(a.created_at);
+                            }
+                            if (filter.value === 'oldest') {
+                                return a.created_at.localeCompare(b.created_at);
+                            }
+                            return a.id - b.id;
                         });
                     });
                     const per_page = 50;
                     const page = ref(1);
                     watch(keyword, () => page.value = 1);
-                    watch(filter, () => page.value = 1);
-                    const pageInvoices = computed(() => {
-                        return filteredInvoices.value.filter((invoice, index) => {
+                    watch(filter, () => {
+                        if (filter.value === 'location') page.value = 1;
+                    });
+                    watch(locationFilter, () => page.value = 1);
+                    const pageScans = computed(() => {
+                        return filteredScans.value.filter((scan, index) => {
                             return (page.value - 1) * per_page <= index
-                                && index < Math.min(page.value * per_page, filteredInvoices.value.length);
+                                && index < Math.min(page.value * per_page, filteredScans.value.length);
                         });
                     });
-                    const showMenu = ref(false);
-                    const toggleMenu = () => {
-                        showMenu.value = !showMenu.value;
+                    const showFilter = ref(false);
+                    const toggleFilter = () => {
+                        showFilter.value = !showFilter.value;
                     }
                     const filterText = computed(() => {
-                        if (filter.value === 'paid') return 'Only Paid';
-                        if (filter.value === 'unpaid') return 'Only Unpaid';
-                        if (filter.value === 'unpaid-non0') return 'Unpaid, No $0s';
+                        if (filter.value === 'newest') return 'Newest First';
+                        if (filter.value === 'oldest') return 'Oldest First';
+                        if (filter.value === 'location') return 'Location';
                         return 'All';
                     });
+                    const showLocationFilter = ref(false);
+                    const toggleLocationFilter = () => {
+                        showLocationFilter.value = !showLocationFilter.value;
+                    }
+                    const locationFilterText = computed(() => {
+                        const locations = {{ Js::from($locations) }};
+                        return locations.find(location => location.id == locationFilter.value)?.name;
+                    });
                     const paginationInfo = computed(() => {
-                        const total = filteredInvoices.value.length;
+                        const total = filteredScans.value.length;
                         const from = (page.value - 1) * per_page + 1;
                         const to = Math.min(page.value * per_page, total);
                         return `From ${from} to ${to} of ${total} invoices`;
@@ -228,18 +240,17 @@
                         if (!isFirstPage.value) page.value--;
                     }
                     const isLastPage = computed(() => {
-                        return page.value * per_page >= filteredInvoices.value.length;
+                        return page.value * per_page >= filteredScans.value.length;
                     });
                     const nextPage = () => {
                         if (!isLastPage.value) page.value++;
                     }
-                    const currencyFormat = window.currencyFormat;
 
                     return {
-                        keyword, filter, filteredInvoices, pageInvoices,
-                        showMenu, toggleMenu, filterText,
+                        keyword, filter, locationFilter, filteredScans, pageScans,
+                        showFilter, toggleFilter, filterText,
+                        showLocationFilter, toggleLocationFilter, locationFilterText,
                         paginationInfo, isFirstPage, prevPage, isLastPage, nextPage,
-                        currencyFormat,
                     }
                 }
             }).mount('#app');
